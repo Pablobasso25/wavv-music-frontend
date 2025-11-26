@@ -40,6 +40,12 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
 
     }, []);
 
+      const handleClick = (album) => {
+    console.log("📀 Álbum seleccionado:", album);
+    localStorage.setItem("selectedAlbum", JSON.stringify(album));
+    onAlbumSelect(album);
+  };
+
 
     return (
         <div
