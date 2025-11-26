@@ -3,20 +3,44 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
     const [artistas, setArtistas] = useState([]);
     const contentRef = useRef(null);
 
-  useEffect(() => {
-    const loadArtists = () => {
-      const stored = JSON.parse(localStorage.getItem("artistas")) || [];
-      console.log("🎤 Artistas guardados:", stored);
+    useEffect(() => {
+        const loadArtists = () => {
+            const stored = JSON.parse(localStorage.getItem("artistas")) || [];
+            console.log("🎤 Artistas guardados:", stored);
 
 
-      const defaultArtist = {
-        id: "default-artist",
-        name: "Rion Clarke",
-        image: defaultAlbum.image,
-        album: defaultAlbum,
-      };
+            const defaultArtist = {
+                id: "default-artist",
+                name: "Rion Clarke",
+                image: defaultAlbum.image,
+                album: defaultAlbum,
+            };
+            setArtistas([defaultArtist, ...stored]);
+        };
 
-    }}, [])  
+        loadArtists();
+
+
+        window.addEventListener("storage", loadArtists);
+        return () => window.removeEventListener("storage", loadArtists);
+    }, []);
+
+    useEffect(() => {
+        const content = contentRef.current;
+        if (!content) return;
+
+        const handleWheel = (e) => {
+            e.preventDefault();
+            content.scrollTop += e.deltaY;
+        };
+
+        content.addEventListener("wheel", handleWheel, { passive: false });
+        return () => content.removeEventListener("wheel", handleWheel);
+
+
+    }, []);
+
+
     return (
         <div
             className="artistas-sidebar p-3"
