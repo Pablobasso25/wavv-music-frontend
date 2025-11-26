@@ -4,11 +4,18 @@ import trendImg from "../assets/trend.png";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 
 const TrendingSong = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  const { playSong } = useMusicPlayer();
+  const [trendingSong, setTrendingSong] = useState({
+    title: "Lost Emotions",
+    artist: "Rion Clarke",
+    album: "Digital Dreams",
+    cover: trendImg,
+    audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    genre: "Electronic",
+    plays: "63 Million Plays",
+  });
 
-export default TrendingSong
+  return <div>TrendingSong</div>;
+};
+
+export default TrendingSong;
