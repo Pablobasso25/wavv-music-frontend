@@ -15,6 +15,20 @@ const TrendingSong = () => {
     plays: "63 Million Plays",
   });
 
+  useEffect(() => {
+    const loadTrendingSong = () => {
+      const storedTrending = localStorage.getItem("trendingSong");
+      if (storedTrending) {
+        setTrendingSong(JSON.parse(storedTrending));
+      }
+    };
+
+    loadTrendingSong();
+    window.addEventListener("storage", loadTrendingSong);
+
+    return () => window.removeEventListener("storage", loadTrendingSong);
+  }, []);
+
   return <div>TrendingSong</div>;
 };
 
