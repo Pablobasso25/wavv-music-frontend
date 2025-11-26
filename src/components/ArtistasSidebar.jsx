@@ -1,5 +1,22 @@
 const ArtistasSidebar = ({ onAlbumSelect }) => {
 
+    const [artistas, setArtistas] = useState([]);
+    const contentRef = useRef(null);
+
+  useEffect(() => {
+    const loadArtists = () => {
+      const stored = JSON.parse(localStorage.getItem("artistas")) || [];
+      console.log("🎤 Artistas guardados:", stored);
+
+
+      const defaultArtist = {
+        id: "default-artist",
+        name: "Rion Clarke",
+        image: defaultAlbum.image,
+        album: defaultAlbum,
+      };
+
+    }}, [])  
     return (
         <div
             className="artistas-sidebar p-3"
