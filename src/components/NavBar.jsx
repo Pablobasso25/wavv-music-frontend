@@ -14,22 +14,28 @@ const NavBar = () => {
 
         <NavBar.Collapse>
           <Nav className="mx-auto my-3 my-lg-0 text-center">
-            <NavLink  className="text-secondary text-uppercase fw-bold mx-2 nav-link-custom">
+            <NavLink  
+            to="/"
+            className="text-secondary text-uppercase fw-bold mx-2 nav-link-custom"
+            >
               <i className="bx bx-home-alt me-1"></i>
               Home
               </NavLink>
-            <NavLink  
+            <NavLink
+            to="/playlist"  
             className="text-secondary text-uppercase fw-bold mx-2 nav-link-custom"
             >
               <i className="bx bx-list-ul me-1"></i>
               Playlist
               </NavLink>
-            <NavLink  
+            <NavLink
+            href="#"  
             className="text-secondary text-uppercase fw-bold mx-2 nav-link-custom"
             >
               NOSOTROS
             </NavLink>
-            <NavLink  
+            <NavLink
+            to="/admin"  
             className="text-warning text-uppercase fw-bold mx-2 nav-link-custom"
             >
               <i className="bx bx-cog me-1"></i>
