@@ -70,3 +70,9 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     window.dispatchEvent(new Event("playlistUpdated"));
     alert(`✅ "${track.name}" eliminada de tu playlist.`);
   };
+  
+    const isInPlaylist = (trackName) => {
+    return playlist.some(
+      (song) => song.name === trackName && song.album === album.name
+    );
+  };
