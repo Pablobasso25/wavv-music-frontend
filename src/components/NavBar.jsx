@@ -118,49 +118,79 @@ const NavBar = () => {
             No se encontraron resultados
           </div>
 
-          <div>
+          <div className="d-flex align-items-center gap-3">
             <Dropdown>
-              <Dropdown.Toggle>
-                <div>
-                  <div>
-                    <img src="" alt="" />
+              <Dropdown.Toggle
+               className="d-flex align-items-center  profile-toggle"
+               style={{ backgroundColor: "transparent" }} 
+              >
+                <div className="d-flex align-items-center">
+                  <div className="bg-secondary rounded-start p-1">
+                    <img src=""  
+                      className="rounded"
+                      width="35"
+                      height="35"
+                      alt="" />
                   </div>
-                  <div>
-                    <h6></h6>
+                  <div className="rounded-end p-2  d-md-block">
+                    <h6 className="mb-0 text-white">
+
+                    </h6>
                   </div>
                 </div>
               </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item>
-                  <i></i>
+              <Dropdown.Menu
+                className=" border-secondary"
+                style={{ backgroundColor: "#000", borderColor: "#000" }}
+              >
+                <Dropdown.Item
+                  className="text-white d-flex align-items-center dropdown-item-custom"
+                  style={{ backgroundColor: "#000" }}
+                >
+                  <i className="bx bx-log-out me-2"></i>
                   <span>Cerrar Sesión</span>
                 </Dropdown.Item>
-                <Dropdown.Item>
-                  <i></i>
+                <Dropdown.Item
+                  className="text-white d-flex align-items-center dropdown-item-custom"
+                  style={{ backgroundColor: "#000" }}
+                >
+                  <i className="bx bx-user me-2"></i>
                   <span>Perfil</span>
                 </Dropdown.Item>
-                <Dropdown.Item>
-                  <i></i>
+                <Dropdown.Item 
+                  className="text-white d-flex align-items-center dropdown-item-custom"
+                  style={{ backgroundColor: "#000" }}
+                >
+                  <i className="bx bx-cog me-2"></i>
                   <span>Configuración</span>
                 </Dropdown.Item>
 
-                <Dropdown.Item>
-                  <i></i>
+                <Dropdown.Item 
+                  className="text-white d-flex align-items-center dropdown-item-custom"
+                  style={{ backgroundColor: "#000" }}
+                >
+                  <i className="bx bx-crown me-2"></i>
                   <span>Premium</span>
-                  <Badge>
+                  <Badge bg="warning" text="dark" className="ms-2">
                     PRO
                   </Badge>
                 </Dropdown.Item>
 
-                <Dropdown.Item>
-                  <i></i>
+                <Dropdown.Item 
+                  className="text-warning d-flex align-items-center dropdown-item-custom"
+                  style={{ backgroundColor: "#000" }}
+                >
+                  <i className="bx bx-shield me-2"></i>
                   <span>Panel Admin</span>
                 </Dropdown.Item>
 
-                <Dropdown.Divider />
-                <Dropdown.Item>
-                  <i></i>
+                <Dropdown.Divider className="border-secondary" />
+                <Dropdown.Item
+                  className="text-white d-flex align-items-center dropdown-item-custom"
+                  style={{ backgroundColor: "#000" }}
+                >
+                  <i className="bx bx-log-out me-2"></i>
                   <span>Cerrar Sesión</span>
                 </Dropdown.Item>
               </Dropdown.Menu>
