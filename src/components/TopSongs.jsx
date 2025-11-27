@@ -208,3 +208,5 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     </Container>
   );
 };
+
+export default TopSongs;
