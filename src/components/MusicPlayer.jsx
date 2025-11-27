@@ -46,6 +46,48 @@ const MusicPlayer = () => {
             {currentSong?.genre || "Electronic"}
           </p>
         </div>
+        
+        <div className="progress-container">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <span className="text-white-50 small">
+              {formatTime(currentTime)}
+            </span>
+            <span className="text-white-50 small">
+              {duration ? `-${formatTime(duration - currentTime)}` : "0:00"}
+            </span>
+          </div>
+
+          <div
+            className="progress bg-secondary position-relative"
+            style={{
+              height: "6px",
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const percentage = (x / rect.width) * 100;
+              handleSeek(percentage);
+            }}
+          >
+            <ProgressBar
+              now={progress || 0}
+              className="bg-white"
+              style={{ height: "100%" }}
+            />
+            <div
+              className="position-absolute top-50 translate-middle"
+              style={{
+                left: `${progress}%`,
+                width: "16px",
+                height: "16px",
+              }}
+            >
+              <div className="bg-white border border-dark rounded-circle w-100 h-100 shadow"></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       </div>
 
