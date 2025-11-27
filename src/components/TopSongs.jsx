@@ -55,3 +55,18 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     window.dispatchEvent(new Event("playlistUpdated"));
     alert(`✅ "${track.name}" agregada a tu playlist.`);
   };
+
+    const handleRemoveFromPlaylist = (track) => {
+    if (!confirm(`¿Estás seguro de eliminar "${track.name}" de tu playlist?`)) {
+      return;
+    }
+
+    const updatedPlaylist = playlist.filter(
+      (song) => !(song.name === track.name && song.album === track.album)
+    );
+    setPlaylist(updatedPlaylist);
+    localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
+    window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new Event("playlistUpdated"));
+    alert(`✅ "${track.name}" eliminada de tu playlist.`);
+  };
