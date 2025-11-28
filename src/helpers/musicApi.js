@@ -1,5 +1,10 @@
 export const getTokenApi = async () => {
-  const response = await fetch("http://localhost:3001/api/token");
+  // En producción usa Netlify Functions, en desarrollo usa el servidor local
+  const apiUrl = import.meta.env.VITE_API_URL || "/.netlify/functions";
+  const endpoint = apiUrl.startsWith("http")
+    ? `${apiUrl}/api/token`
+    : `${apiUrl}/token`;
+  const response = await fetch(endpoint);
   const data = await response.json();
   const expiresAt = Date.now() + data.expires_in * 1000;
   return { access_token: data.access_token, expires_at: expiresAt };
