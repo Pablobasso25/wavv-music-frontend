@@ -56,8 +56,8 @@ const TrendingSong = () => {
         </Col>
         <Col md={4} className="d-flex justify-content-center">
           <img
-            src={}
-            alt={}
+            src={trendingSong.cover || trendImg}
+            alt={trendingSong.title}
             width="250"
             height="250"
             className="img-fluid rounded-3"
