@@ -27,14 +27,29 @@ const colors = {
     }}
 >
 
-<Container className="text-center mb-3">
-  <img src={logo} alt="logo" width="110" className="mb-2" />
+    <Container className="text-center mb-3">
+        <img src={logo} alt="logo" width="110" className="mb-2" />
 
-  <h2 style={{ color: colors.textMain, marginBottom: "0.5rem" }}>
-    Nuestro Equipo
-  </h2>
+        <h2 style={{ color: colors.textMain, marginBottom: "0.5rem" }}>
+            Nuestro Equipo
+        </h2>
 
-  <h6 style={{ color: colors.accent, opacity: 0.9 }}>
-    Wavv Music – Innovando con ritmo y buen mate.
-  </h6>
-</Container>
+        <h6 style={{ color: colors.accent, opacity: 0.9 }}>
+            Wavv Music – Innovando con ritmo y buen mate.
+        </h6>
+    </Container>
+
+    <Container
+        style={{
+            height: "60vh",
+            display: "flex",
+            alignItems: "center",
+        }}
+    >
+        <Row
+            className="g-3 justify-content-center"
+            style={{
+                width: "100%",
+                padding: "0 2rem",
+            }}
+        >
