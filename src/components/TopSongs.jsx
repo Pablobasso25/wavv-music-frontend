@@ -1,6 +1,5 @@
 import { Container, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import trendImg from "../assets/trend.png";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 
@@ -45,7 +44,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     );
 
     if (exists) {
-      toast.warning("⚠️ Esta canción ya está en tu playlist.");
+      alert(`⚠️ Esta canción ya está en tu playlist.`);
       return;
     }
 
@@ -54,12 +53,13 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
     window.dispatchEvent(new Event("storage"));
     window.dispatchEvent(new Event("playlistUpdated"));
-
-    toast.success(`🎵 "${track.name}" agregada a tu playlist.`);
+    alert(`✅ "${track.name}" agregada a tu playlist.`);
   };
 
   const handleRemoveFromPlaylist = (track) => {
-    toast.info(`🗑️ Eliminando "${track.name}"...`, { autoClose: 800 });
+    if (!confirm(`¿Eliminar "${track.name}" de tu playlist?`)) {
+      return;
+    }
 
     const updatedPlaylist = playlist.filter(
       (song) => !(song.name === track.name && song.album === track.album)
@@ -69,8 +69,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
     window.dispatchEvent(new Event("storage"));
     window.dispatchEvent(new Event("playlistUpdated"));
-
-    toast.success(`❌ "${track.name}" eliminada de tu playlist.`);
+    alert(`✅ "${track.name}" eliminada de tu playlist.`);
   };
 
   const isInPlaylist = (trackName) => {
@@ -98,7 +97,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       <div
         className="music-list p-3 rounded-4"
         style={{
-          backgroundColor: "#0f0f0f",
+          backgroundColor: "#111111",
           height: fromHome ? "calc(80vh - 280px)" : "80vh",
           overflowY: "auto",
         }}
@@ -116,7 +115,16 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
               <div
                 key={index}
                 className="item d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 cursor-pointer"
-                style={{ backgroundColor: "#18181d" }}
+                style={{
+                  backgroundColor: "#191B1B",
+                  transition: "0.2s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#35393B")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#191B1B")
+                }
                 onClick={() => {
                   const songData = {
                     title: track.name,
@@ -146,7 +154,9 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                   <div className="details">
                     <h6
                       className="mb-0 small"
-                      style={{ color: isCurrentTrack ? "#0d6efd" : "white" }}
+                      style={{
+                        color: isCurrentTrack ? "#0d6efd" : "white",
+                      }}
                     >
                       {track.name}
                     </h6>
@@ -160,7 +170,9 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                         isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
                       } cursor-pointer fs-2`}
                       title={
-                        isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
+                        isCurrentTrack && isPlaying
+                          ? "Pausar"
+                          : "Reproducir"
                       }
                     ></i>
                   )}
@@ -196,9 +208,9 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                     ></i>
                   )}
 
-                  <span>
+                  <span style={{ color: "#494D4E" }}>
                     {track.duration_ms
-                      ? Math.floor(track.duration_ms / 60000) +
+                      ? Math.floor(track.duration_ms / 1000 / 60) +
                         ":" +
                         String(
                           Math.floor((track.duration_ms / 1000) % 60)
