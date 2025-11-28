@@ -1,7 +1,145 @@
 import { Navbar, Nav, Container, Form, Dropdown, Badge } from "react-bootstrap";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useState, useEffect, useRef } from "react";
+import { useToken } from "../context/useToken";
+import { searchTracks } from "../helpers/musicApi";
+import { useMusicPlayer } from "../context/MusicPlayerContext";
+import { Alert } from "bootstrap";
 
 const NavBar = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { token, loading: tokenLoading } = useToken();
+  const { playSong } = useMusicPlayer();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState ([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef(null);
+  const lastSearchRef = useRef(""); // Para evitar búsquedas deplicadas
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  // Verificar si estamos en la ruta de admin
+  const isAdminPage = location.pathname === "/admin";
+
+  // búsqueda con debounce
+  useEffect(() => {
+    // Si no hay query, limpiar y salir
+    if (searchQuery.length === 0) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      setIsSearching(false);
+      lastSearchRef.current = ""; // Resetear última búsqueda
+      return;
+    }
+
+    // Si el query es muy corto, no buscar aún
+    if (searchQuery.length < 3) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    // Si no hay token, esperar
+    if (!token || tokenLoading) {
+      return;
+    }
+
+    // IMPORTANTE: Si ya buscamos esto, no volver a buscar
+    if (lastSearchRef.current === searchQuery) {
+      return;
+    }
+
+    // Buscar con debounce
+    const timer = setTimeout(async () => {
+      console.log("🔍 Buscando:", searchQuery);
+      lastSearchRef.current = searchQuery; // Guardar lo que estamos buscando
+      setIsSearching(true); 
+      try {
+        const results = await searchTracks (token, searchQuery, 8);
+        console.log("✅ Resultados:", results);
+        setSearchResults(results);
+        setShowDropdown(true);
+      } catch (error) {
+        console.log("❌ Error al buscar:", error);
+        setSearchResults([]);
+        setShowDropdown(false);
+      }finally {
+        setIsSearching(false);
+      }
+    }, 300 );
+
+    return() => crearTimeout(timer);
+  }, [searchQuery, token, tokenLoading]);
+    
+  // Cerrar dropdown al hacer click afuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if ( searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowDropdown(false);
+        // NO limpiar el searchQuery aquí para que el usuario vea lo que buscó
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handlePlaySong = (track) => {
+    const songData = {
+      title: track.name,
+      artists: track.artists[0]?.name || "artista",
+      album: track.album.name,
+      cover: track.album.images[0]?.url,
+      audio: track.preview_url,
+      genre: "music",
+      name: track.name,
+    };
+    playSong(songData);
+    setShowDropdown(false);
+    setSearchQuery("");
+  };
+
+  const handleAddToPlaylist = (track) => {
+    const playlist = JSON.parse(localStorage.getItem("userPlaylist")) || [];
+    
+    const exists = playlist.some((song) => song.name === track.name);
+    if (exists) {
+      alert("⚠ Esta canción ya está en tu playlist.");
+      return;
+    }
+
+    const songData = {
+      id: Date.now(),
+      title: track.name,
+      artist: track.artists[0]?.name || "artista",
+      album: track.album.name,
+      cover: track.album.images[0]?.url,
+      audio: track.preview_url,
+      genre: "music",
+      name: track.name,
+      duration_ms: track.duration_ms,
+    };
+    const updatedPlaylist = [...playlist, songData];
+    localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
+    window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new Event("playlistUpdated"));
+    Alert();
+
+    // Cerrar dropdown y limpiar búsqueda después de agregar 
+    setShowDropdown(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+
   return (
     <Navbar expand="lg" className="py-3" style={{ backgroundColor: "#000" }}>
       <Container>
