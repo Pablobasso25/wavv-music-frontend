@@ -53,3 +53,11 @@ const colors = {
                 padding: "0 2rem",
             }}
         >
+
+
+            <TeamMember name="Pablo" img={pabloImg} text="..." extra="..." colors={colors} compact />
+            <TeamMember name="Alvaro" img={alvaroImg} text="..." extra="..." colors={colors} compact />
+            <TeamMember name="Romina" img={rominaImg} text="..." extra="..." colors={colors} compact />
+            <TeamMember name="Juan" img={juanImg} text="..." extra="..." colors={colors} compact />
+            <TeamMember name="Patricio" img={patricioImg} text="..." extra="..." colors={colors} compact />
+
