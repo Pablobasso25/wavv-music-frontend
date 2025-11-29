@@ -21,7 +21,6 @@ const EMAILJS_CONFIG = {
   TEMPLATE_ID: "template_v81kajd",
   PUBLIC_KEY: "W0WIYNiPDb9B0Jhf3",
 };
-
 emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
 
 const RegisterScreen = () => {
@@ -29,7 +28,7 @@ const RegisterScreen = () => {
   const [errorEmail, setErrorEmail] = useState("");
   const [emailEnviado, setEmailEnviado] = useState(false);
 
- const {
+  const {
     register,
     handleSubmit,
     watch,
@@ -85,7 +84,7 @@ const RegisterScreen = () => {
 
   const { force: forcePassword, validations } = validatePassword(password);
 
-  const informationForce = () => { 
+  const informationForce = () => {
     if (forcePassword === 0)
       return { texto: "No ingresado", variant: "secondary" };
     if (forcePassword < 50) return { texto: "Débil", variant: "danger" };
@@ -123,7 +122,113 @@ const RegisterScreen = () => {
       navigate("/login");
     });
   };
-  const onSubmit = () => {};
+
+  const onSubmit = async (data) => {
+    if (forcePassword < 99) {
+      Swal.fire({
+        title: "🔒 Contraseña insuficiente",
+        text: "La contraseña debe ser MUY FUERTE para registrarse",
+        icon: "warning",
+        background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+        color: "#ffffff",
+        confirmButtonText: "Entendido",
+        confirmButtonColor: "#ffc107",
+      });
+      return;
+    }
+
+    setSend(true);
+    setErrorEmail("");
+    setEmailEnviado(true);
+
+    try {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const exists = users.some((user) => user.email === data.email);
+
+      if (exists) {
+        Swal.fire({
+          title: "❌ Error",
+          text: "Ya existe un usuario con ese email",
+          icon: "error",
+          background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+          color: "#ffffff",
+          confirmButtonText: "Entendido",
+          confirmButtonColor: "#dc3545",
+        });
+        setSend(false);
+        return;
+      }
+
+      const newUser = {
+        id: Date.now(),
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        role: "usuario",
+        favorites: [],
+        playlists: [],
+        createdAt: new Date().toISOString(),
+        verificado: false,
+      };
+
+      localStorage.setItem("users", JSON.stringify([...users, newUser]));
+
+      // ENVIAR EMAIL
+      try {
+        const templateParams = {
+          to_name: data.username,
+          to_email: data.email,
+          from_name: "Harmony Stream",
+          fecha: new Date().toISOString().split("T")[0],
+        };
+
+        console.log(" Enviando email con:", {
+          service: EMAILJS_CONFIG.SERVICE_ID,
+          template: EMAILJS_CONFIG.TEMPLATE_ID,
+          publicKey: EMAILJS_CONFIG.PUBLIC_KEY,
+          to_email: data.email,
+        });
+
+        const emailResult = await emailjs.send(
+          EMAILJS_CONFIG.SERVICE_ID,
+          EMAILJS_CONFIG.TEMPLATE_ID,
+          templateParams,
+          EMAILJS_CONFIG.PUBLIC_KEY
+        );
+
+        console.log(" Email enviado:", emailResult);
+        setEmailEnviado(true);
+      } catch (emailError) {
+        console.error("❌ Error enviando email:", emailError);
+        Swal.fire({
+          title: "❌ Error de Email",
+          text: `No se pudo enviar el email: ${
+            emailError.text || emailError.message
+          }`,
+          icon: "error",
+          background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+          color: "#ffffff",
+          confirmButtonText: "Entendido",
+          confirmButtonColor: "#dc3545",
+        });
+        setEmailEnviado(false);
+      }
+
+      showSuccessAlert(emailEnviado);
+    } catch (error) {
+      Swal.fire({
+        title: "❌ Error",
+        text: "Hubo un problema con el registro. Intenta nuevamente.",
+        icon: "error",
+        background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+        color: "#ffffff",
+        confirmButtonText: "Entendido",
+        confirmButtonColor: "#dc3545",
+      });
+    } finally {
+      setSend(false);
+    }
+  };
 
   return (
     <Container className="d-flex align-items-center justify-content-center vh-100 mt-2">
@@ -138,7 +243,7 @@ const RegisterScreen = () => {
               </small>
             </Card.Header>
             <Card.Body className="p-4">
-                {errorEmail && (
+              {errorEmail && (
                 <Alert variant="danger" className="mb-4">
                   {errorEmail}
                 </Alert>
@@ -173,7 +278,6 @@ const RegisterScreen = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
 
-              
                 <Form.Group className="mb-3">
                   <Form.Label>Email *</Form.Label>
                   <Form.Control
@@ -243,7 +347,6 @@ const RegisterScreen = () => {
                       errors.password.message}
                   </Form.Control.Feedback>
 
-                  
                   {password && (
                     <div className="text-end mt-1">
                       <small
@@ -256,7 +359,6 @@ const RegisterScreen = () => {
                     </div>
                   )}
 
-                  
                   {password && (
                     <div className="mt-2">
                       <div className="d-flex justify-content-between align-items-center mb-1">
@@ -271,7 +373,6 @@ const RegisterScreen = () => {
                         className="mb-2"
                       />
 
-                      
                       {Object.keys(validations).some(
                         (key) => !validations[key]
                       ) &&
@@ -334,7 +435,6 @@ const RegisterScreen = () => {
                           </div>
                         )}
 
-                      
                       {forcePassword >= 99 && (
                         <div className="border border-success rounded p-2 text-center">
                           <small className="text-success ">
@@ -346,7 +446,6 @@ const RegisterScreen = () => {
                   )}
                 </Form.Group>
 
-         
                 <Form.Group className="mb-4">
                   <Form.Label>Confirmar contraseña *</Form.Label>
                   <Form.Control
