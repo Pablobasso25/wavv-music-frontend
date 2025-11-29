@@ -7,7 +7,6 @@ const TeamMember = ({ name, img, text, extra, colors, compact }) => {
 
   return (
     <Col
-      md={compact ? 2 : 4}
       className="d-flex justify-content-center mb-3"
       style={{ minWidth: cardWidth }}
     >

@@ -1,12 +1,6 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
 import TeamMember from "./TeamMember";
-import logo from "../logo.png";
-import pabloImg from "../aboutUs/pablo.jpg";
-import alvaroImg from "../aboutUs/alvaro.jpg";
-import rominaImg from "../aboutUs/romina.jpg";
-import juanImg from "../aboutUs/juan.png";
-import patricioImg from "../aboutUs/patricio.png";
 
 const colors = {
     bgPrimary: "#111111",
@@ -23,35 +17,62 @@ const AboutUs = () => {
             style={{
                 backgroundColor: colors.bgPrimary,
                 minHeight: "100vh",
-                maxHeight: "100vh",
                 overflow: "hidden",
                 paddingTop: "2rem",
             }}
         >
             <Container className="text-center mb-3">
-                <img src={logo} alt="logo" width="110" className="mb-2" />
+                <img src="/logo.png" alt="logo" width="110" className="mb-2" />
                 <h2 style={{ color: colors.textMain }}>Nuestro Equipo</h2>
                 <h6 style={{ color: colors.accent, opacity: 0.9 }}>
-                    Wavv Music – Innovando con ritmo y buen mate.
+                    Wavv Music – Somos lo que te conecta.
                 </h6>
             </Container>
 
-            <Container
-                style={{
-                    height: "60vh",
-                    display: "flex",
-                    alignItems: "center",
-                }}
-            >
+            <Container style={{ display: "flex", alignItems: "center" }}>
                 <Row
-                    className="g-3 justify-content-center"
+                    className="g-3 justify-content-center flex-wrap"
                     style={{ width: "100%", padding: "0 2rem" }}
                 >
-                    <TeamMember name="Pablo" img={pabloImg} colors={colors} compact />
-                    <TeamMember name="Alvaro" img={alvaroImg} colors={colors} compact />
-                    <TeamMember name="Romina" img={rominaImg} colors={colors} compact />
-                    <TeamMember name="Juan" img={juanImg} colors={colors} compact />
-                    <TeamMember name="Patricio" img={patricioImg} colors={colors} compact />
+                    <TeamMember
+                        name="Pablo"
+                        img="/aboutUs/placeholder.jpg"
+                        text="texto de prueba"
+                        colors={colors}
+                        compact
+                    />
+
+                    <TeamMember
+                        name="Alvaro"
+                        img="/aboutUs/placeholder.jpg"
+                        text="Texto de prueba."
+                        colors={colors}
+                        compact
+                    />
+
+                    <TeamMember
+                        name="Romina"
+                        img="/aboutUs/romina.jpg"
+                        text="texto de prueba"
+                        colors={colors}
+                        compact
+                    />
+
+                    <TeamMember
+                        name="Juan"
+                        img="/aboutUs/placeholder.jpg"
+                        text="texto de prueba"
+                        colors={colors}
+                        compact
+                    />
+
+                    <TeamMember
+                        name="Patricio"
+                        img="/aboutUs/placeholder.jpg"
+                        text="teexto de prueba"
+                        colors={colors}
+                        compact
+                    />
                 </Row>
             </Container>
         </div>

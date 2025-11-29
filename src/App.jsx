@@ -3,7 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { MusicPlayerProvider } from "./context/MusicPlayerContext";
 import { TokenProvider } from "./context/useToken";
 
-import AboutUs from "./components/AboutUs";
+import AboutUs from "./pages/AboutUs"; 
 
 const App = () => {
   return (
