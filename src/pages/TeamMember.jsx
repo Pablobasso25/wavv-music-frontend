@@ -28,7 +28,7 @@ const AboutUs = () => {
         paddingTop: "2rem",
       }}
     >
-      {/* HEADER */}
+      {}
       <Container className="text-center mb-3">
         <img src={logo} alt="logo" width="110" className="mb-2" />
 
@@ -37,11 +37,11 @@ const AboutUs = () => {
         </h2>
 
         <h6 style={{ color: colors.accent, opacity: 0.9 }}>
-          Wavv Music – Innovando con ritmo y buen mate.
+          Wavv Music – Somos lo que te mantiene conectado.
         </h6>
       </Container>
 
-      {/* GRID */}
+      {}
       <Container
         style={{
           height: "60vh",
