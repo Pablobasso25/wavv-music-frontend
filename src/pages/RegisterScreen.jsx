@@ -29,16 +29,25 @@ const RegisterScreen = () => {
   const [errorEmail, setErrorEmail] = useState("");
   const [emailEnviado, setEmailEnviado] = useState(false);
 
-  const {
+ const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmarPassword: "",
+    },
+  });
 
-  const navigate = useNavigate(); 
-  const password = watch("password"); 
-  const username = watch("username"); 
+  const navigate = useNavigate();
+  const password = watch("password");
+  const username = watch("username");
+  
   const onSubmit = () => {};
 
   const forcePassword = 0;
