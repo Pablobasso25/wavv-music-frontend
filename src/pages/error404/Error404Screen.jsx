@@ -41,6 +41,15 @@ const Error404Screen = () => {
                         </p>
                     </Col>
                 </Row>
+                <Row>
+                    <Col>
+                        <Button variant="primary"
+                        className="back-button-404"
+                        >
+                            Volver a la sintonía (inicio)
+                        </Button>
+                    </Col>
+                </Row>
             </Container>
         </div>
     );
