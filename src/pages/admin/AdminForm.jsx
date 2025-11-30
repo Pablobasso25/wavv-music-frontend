@@ -45,14 +45,18 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
           playlists: [],
           createdAt: new Date().toISOString(),
         };
+
         const updatedUsers = [...users, newUser];
+
         localStorage.setItem("users", JSON.stringify(updatedUsers));
+
         window.dispatchEvent(new Event("storage"));
         alert(`✅ Usuario "${formData.username}" agregado correctamente.`);
         setFormData({ username: "", email: "", password: "" });
       }
     } else {
       const songs = JSON.parse(localStorage.getItem("songs")) || [];
+
       if (isEditing) {
         // Editar canción existente
         const updatedSongs = songs.map((song) =>
@@ -70,7 +74,30 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
               }
             : song
         );
+
         localStorage.setItem("songs", JSON.stringify(updatedSongs));
+
+        const currentTrending = localStorage.getItem("trendingSong");
+        if (currentTrending) {
+          const trending = JSON.parse(currentTrending);
+          if (trending.id === editData.id) {
+            const updatedTrending = {
+              ...trending,
+              title: formData.title,
+              artist: formData.artist,
+              audio: formData.url,
+              cover:
+                formData.cover ||
+                "https://via.placeholder.com/300x300/5773ff/ffffff?text=Music",
+              plays: formData.plays || "0 Plays",
+              name: formData.title,
+            };
+            localStorage.setItem(
+              "trendingSong",
+              JSON.stringify(updatedTrending)
+            );
+          }
+        }
         window.dispatchEvent(new Event("storage"));
         alert(`✅ Canción "${formData.title}" editada correctamente.`);
         setFormData({ title: "", artist: "", url: "", cover: "", plays: "" });
@@ -103,7 +130,6 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
       }
     }
   };
-    
 
   return (
     <Card className="mb-4 bg-dark text-white border-secondary">
