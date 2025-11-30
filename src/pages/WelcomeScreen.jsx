@@ -13,7 +13,7 @@ const WelcomeScreen = () => {
         }
         return prev + 3.33; 
       });
-    }, 100);nst
+    }, 100);
 
     return () => clearInterval(interval);
   }, []);
