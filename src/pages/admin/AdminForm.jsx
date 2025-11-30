@@ -88,7 +88,71 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
               )}
             </>
           ) : (
-            null 
+            <>
+          <Form.Group className="mb-2">
+                <Form.Label>Título</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-2">
+                <Form.Label>Artista</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="artist"
+                  value={formData.artist}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-2">
+                <Form.Label>URL del audio</Form.Label>
+                <Form.Control
+                  type="url"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  placeholder="https://example.com/song.mp3"
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-2">
+                <Form.Label>URL de portada (opcional)</Form.Label>
+                <Form.Control
+                  type="url"
+                  name="cover"
+                  value={formData.cover}
+                  onChange={handleChange}
+                  placeholder="https://example.com/cover.jpg"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Reproducciones (opcional)</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="plays"
+                  value={formData.plays}
+                  onChange={handleChange}
+                  placeholder="Ej: 5 Million Plays"
+                />
+              </Form.Group>
+              <Button type="submit" variant="success">
+                {isEditing ? "Guardar cambios" : "Agregar canción"}
+              </Button>
+              {isEditing && (
+                <Button
+                  variant="secondary"
+                  className="ms-2"
+                  onClick={() => onSave && onSave()}
+                >
+                  Cancelar
+                </Button>
+              )}
+            </>
           )}
         </Form>
       </Card.Body>
