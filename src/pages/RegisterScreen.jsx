@@ -178,34 +178,20 @@ const RegisterScreen = () => {
         const templateParams = {
           to_name: data.username,
           to_email: data.email,
-          email: data.email, 
+          email: data.email,
           from_name: "Harmony Stream",
           fecha: new Date().toISOString().split("T")[0],
         };
 
-        console.log("📧 Enviando email con:", {
-          service: EMAILJS_CONFIG.SERVICE_ID,
-          template: EMAILJS_CONFIG.TEMPLATE_ID,
-          publicKey: EMAILJS_CONFIG.PUBLIC_KEY,
-          templateParams: templateParams,
-        });
-
-        const emailResult = await emailjs.send(
+        await emailjs.send(
           EMAILJS_CONFIG.SERVICE_ID,
           EMAILJS_CONFIG.TEMPLATE_ID,
           templateParams,
           EMAILJS_CONFIG.PUBLIC_KEY
         );
 
-        console.log("✅ Email enviado:", emailResult);
         emailFueEnviado = true;
       } catch (emailError) {
-        console.error("❌ Error enviando email:", emailError);
-        console.error("Detalles del error:", {
-          text: emailError.text,
-          status: emailError.status,
-          message: emailError.message,
-        });
         emailFueEnviado = false;
       }
 
