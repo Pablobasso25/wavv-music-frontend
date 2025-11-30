@@ -1,11 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Navbar, Nav, Container, Form, Dropdown, Badge } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Form,
+  Dropdown,
+  Badge,
+  Alert,
+} from "react-bootstrap";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToken } from "../context/useToken";
 import { searchTracks } from "../helpers/musicApi";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
-import { Alert } from "bootstrap";
 
 const NavBar = () => {
   const { user, logout } = useAuth();
@@ -152,7 +159,7 @@ const NavBar = () => {
           className="text-secondary border-0"
         />
 
-        <NavBar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav">
           {/* NAVEGACIÒN CENTRAL - Centrada en movil */}
           <Nav className="mx-auto my-3 my-lg-0 text-center">
             {isAdminPage ? (
@@ -429,7 +436,7 @@ const NavBar = () => {
               </Dropdown>
             </div>
           </div>
-        </NavBar.Collapse>
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

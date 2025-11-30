@@ -10,6 +10,7 @@ const MusicPlayer = () => {
     isPlaying,
     progress,
     currentTime,
+    duration,
     audioRef,
     togglePlay,
     handleTimeUpdate,
