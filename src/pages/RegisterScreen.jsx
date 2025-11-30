@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Container,
@@ -11,7 +12,6 @@ import {
   ListGroup,
   Badge,
 } from "react-bootstrap";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
@@ -104,7 +104,7 @@ const RegisterScreen = () => {
       title: "✔️¡Registro Exitoso!",
       html: `
         <div style="text-align: center;">
-          <p style="margin-bottom: 10px; font-size: 16px;">¡Bienvenido a <strong>Harmony Stream</strong>!</p>
+          <p style="margin-bottom: 10px; font-size: 16px;">¡Bienvenido a <strong>Wavv Music</strong>!</p>
           <p style="margin-bottom: 0; font-size: 14px; color: ${
             emailEnviado ? "#b0b0b0" : "#ffc107"
           };">${mensaje}</p>
@@ -139,7 +139,6 @@ const RegisterScreen = () => {
 
     setSend(true);
     setErrorEmail("");
-    setEmailEnviado(true);
 
     try {
       const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -174,47 +173,29 @@ const RegisterScreen = () => {
       localStorage.setItem("users", JSON.stringify([...users, newUser]));
 
       // ENVIAR EMAIL
+      let emailFueEnviado = false;
       try {
         const templateParams = {
           to_name: data.username,
           to_email: data.email,
+          email: data.email,
           from_name: "Harmony Stream",
           fecha: new Date().toISOString().split("T")[0],
         };
 
-        console.log(" Enviando email con:", {
-          service: EMAILJS_CONFIG.SERVICE_ID,
-          template: EMAILJS_CONFIG.TEMPLATE_ID,
-          publicKey: EMAILJS_CONFIG.PUBLIC_KEY,
-          to_email: data.email,
-        });
-
-        const emailResult = await emailjs.send(
+        await emailjs.send(
           EMAILJS_CONFIG.SERVICE_ID,
           EMAILJS_CONFIG.TEMPLATE_ID,
           templateParams,
           EMAILJS_CONFIG.PUBLIC_KEY
         );
 
-        console.log(" Email enviado:", emailResult);
-        setEmailEnviado(true);
+        emailFueEnviado = true;
       } catch (emailError) {
-        console.error("❌ Error enviando email:", emailError);
-        Swal.fire({
-          title: "❌ Error de Email",
-          text: `No se pudo enviar el email: ${
-            emailError.text || emailError.message
-          }`,
-          icon: "error",
-          background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-          color: "#ffffff",
-          confirmButtonText: "Entendido",
-          confirmButtonColor: "#dc3545",
-        });
-        setEmailEnviado(false);
+        emailFueEnviado = false;
       }
 
-      showSuccessAlert(emailEnviado);
+      showSuccessAlert(emailFueEnviado);
     } catch (error) {
       Swal.fire({
         title: "❌ Error",
@@ -285,8 +266,13 @@ const RegisterScreen = () => {
                     placeholder="tu@email.com"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.email}
+                    maxLength={50}
                     {...register("email", {
                       required: "El email es obligatorio",
+                      maxLength: {
+                        value: 50,
+                        message: "El email no puede tener más de 50 caracteres",
+                      },
                       pattern: {
                         value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                         message: "Por favor ingresa un email válido",
@@ -316,6 +302,9 @@ const RegisterScreen = () => {
                         value: 20,
                         message:
                           "La contraseña no puede tener más de 20 caracteres",
+                      },
+                      onChange: (e) => {
+                        e.target.value = e.target.value.replace(/[<>\s]/g, "");
                       },
                       validate: {
                         fuerza: () =>
@@ -456,6 +445,9 @@ const RegisterScreen = () => {
                     maxLength={20}
                     {...register("confirmarPassword", {
                       required: "Confirma tu contraseña",
+                      onChange: (e) => {
+                        e.target.value = e.target.value.replace(/[<>\s]/g, "");
+                      },
                       validate: (value) =>
                         value === password || "Las contraseñas no coinciden",
                     })}

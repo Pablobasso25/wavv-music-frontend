@@ -1,6 +1,6 @@
+import React, { useState, useEffect } from "react";
 import { Container, Col } from "react-bootstrap";
-import { useState, useEffect } from "react";
-import trendImg from "../assets/trend.png";
+//import trendImg from "../assets/trend.png"; // Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
@@ -130,7 +130,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                     title: track.name,
                     artist: album.artists?.[0]?.name || "Artista",
                     album: album.name,
-                    cover: album.image,
+                    cover: track.cover || album.image,
                     audio: track.preview_url,
                     genre: "Music",
                     name: track.name,
@@ -144,7 +144,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                   </span>
 
                   <img
-                    src={album.image}
+                    src={track.cover || album.image}
                     className="rounded me-2 me-md-3"
                     width="40"
                     height="40"
@@ -170,9 +170,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                         isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
                       } cursor-pointer fs-2`}
                       title={
-                        isCurrentTrack && isPlaying
-                          ? "Pausar"
-                          : "Reproducir"
+                        isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
                       }
                     ></i>
                   )}
@@ -202,8 +200,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                       }
                       onClick={(e) => {
                         e.stopPropagation();
-                        !isInPlaylist(track.name) &&
-                          handleAddToPlaylist(track);
+                        !isInPlaylist(track.name) && handleAddToPlaylist(track);
                       }}
                     ></i>
                   )}

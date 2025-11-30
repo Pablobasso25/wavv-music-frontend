@@ -1,13 +1,14 @@
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import RegisterScreen from "./pages/Autenticacion/RegisterScreen";
-import LoginScreen from "./pages/Autenticacion/LoginScreen";
+import RegisterScreen from "./pages/RegisterScreen";
 import ProtectedRoute from "./routes/ProtectedRoute";
-import HomeScreen from "./pages/Home/HomeScreen";
+import HomeScreen from "./pages/HomeScreen";
 import NavBar from "./components/NavBar";
 import WelcomeScreen from "./pages/WelcomeScreen";
-import AdminScreen from "./pages/Admin/AdminScreen";
-import PlaylistScreen from "./pages/Playlist/PlaylistScreen";
+import PlaylistScreen from "./pages/PlaylistScreen";
+import LoginScreen from "./pages/LoginScreen";
+
 const App = () => {
   const [welcome, setWelcome] = useState(true);
 
@@ -32,28 +33,11 @@ const App = () => {
           }
         />
         <Route
-          path="/admin"
-          element={
-            <ProtectedRoute adminOnly>
-              <AdminScreen />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/playlist"
           element={
             <ProtectedRoute>
               <NavBar />
               <PlaylistScreen />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/topsongs"
-          element={
-            <ProtectedRoute>
-              <NavBar />
-              <TopSongs />
             </ProtectedRoute>
           }
         />

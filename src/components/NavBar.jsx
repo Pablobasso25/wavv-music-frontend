@@ -1,12 +1,19 @@
-import { Navbar, Nav, Container, Form, Dropdown, Badge } from "react-bootstrap";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Form,
+  Dropdown,
+  Badge,
+  Alert,
+} from "react-bootstrap";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useState, useEffect, useRef } from "react";
 import { useToken } from "../context/useToken";
 import { searchTracks } from "../helpers/musicApi";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
-import { Alert } from "bootstrap";
-
+import Logo from "../assets/images/logo.jpg";
 const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -15,7 +22,7 @@ const NavBar = () => {
   const { playSong } = useMusicPlayer();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState ([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
@@ -26,44 +33,37 @@ const NavBar = () => {
     navigate("/login");
   };
 
-  // Verificar si estamos en la ruta de admin
   const isAdminPage = location.pathname === "/admin";
 
-  // búsqueda con debounce
   useEffect(() => {
-    // Si no hay query, limpiar y salir
     if (searchQuery.length === 0) {
       setSearchResults([]);
       setShowDropdown(false);
       setIsSearching(false);
-      lastSearchRef.current = ""; // Resetear última búsqueda
+      lastSearchRef.current = "";
       return;
     }
 
-    // Si el query es muy corto, no buscar aún
     if (searchQuery.length < 3) {
       setSearchResults([]);
       setShowDropdown(false);
       return;
     }
 
-    // Si no hay token, esperar
     if (!token || tokenLoading) {
       return;
     }
 
-    // IMPORTANTE: Si ya buscamos esto, no volver a buscar
     if (lastSearchRef.current === searchQuery) {
       return;
     }
 
-    // Buscar con debounce
     const timer = setTimeout(async () => {
       console.log("🔍 Buscando:", searchQuery);
-      lastSearchRef.current = searchQuery; // Guardar lo que estamos buscando
-      setIsSearching(true); 
+      lastSearchRef.current = searchQuery;
+      setIsSearching(true);
       try {
-        const results = await searchTracks (token, searchQuery, 8);
+        const results = await searchTracks(token, searchQuery, 8);
         console.log("✅ Resultados:", results);
         setSearchResults(results);
         setShowDropdown(true);
@@ -71,20 +71,18 @@ const NavBar = () => {
         console.log("❌ Error al buscar:", error);
         setSearchResults([]);
         setShowDropdown(false);
-      }finally {
+      } finally {
         setIsSearching(false);
       }
-    }, 300 );
+    }, 300);
 
-    return() => crearTimeout(timer);
+    return () => clearTimeout(timer);
   }, [searchQuery, token, tokenLoading]);
-    
-  // Cerrar dropdown al hacer click afuera
+
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if ( searchRef.current && !searchRef.current.contains(event.target)) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowDropdown(false);
-        // NO limpiar el searchQuery aquí para que el usuario vea lo que buscó
       }
     };
 
@@ -109,7 +107,7 @@ const NavBar = () => {
 
   const handleAddToPlaylist = (track) => {
     const playlist = JSON.parse(localStorage.getItem("userPlaylist")) || [];
-    
+
     const exists = playlist.some((song) => song.name === track.name);
     if (exists) {
       alert("⚠ Esta canción ya está en tu playlist.");
@@ -132,20 +130,25 @@ const NavBar = () => {
     window.dispatchEvent(new Event("storage"));
     window.dispatchEvent(new Event("playlistUpdated"));
     Alert();
-
-    // Cerrar dropdown y limpiar búsqueda después de agregar 
     setShowDropdown(false);
     setSearchQuery("");
     setSearchResults([]);
   };
 
-
   return (
     <Navbar expand="lg" className="py-3" style={{ backgroundColor: "#000" }}>
       <Container>
-        {/* LOGO Y BÓTON HAMBURGUESA */}
-        <Navbar.Brand href="#" className="text-white fw-bold logo-custom">
-          Wavv
+        <Navbar.Brand
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+          className="text-white fw-bold logo-custom"
+        >
+          <img
+            src={Logo}
+            alt="Wavv Music Logo"
+            height="75"
+            className="d-inline-block align-top"
+          />
         </Navbar.Brand>
 
         <Navbar.Toggle
@@ -153,58 +156,15 @@ const NavBar = () => {
           className="text-secondary border-0"
         />
 
-        <NavBar.Collapse id="basic-navbar-nav">
-          {/* NAVEGACIÒN CENTRAL - Centrada en movil */}
-          <Nav className="mx-auto my-3 my-lg-0 text-center">
-            {isAdminPage ? (
-              // Vista simplificada para Admin
-              <NavLink
-                to="/"
-                className="text-secondary text-uppercase fw-bold mx-2 nav-link-custom"
-              >
-                <i className="bx bx-home-alt me-1"></i>
-                Home
-              </NavLink>
-            ) : (
-              // Vista completa para usarios
-              <>
-                <NavLink
-                  to="/playlist"
-                  className="text-secondary text-uppercase fw-bold mx-2 nav-link-custom"
-                >
-                  <i className="bx bx-list-ul me-1"></i>
-                  Playlist
-                </NavLink>
-                <NavLink
-                  href="#"
-                  className="text-secondary text-uppercase fw-bold mx-2 nav-link-custom"
-                >
-                  NOSOTROS
-                </NavLink>
-
-                {/* Enlaces SOLO para ADMIN */}
-                {user?.role === "admin" && (
-                  <NavLink
-                    to="/admin"
-                    className="text-warning text-uppercase fw-bold mx-2 nav-link-custom"
-                  >
-                    <i className="bx bx-cog me-1"></i>
-                    ADMIN
-                  </NavLink>
-                )}
-              </>
-            )}
-          </Nav>
-
-          {/* BÚSQUEDA Y PERFIL */}
-          <div className="d-flex flex-column flex-lg-row align-items-center gap-3">
-            {/* BUSQUEDA - Solo en vista normal */}
-            {isAdminPage && (
+        <Navbar.Collapse id="basic-navbar-nav">
+         
+          <div className="ms-auto d-flex align-items-center gap-3">
+            {!isAdminPage && (
               <div className="search position-relative" ref={searchRef}>
                 <i className="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
                 {isSearching && (
                   <div
-                    className="spinner-border spinner-border-sm position-absolute top-50 end-0 translate-middle--y me-3"
+                    className="spinner-border spinner-border-sm position-absolute top-50 end-0 translate-middle-y me-3"
                     style={{ width: "1rem", height: "1rem" }}
                     role="status"
                   >
@@ -216,7 +176,7 @@ const NavBar = () => {
                   className="ps-5 border-dark text-white custom-search-input"
                   placeholder="Buscar canciones..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.velue)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   style={{
                     width: "250px",
                     backgroundColor: "#1a1a1a",
@@ -225,7 +185,6 @@ const NavBar = () => {
                   }}
                 />
 
-                {/* DROPDOWN DE RESULTADOS */}
                 {showDropdown && (
                   <div
                     className="search-dropdown position-absolute mt-2 rounded-3 shadow-lg"
@@ -244,33 +203,50 @@ const NavBar = () => {
                           className="spinner-border spinner-border-sm me-2"
                           role="status"
                         >
-                          <span className="visually-hidden">Buscando...</span>
+                          <span className="visually-hidden">Cargando...</span>
                         </div>
                         Buscando...
                       </div>
                     ) : searchResults.length > 0 ? (
                       <>
                         <div className="p-2 border-bottom border-secondary">
-                          <small className="text-secondary fw-bold">
+                          <small className="text-white-50 ms-2">
                             {searchResults.length} resultados
                           </small>
                         </div>
                         {searchResults.map((track, index) => (
                           <div
                             key={index}
-                            className="search-result-item d-flex align-items-center p-3 border-bottom border-dark"
+                            className="search-result-item p-3 d-flex align-items-center gap-3"
                             style={{
                               cursor: "pointer",
                               transition: "background-color 0.2s",
                             }}
                             onMouseEnter={(e) =>
                               (e.currentTarget.style.backgroundColor =
-                                "#18181d")
+                                "#2a2a30")
                             }
                             onMouseLeave={(e) =>
                               (e.currentTarget.style.backgroundColor =
-                                "Transparent")
+                                "transparent")
                             }
+                            onClick={() => {
+                              const songData = {
+                                title: track.name,
+                                artist:
+                                  track.artists
+                                    ?.map((a) => a.name)
+                                    .join(", ") || "Unknown",
+                                album: track.album?.name || "Unknown Album",
+                                cover: track.album.images[0]?.url,
+                                audio: track.preview_url,
+                                genre: "Music",
+                                name: track.name,
+                              };
+                              playSong(songData);
+                              setShowDropdown(false);
+                              setSearchQuery("");
+                            }}
                           >
                             <img
                               src={
@@ -280,43 +256,24 @@ const NavBar = () => {
                               alt={track.name}
                               width="50"
                               height="50"
-                              className="rounded me-3"
+                              className="rounded"
                             />
                             <div className="flex-grow-1">
-                              <h6
-                                className="mb-0 text-white"
-                                style={{ fontSize: "0.9rem" }}
-                              >
-                                {track.name.length > 30
-                                  ? track.name.substring(0, 30) + "..."
-                                  : track.name}
-                              </h6>
-                              <small className="text-secondary">
-                                {track.artists[0]?.name} • {track.album.name}
-                              </small>
+                              <div className="text-white fw-semibold">
+                                {track.name}
+                              </div>
+                              <div className="text-secondary small">
+                                {track.artists?.map((a) => a.name).join(", ")}
+                              </div>
                             </div>
-                            <div className="d-flex gap-2">
-                              {track.preview_url && (
-                                <i
-                                  className="bx bx-play-circle fs-4 text-primary"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => handlePlaySong(track)}
-                                  title="Reproducir"
-                                ></i>
-                              )}
-                              <i
-                                className="bx bx-plus-circle fs-4 text-secondary"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => handleAddToPlaylist(track)}
-                                title="Agregar a playlist"
-                              ></i>
-                            </div>
+                            {track.preview_url && (
+                              <i className="bx bx-play-circle fs-4 text-primary"></i>
+                            )}
                           </div>
                         ))}
                       </>
                     ) : (
                       <div className="p-3 text-center text-secondary">
-                        <i className="bx bx-search-alt fs-2 d-block mb-2"></i>
                         No se encontraron resultados
                       </div>
                     )}
@@ -324,15 +281,51 @@ const NavBar = () => {
                 )}
               </div>
             )}
+            <Nav className="d-flex align-items-center gap-3">
+              {isAdminPage ? (
+                <NavLink
+                  to="/"
+                  className="text-secondary text-uppercase fw-bold nav-link-custom"
+                  style={{ textDecoration: "none" }}
+                >
+                  <i className="bx bx-home-alt me-1"></i>
+                  Home
+                </NavLink>
+              ) : (
+                <>
+                  <NavLink
+                    to="/playlist"
+                    className="text-secondary text-uppercase fw-bold nav-link-custom"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <i className="bx bx-list-ul me-1"></i>
+                    Playlist
+                  </NavLink>
+                  <NavLink
+                    to="#"
+                    className="text-secondary text-uppercase fw-bold nav-link-custom"
+                    style={{ textDecoration: "none" }}
+                  >
+                    NOSOTROS
+                  </NavLink>
+                  {user?.role === "admin" && (
+                    <NavLink
+                      to="/admin"
+                      className="text-warning text-uppercase fw-bold nav-link-custom"
+                      style={{ textDecoration: "none" }}
+                    >
+                      <i className="bx bx-cog me-1"></i>
+                      ADMIN
+                    </NavLink>
+                  )}
+                </>
+              )}
 
-            {/* ICONOS Y PERFIL */}
-            <div className="d-flex align-items-center gap-3">
-              {/* PERFIL */}
-              <Dropdown>
+              <Dropdown align="end">
                 <Dropdown.Toggle
                   variant="dark"
                   id="dropdown-user"
-                  className="d-flex align-items-center  profile-toggle"
+                  className="d-flex align-items-center profile-toggle"
                   style={{ backgroundColor: "transparent" }}
                 >
                   <div className="d-flex align-items-center">
@@ -349,7 +342,7 @@ const NavBar = () => {
                         }}
                       />
                     </div>
-                    <div className="rounded-end p-2  d-md-block">
+                    <div className="rounded-end p-2 d-md-block">
                       <h6 className="mb-0 text-white">
                         {user?.username || "Usuario"}
                       </h6>
@@ -358,11 +351,10 @@ const NavBar = () => {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu
-                  className=" border-secondary"
+                  className="border-secondary"
                   style={{ backgroundColor: "#000", borderColor: "#000" }}
                 >
                   {isAdminPage ? (
-                    // Vista simplificada para Admin - Solo Cerrar Sesion
                     <Dropdown.Item
                       onClick={handleLogout}
                       className="text-white d-flex align-items-center dropdown-item-custom"
@@ -389,21 +381,19 @@ const NavBar = () => {
                         <span>Configuración</span>
                       </Dropdown.Item>
 
-                      {/* Opción Premium SOLO para usuarios normales */}
                       {user?.role !== "admin" && (
-                      <Dropdown.Item
-                        className="text-white d-flex align-items-center dropdown-item-custom"
-                        style={{ backgroundColor: "#000" }}
-                      >
-                        <i className="bx bx-crown me-2"></i>
-                        <span>Premium</span>
-                        <Badge bg="warning" text="dark" className="ms-2">
-                          PRO
-                        </Badge>
-                      </Dropdown.Item>
+                        <Dropdown.Item
+                          className="text-white d-flex align-items-center dropdown-item-custom"
+                          style={{ backgroundColor: "#000" }}
+                        >
+                          <i className="bx bx-crown me-2"></i>
+                          <span>Premium</span>
+                          <Badge bg="warning" text="dark" className="ms-2">
+                            PRO
+                          </Badge>
+                        </Dropdown.Item>
                       )}
-
-                      {/* Panel admin SOLO para administradores */}
+                      
                       {user?.role === "admin" && (
                         <Dropdown.Item
                           onClick={() => navigate("/admin")}
@@ -428,9 +418,9 @@ const NavBar = () => {
                   )}
                 </Dropdown.Menu>
               </Dropdown>
-            </div>
+            </Nav>
           </div>
-        </NavBar.Collapse>
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

@@ -9,3 +9,165 @@ body {
     min-height: 100vh;
     color: white;
 }
+
+/* NavBar */
+.nav-link-custom {
+  color: #1771b6ce !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link-custom:hover {
+  color: #056dff !important;
+  scale: 1.1 ;
+}
+.logo-custom {
+  color: #ffffff !important;
+  transition: color 1s ease;
+  font-size: 25px;
+ 
+}
+
+.logo-custom:hover {
+  color: #056dff !important;
+   scale: 0.9 ;
+   transition: scale 0.3s ease-out;
+}
+
+.custom-search-input {
+  background-color:transparent !important;
+  border-color: #333 !important;
+  color: #fff !important;
+}
+
+.custom-search-input:focus {
+  background-color: #1a1a1a27 !important;
+  border-color: #0d6efd !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.icon-hover {
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.icon-hover:hover {
+  color: #0d6efd !important;
+}
+
+.dropdown-item-custom {
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item-custom:hover {
+  background-color: #0d6efd !important;
+}
+
+.profile-toggle:hover {
+  opacity: 0.8;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+/* termina Navbar */
+
+
+
+
+/* Botones personalizados */
+.btn-primary {
+    background-color: #5773ff;
+    border-color: #5773ff;
+}
+
+.btn-primary:hover {
+    background-color: #4760e0;
+    border-color: #4760e0;
+}
+
+
+/* Estilos específicos para el reproductor */
+.music-player {
+    background-color: #202026 !important;
+}
+
+.player-actions {
+    background-color: #5773ff !important;
+    border-radius: 8px !important;
+}
+
+.play-button {
+    padding: 12px !important;
+    font-size: 1.5rem !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Progress bar personalizada */
+.progress {
+    background-color: #919191 !important;
+    border-radius: 2px;
+}
+
+.progress-bar {
+    background-color: #ffffff !important;
+    border-radius: 2px;
+}
+
+/* Efectos hover */
+.buttons i:not(.play-button):hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+.play-button:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+/* Ocultar scrollbar pero mantener funcionalidad */
+.music-list::-webkit-scrollbar,
+.artistas-sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.music-list,
+.artistas-sidebar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Search Dropdown */
+.search-dropdown {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb {
+    background-color: #5773ff;
+    border-radius: 3px;
+}
+
+.search-dropdown::-webkit-scrollbar-track {
+    background-color: #18181d;
+}
+
+.search-result-item:last-child {
+    border-bottom: none !important;
+}

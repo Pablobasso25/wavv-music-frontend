@@ -1,26 +1,25 @@
 import React from "react";
 import { Container, ProgressBar } from "react-bootstrap";
-import trendImg from "../assets/trend.png";
+// import trendImg from "../assets/trend.png"; // TODO: Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
 const MusicPlayer = () => {
-    const {
+  const {
     currentSong,
     isPlaying,
     progress,
     currentTime,
+    duration,
     audioRef,
     togglePlay,
     handleTimeUpdate,
     handleSeek,
     skipNext,
     skipPrevious,
-
   } = useMusicPlayer();
 
-    const formatTime = (seconds) => {
+  const formatTime = (seconds) => {
     if (!seconds || isNaN(seconds)) return "0:00";
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -38,14 +37,16 @@ const MusicPlayer = () => {
           src={currentSong.audio}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleTimeUpdate}
-          autoPlay
         />
       )}
 
       <div className="song-info text-center flex-grow-1">
-                <img
+        <img
           className="rounded-3"
-          src={currentSong?.cover || trendImg}
+          src={
+            currentSong?.cover ||
+            "https://via.placeholder.com/150x150/8b5cf6/ffffff?text=Music"
+          }
           alt={currentSong?.title || "Album cover"}
           style={{ maxWidth: "280px", height: "200px", objectFit: "cover" }}
         />
@@ -62,7 +63,7 @@ const MusicPlayer = () => {
             {currentSong?.genre || "Electronic"}
           </p>
         </div>
-        
+
         <div className="progress-container">
           <div className="d-flex justify-content-between align-items-center mb-2">
             <span className="text-white-50 small">
@@ -142,11 +143,9 @@ const MusicPlayer = () => {
           <i className="bx bx-chevron-up d-block fs-6 mb-1"></i>
           <h6 className="mb-0 small fw-bold">LYRICS</h6>
         </div>
-
       </div>
-  </Container>
+    </Container>
   );
 };
- 
 
 export default MusicPlayer;
