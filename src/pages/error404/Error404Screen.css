@@ -14,3 +14,9 @@
     background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
     min-height: 100vh;
 }
+
+.wavv-logo-404 {
+    width: 250px;
+    height: auto;
+    filter: drop-shadow(0 0 8px var(--wavv-blue-accent)) drop-shadow(0 0 15px var(--wavv-purple-accent));
+}
