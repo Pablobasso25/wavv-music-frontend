@@ -7,6 +7,7 @@ import HomeScreen from "./pages/Home/HomeScreen";
 import NavBar from "./components/NavBar";
 import WelcomeScreen from "./pages/WelcomeScreen";
 import AdminScreen from "./pages/Admin/AdminScreen";
+import PlaylistScreen from "./pages/Playlist/PlaylistScreen";
 const App = () => {
   const [welcome, setWelcome] = useState(true);
 
@@ -35,6 +36,15 @@ const App = () => {
           element={
             <ProtectedRoute adminOnly>
               <AdminScreen />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/playlist"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <PlaylistScreen />
             </ProtectedRoute>
           }
         />
