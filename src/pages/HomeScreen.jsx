@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import ArtistasSidebar from "../components/ArtistasSidebar";
 import MusicPlayer from "../components/MusicPlayer";
 import TrendingSong from "../components/TrendingSong";

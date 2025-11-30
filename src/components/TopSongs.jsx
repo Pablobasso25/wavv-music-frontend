@@ -1,5 +1,5 @@
+import React, { useState, useEffect } from "react";
 import { Container, Col } from "react-bootstrap";
-import { useState, useEffect } from "react";
 //import trendImg from "../assets/trend.png"; // Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 

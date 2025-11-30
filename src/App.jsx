@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import RegisterScreen from "./pages/RegisterScreen";
@@ -37,15 +38,6 @@ const App = () => {
             <ProtectedRoute>
               <NavBar />
               <PlaylistScreen />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/topsongs"
-          element={
-            <ProtectedRoute>
-              <NavBar />
-              <TopSongs />
             </ProtectedRoute>
           }
         />

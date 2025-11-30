@@ -1,7 +1,7 @@
+import React, { useState, useEffect, useRef } from "react";
 import { Navbar, Nav, Container, Form, Dropdown, Badge } from "react-bootstrap";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useState, useEffect, useRef } from "react";
 import { useToken } from "../context/useToken";
 import { searchTracks } from "../helpers/musicApi";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
@@ -15,7 +15,7 @@ const NavBar = () => {
   const { playSong } = useMusicPlayer();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState ([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
@@ -61,9 +61,9 @@ const NavBar = () => {
     const timer = setTimeout(async () => {
       console.log("🔍 Buscando:", searchQuery);
       lastSearchRef.current = searchQuery; // Guardar lo que estamos buscando
-      setIsSearching(true); 
+      setIsSearching(true);
       try {
-        const results = await searchTracks (token, searchQuery, 8);
+        const results = await searchTracks(token, searchQuery, 8);
         console.log("✅ Resultados:", results);
         setSearchResults(results);
         setShowDropdown(true);
@@ -71,18 +71,18 @@ const NavBar = () => {
         console.log("❌ Error al buscar:", error);
         setSearchResults([]);
         setShowDropdown(false);
-      }finally {
+      } finally {
         setIsSearching(false);
       }
-    }, 300 );
+    }, 300);
 
-    return() => crearTimeout(timer);
+    return () => crearTimeout(timer);
   }, [searchQuery, token, tokenLoading]);
-    
+
   // Cerrar dropdown al hacer click afuera
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if ( searchRef.current && !searchRef.current.contains(event.target)) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowDropdown(false);
         // NO limpiar el searchQuery aquí para que el usuario vea lo que buscó
       }
@@ -109,7 +109,7 @@ const NavBar = () => {
 
   const handleAddToPlaylist = (track) => {
     const playlist = JSON.parse(localStorage.getItem("userPlaylist")) || [];
-    
+
     const exists = playlist.some((song) => song.name === track.name);
     if (exists) {
       alert("⚠ Esta canción ya está en tu playlist.");
@@ -133,12 +133,11 @@ const NavBar = () => {
     window.dispatchEvent(new Event("playlistUpdated"));
     Alert();
 
-    // Cerrar dropdown y limpiar búsqueda después de agregar 
+    // Cerrar dropdown y limpiar búsqueda después de agregar
     setShowDropdown(false);
     setSearchQuery("");
     setSearchResults([]);
   };
-
 
   return (
     <Navbar expand="lg" className="py-3" style={{ backgroundColor: "#000" }}>
@@ -391,16 +390,16 @@ const NavBar = () => {
 
                       {/* Opción Premium SOLO para usuarios normales */}
                       {user?.role !== "admin" && (
-                      <Dropdown.Item
-                        className="text-white d-flex align-items-center dropdown-item-custom"
-                        style={{ backgroundColor: "#000" }}
-                      >
-                        <i className="bx bx-crown me-2"></i>
-                        <span>Premium</span>
-                        <Badge bg="warning" text="dark" className="ms-2">
-                          PRO
-                        </Badge>
-                      </Dropdown.Item>
+                        <Dropdown.Item
+                          className="text-white d-flex align-items-center dropdown-item-custom"
+                          style={{ backgroundColor: "#000" }}
+                        >
+                          <i className="bx bx-crown me-2"></i>
+                          <span>Premium</span>
+                          <Badge bg="warning" text="dark" className="ms-2">
+                            PRO
+                          </Badge>
+                        </Dropdown.Item>
                       )}
 
                       {/* Panel admin SOLO para administradores */}

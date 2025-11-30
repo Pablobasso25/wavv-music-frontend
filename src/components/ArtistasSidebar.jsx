@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 // import trendImg from "../assets/trend.png"; // TODO: Agregar imagen cuando exista
 import { defaultAlbum } from "../data/dataDefault";
