@@ -1,0 +1,16 @@
+/* colores de nuestro logo Wavv */ 
+:root {
+    --wavv-dark-background: #000000;
+    --wavv-blue-accent: #5d9fff;
+    --wavv-purple-accent: #935dff;
+    --wavv-text-light: #f0f0f0;
+    --wavv-text-muted: #aaaaaa;
+}
+
+.not-found-wrapper {
+    background-color: var(--wavv-dark-background);
+    color: var(--wavv-text-light);
+    font-family: 'Arial', sans-serif;
+    background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+    min-height: 100vh;
+}
