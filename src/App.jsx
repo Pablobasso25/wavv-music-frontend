@@ -48,6 +48,15 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/topsongs"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <TopSongs />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
