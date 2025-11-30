@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useRef, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+} from "react";
 
 const MusicPlayerContext = createContext();
 

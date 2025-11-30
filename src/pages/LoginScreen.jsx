@@ -9,7 +9,7 @@ import {
 } from "react-bootstrap";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const LoginScreen = () => {
   const { login } = useAuth();
@@ -33,19 +33,20 @@ const LoginScreen = () => {
     } else {
       setError("Credenciales incorrectas");
       setLoading(false);
-    }};
+    }
+  };
 
-    return (
+  return (
     <Container className="vh-100 d-flex justify-content-center align-items-center">
       <Row className="w-100 justify-content-center">
         <Col xs={12} sm={8} md={6} lg={4}>
-          <Card className="bg-dark text-white border-secondary shadow"></Card>
-           <Card.Body>
-             <h2 className="text-center mb-4">Iniciar sesión</h2> 
+          <Card className="bg-dark text-white border-secondary shadow">
+            <Card.Body>
+              <h2 className="text-center mb-4">Iniciar sesión</h2>
 
-             {error && <Alert variant="danger">{error}</Alert>}
+              {error && <Alert variant="danger">{error}</Alert>}
 
-             <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
                   <Form.Control
@@ -58,7 +59,7 @@ const LoginScreen = () => {
                   />
                 </Form.Group>
 
-              <Form.Group className="mb-4">
+                <Form.Group className="mb-4">
                   <Form.Label>Contraseña</Form.Label>
                   <Form.Control
                     type="password"
@@ -70,7 +71,7 @@ const LoginScreen = () => {
                   />
                 </Form.Group>
 
-             <Button type="submit" className="btn-primary-custom w-100 py-2">
+                <Button type="submit" className="btn-primary-custom w-100 py-2">
                   {loading ? "Iniciando sesión..." : "Ingresar"}
                 </Button>
               </Form>
@@ -83,13 +84,13 @@ const LoginScreen = () => {
                 >
                   Regístrate aquí
                 </Link>
-              </p>         
-          </Card.Body>
+              </p>
+            </Card.Body>
           </Card>
         </Col>
       </Row>
     </Container>
   );
-}; 
+};
 
-export default LoginScreen;
+export default LoginScreen;

@@ -6,7 +6,7 @@ import HomeScreen from "./pages/HomeScreen";
 import NavBar from "./components/NavBar";
 import WelcomeScreen from "./pages/WelcomeScreen";
 import PlaylistScreen from "./pages/PlaylistScreen";
-// import LoginScreen from "./pages/LoginScreen"; // Descomentar cuando esté listo
+import LoginScreen from "./pages/LoginScreen";
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
@@ -20,8 +20,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* TODO: Descomentar cuando LoginScreen esté listo */}
-        {/* <Route path="/login" element={<LoginScreen />} /> */}
+        <Route path="/login" element={<LoginScreen />} />
         <Route path="/register" element={<RegisterScreen />} />
         <Route
           path="/"
@@ -38,6 +37,15 @@ const App = () => {
             <ProtectedRoute>
               <NavBar />
               <PlaylistScreen />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/topsongs"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <TopSongs />
             </ProtectedRoute>
           }
         />

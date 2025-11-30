@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { defaultAdmin, defaultUsers, defaultSongs } from "../data/dataDefault";
 
 const AuthContext = createContext();
@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user")); 
+    const storedUser = JSON.parse(localStorage.getItem("user"));
     const storedUsers = JSON.parse(localStorage.getItem("users"));
     const storedSongs = JSON.parse(localStorage.getItem("songs"));
 
