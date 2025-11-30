@@ -53,3 +53,29 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+.error-message-404 {
+    font-size: 1.8rem;
+    color: var(--wavv-text-light);
+    margin-top: 1.5rem;
+    font-weight: bold;
+}
+
+.error-description-404 {
+    font-size: 1rem;
+    color: var(--wavv-text-muted);
+    margin-bottom: 2.5rem;
+}
+
+.back-button-404 {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+
+    background: linear-gradient(90deg, var(--wavv-blue-accent) 0%, var(--wavv-purple-accent) 100%) !important;
+    box-shadow: 0 0 25px rgba(147, 93, 255, 0.5);
+    color: var(--wavv-text-light);
+}
