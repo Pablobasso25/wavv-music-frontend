@@ -19,3 +19,13 @@ export const defaultUsers = [
 ];
 
 export const defaultSongs = [];
+
+export const defaultAlbum = {
+  id: "default",
+  name: "Álbum por defecto",
+  image: "https://via.placeholder.com/300x300/8b5cf6/ffffff?text=Album",
+  release_date: new Date().toLocaleDateString(),
+  total_tracks: 0,
+  artists: [{ name: "Artista", id: "default-artist" }],
+  tracks: [],
+};

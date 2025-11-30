@@ -1,6 +1,6 @@
 import { Container, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import trendImg from "../assets/trend.png";
+//import trendImg from "../assets/trend.png"; // Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
@@ -170,9 +170,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                         isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
                       } cursor-pointer fs-2`}
                       title={
-                        isCurrentTrack && isPlaying
-                          ? "Pausar"
-                          : "Reproducir"
+                        isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
                       }
                     ></i>
                   )}
@@ -202,8 +200,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                       }
                       onClick={(e) => {
                         e.stopPropagation();
-                        !isInPlaylist(track.name) &&
-                          handleAddToPlaylist(track);
+                        !isInPlaylist(track.name) && handleAddToPlaylist(track);
                       }}
                     ></i>
                   )}

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import trendImg from "../assets/trend.png";
+// import trendImg from "../assets/trend.png"; // TODO: Agregar imagen cuando exista
 import { defaultAlbum } from "../data/dataDefault";
 
 const ArtistasSidebar = ({ onAlbumSelect }) => {
@@ -98,7 +98,7 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
                             style={{
                                 width: "70px",
                                 height: "70px",
-                                backgroundImage: `url(${artista?.album?.image || artista?.image || trendImg
+                                backgroundImage: `url(${artista?.album?.image || artista?.image || "https://via.placeholder.com/150x150/8b5cf6/ffffff?text=Artist"
                                     })`,
                                 backgroundSize: "cover",
                                 backgroundPosition: "center",

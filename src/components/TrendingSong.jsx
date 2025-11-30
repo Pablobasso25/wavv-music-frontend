@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import trendImg from "../assets/trend.png";
+// import trendImg from "../assets/trend.png"; // TODO: Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 
 const TrendingSong = () => {
@@ -9,7 +9,7 @@ const TrendingSong = () => {
     title: "Lost Emotions",
     artist: "Rion Clarke",
     album: "Digital Dreams",
-    cover: trendImg,
+    cover: "https://via.placeholder.com/300x300/8b5cf6/ffffff?text=Trending",
     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     genre: "Electronic",
     plays: "63 Million Plays",
@@ -56,7 +56,7 @@ const TrendingSong = () => {
         </Col>
         <Col md={4} className="d-flex justify-content-center">
           <img
-            src={trendingSong.cover || trendImg}
+            src={trendingSong.cover || "https://via.placeholder.com/300x300/8b5cf6/ffffff?text=Trending"}
             alt={trendingSong.title}
             width="250"
             height="250"

@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, ProgressBar } from "react-bootstrap";
-import trendImg from "../assets/trend.png";
+// import trendImg from "../assets/trend.png"; // TODO: Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -45,7 +45,7 @@ const MusicPlayer = () => {
       <div className="song-info text-center flex-grow-1">
                 <img
           className="rounded-3"
-          src={currentSong?.cover || trendImg}
+          src={currentSong?.cover || "https://via.placeholder.com/150x150/8b5cf6/ffffff?text=Music"}
           alt={currentSong?.title || "Album cover"}
           style={{ maxWidth: "280px", height: "200px", objectFit: "cover" }}
         />

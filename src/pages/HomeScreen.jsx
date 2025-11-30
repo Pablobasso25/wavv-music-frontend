@@ -1,9 +1,9 @@
 import { useState } from "react";
-import ArtistasSidebar from "../../components/ArtistasSidebar";
-import MusicPlayer from "../../components/MusicPlayer";
-import TrendingSong from "../../components/TrendingSong";
-import TopSongs from "../../components/TopSongs";
-import { defaultAlbum } from "../../data/dataDefault";
+import ArtistasSidebar from "../components/ArtistasSidebar";
+import MusicPlayer from "../components/MusicPlayer";
+import TrendingSong from "../components/TrendingSong";
+import TopSongs from "../components/TopSongs";
+import { defaultAlbum } from "../data/dataDefault";
 
 const HomeScreen = () => {
   const [selectedAlbum, setSelectedAlbum] = useState(defaultAlbum);

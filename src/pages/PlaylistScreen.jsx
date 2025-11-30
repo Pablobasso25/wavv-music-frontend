@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import ArtistasSidebar from "../../components/ArtistasSidebar";
-import MusicPlayer from "../../components/MusicPlayer";
-import TopSongs from "../../components/TopSongs";
+import ArtistasSidebar from "../components/ArtistasSidebar";
+import MusicPlayer from "../components/MusicPlayer";
+import TopSongs from "../components/TopSongs";
 
 const PlaylistScreen = () => {
   const [playlistAlbum, setPlaylistAlbum] = useState(null);
@@ -45,7 +45,7 @@ const PlaylistScreen = () => {
     };
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     setSelectedAlbum(null);
   }, [location]);
 
@@ -57,54 +57,53 @@ const PlaylistScreen = () => {
     setSelectedAlbum(null);
   };
 
-
   const displayAlbum = selectedAlbum || playlistAlbum;
   const isShowingPlaylist = !selectedAlbum;
 
-   return (
+  return (
     <Col lg={12}>
-    <div className="d-flex">
-      <ArtistasSidebar onAlbumSelect={handleAlbumSelect} />
-      <div>
-        {isShowingPlaylist ? (
-          <>
-            <h2 className="m-4">Mi Playlist</h2>
-            <p className="text-secondary">
-              {playlistAlbum?.total_tracks || 0} canciones guardadas
-            </p>
-          </>
-        ) : (
-          <>
-            <div className="d-flex align-items-center m-4">
-              <i
-                className="bx bx-arrow-back fs-4 text-white me-3"
-                style={{ cursor: "pointer" }}
-                onClick={handleBackToPlaylist}
-                title="Volver a Mi Playlist"
-              ></i>
-              <h2 className="text-white mb-0">
-                {selectedAlbum?.name || "Álbum"}
-              </h2>
+      <div className="d-flex">
+        <ArtistasSidebar onAlbumSelect={handleAlbumSelect} />
+        <div>
+          {isShowingPlaylist ? (
+            <>
+              <h2 className="m-4">Mi Playlist</h2>
+              <p className="text-secondary">
+                {playlistAlbum?.total_tracks || 0} canciones guardadas
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="d-flex align-items-center m-4">
+                <i
+                  className="bx bx-arrow-back fs-4 text-white me-3"
+                  style={{ cursor: "pointer" }}
+                  onClick={handleBackToPlaylist}
+                  title="Volver a Mi Playlist"
+                ></i>
+                <h2 className="text-white mb-0">
+                  {selectedAlbum?.name || "Álbum"}
+                </h2>
+              </div>
+              <p className="text-secondary">
+                {selectedAlbum?.artists?.[0]?.name || "Artista"} •{" "}
+                {selectedAlbum?.total_tracks || 0} canciones
+              </p>
+            </>
+          )}
+          {displayAlbum ? (
+            <TopSongs album={displayAlbum} isPlaylist={isShowingPlaylist} />
+          ) : (
+            <div className="text-white text-center py-5">
+              <i className="bx bx-music fs-1 text-secondary mb-3"></i>
+              <p className="text-secondary">Tu playlist está vacía</p>
             </div>
-            <p className="text-secondary">
-              {selectedAlbum?.artists?.[0]?.name || "Artista"} •{" "}
-              {selectedAlbum?.total_tracks || 0} canciones
-            </p>
-          </>
-        )}
-        {displayAlbum ? (
-          <TopSongs album={displayAlbum} isPlaylist={isShowingPlaylist} />
-        ) : (
-          <div className="text-white text-center py-5">
-            <i className="bx bx-music fs-1 text-secondary mb-3"></i>
-            <p className="text-secondary">Tu playlist está vacía</p>
-          </div>
-        )}
+          )}
+        </div>
+        <MusicPlayer />
       </div>
-      <MusicPlayer />
-    </div>
     </Col>
   );
 };
 
-export default PlaylistScreen;
+export default PlaylistScreen;
