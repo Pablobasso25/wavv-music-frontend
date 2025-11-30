@@ -13,7 +13,18 @@ const Error404Screen = () => {
     };
     return (
         <div className="not-found-wrapper">
-
+            <Container className="d-flex flex-column justify-content-center align-items-center min-vh-100 text-center py-5">
+                <Row className="mb-4">
+                    <Col>
+                        <Image
+                            src={LOGO_PATH}
+                            alt="Logo de Wavv"
+                            className="wavv-logo-404"
+                            fluid
+                        />
+                    </Col>
+                </Row>
+            </Container>
         </div>
     );
 };
