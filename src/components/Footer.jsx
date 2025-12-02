@@ -1,20 +1,15 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { FaGithub, FaInstagram } from "react-icons/fa";
-import logo from "./logo.jpeg";
 
 const Footer = () => {
   return (
     <footer style={{ background: "black", color: "white", padding: "40px" }}>
       <Container>
         <Row className="align-items-center text-center text-md-start">
-
           <Col md={4}>
-            <img
-              src={logo}
-              alt="Logo"
-              style={{ height: "90px", objectFit: "contain" }}
-            />
+            <h3 style={{ color: "#5773ff", fontWeight: "bold", margin: 0 }}>
+              Wavv Music
+            </h3>
           </Col>
 
           <Col
@@ -35,13 +30,12 @@ const Footer = () => {
             style={{ fontSize: "28px" }}
           >
             <a href="#" style={{ color: "#b56dff" }}>
-              <FaGithub />
+              <i className="bx bxl-github"></i>
             </a>
             <a href="#" style={{ color: "#b56dff" }}>
-              <FaInstagram />
+              <i className="bx bxl-instagram"></i>
             </a>
           </Col>
-
         </Row>
       </Container>
     </footer>

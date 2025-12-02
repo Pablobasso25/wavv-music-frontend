@@ -9,6 +9,8 @@ import WelcomeScreen from "./pages/WelcomeScreen";
 import PlaylistScreen from "./pages/PlaylistScreen";
 import LoginScreen from "./pages/LoginScreen";
 import AdminScreen from "./pages/admin/AdminScreen";
+import Footer from "./components/Footer";
+import Error404Screen from "./pages/error404/Error404Screen";
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
@@ -22,14 +24,31 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginScreen />} />
-        <Route path="/register" element={<RegisterScreen />} />
+        <Route
+          path="/login"
+          element={
+            <>
+              <LoginScreen />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <>
+              <RegisterScreen />
+              <Footer />
+            </>
+          }
+        />
         <Route
           path="/"
           element={
             <ProtectedRoute>
               <NavBar />
               <HomeScreen />
+              <Footer />
             </ProtectedRoute>
           }
         />
@@ -38,6 +57,7 @@ const App = () => {
           element={
             <ProtectedRoute adminOnly>
               <AdminScreen />
+              <Footer />
             </ProtectedRoute>
           }
         />
@@ -47,9 +67,11 @@ const App = () => {
             <ProtectedRoute>
               <NavBar />
               <PlaylistScreen />
+              <Footer />
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<Error404Screen />} />
       </Routes>
     </Router>
   );
