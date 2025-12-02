@@ -3,6 +3,7 @@ import { Container, Col } from "react-bootstrap";
 //import trendImg from "../assets/trend.png"; // Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import { toast, Slide } from "react-toastify";
+import { showConfirm } from "../helpers/alerts";
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const { playSong, currentSong, isPlaying } = useMusicPlayer();
@@ -45,7 +46,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     );
 
     if (exists) {
-      toast.info("✅ Esta canción ya está en tu playlist.", {
+      toast.info(" Esta canción ya está en tu playlist.", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -63,7 +64,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
     window.dispatchEvent(new Event("storage"));
     window.dispatchEvent(new Event("playlistUpdated"));
-    toast.success(`✅ "${track.name}" agregada a tu playlist.`, {
+    toast.success(`"${track.name}" agregada a tu playlist.`, {
       position: "bottom-right",
       autoClose: 5000,
       hideProgressBar: false,
@@ -76,8 +77,13 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     });
   };
 
-  const handleRemoveFromPlaylist = (track) => {
-    if (!confirm(`¿Eliminar "${track.name}" de tu playlist?`)) {
+  const handleRemoveFromPlaylist = async (track) => {
+    const result = await showConfirm(
+      `Esta acción eliminará "${track.name}" de tu playlist.`,
+      "¿Eliminar canción?"
+    );
+
+    if (!result.isConfirmed) {
       return;
     }
 
@@ -89,7 +95,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
     window.dispatchEvent(new Event("storage"));
     window.dispatchEvent(new Event("playlistUpdated"));
-    toast.error(`🗑️ "${track.name}" eliminada de tu playlist.`, {
+    toast.error(`"${track.name}" eliminada de tu playlist.`, {
       position: "bottom-right",
       autoClose: 3000,
       hideProgressBar: false,

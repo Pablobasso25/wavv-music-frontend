@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, Form, Button } from "react-bootstrap";
+import { toastSuccess } from "../../helpers/alerts";
 
 const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
   const isUser = type === "user";
@@ -32,7 +33,7 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
         );
         localStorage.setItem("users", JSON.stringify(updatedUsers));
         window.dispatchEvent(new Event("storage"));
-        alert(`✅ Usuario "${formData.username}" editado correctamente.`);
+        toastSuccess(`Usuario "${formData.username}" editado correctamente`);
         setFormData({ username: "", email: "", password: "" });
         if (onSave) onSave();
       } else {
@@ -51,7 +52,7 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
         localStorage.setItem("users", JSON.stringify(updatedUsers));
 
         window.dispatchEvent(new Event("storage"));
-        alert(`✅ Usuario "${formData.username}" agregado correctamente.`);
+        toastSuccess(`Usuario "${formData.username}" agregado correctamente`);
         setFormData({ username: "", email: "", password: "" });
       }
     } else {
@@ -99,7 +100,7 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
           }
         }
         window.dispatchEvent(new Event("storage"));
-        alert(`✅ Canción "${formData.title}" editada correctamente.`);
+        toastSuccess(`Canción "${formData.title}" editada correctamente`);
         setFormData({ title: "", artist: "", url: "", cover: "", plays: "" });
         if (onSave) onSave();
       } else {
@@ -125,7 +126,7 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
         localStorage.setItem("trendingSong", JSON.stringify(newSong));
 
         window.dispatchEvent(new Event("storage"));
-        alert(`✅ Canción "${formData.title}" agregada correctamente.`);
+        toastSuccess(`Canción "${formData.title}" agregada correctamente`);
         setFormData({ title: "", artist: "", url: "", cover: "", plays: "" });
       }
     }

@@ -1,43 +1,49 @@
 import React, { useState, useEffect } from "react";
-import {Container, Row, Col, Spinner} from "react-bootstrap";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
+/* import LogoWelcome from "../assets/images/logo.png"; */
 
 const WelcomeScreen = () => {
-    const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(0);
 
-    useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        return prev + 3.33; 
+        return prev + 3.33;
       });
     }, 100);
 
     return () => clearInterval(interval);
   }, []);
 
-return (
+  return (
     <Container
       fluid
       className="vh-100 d-flex align-items-center justify-content-center"
-     style={{
+      style={{
         backgroundColor: "#000",
         background: "linear-gradient(135deg, #000000 0%, #1a1a1a 100%)",
-     }}
+      }}
     >
       <Row className="align-items-center text-white text-center">
         <Col>
           <h1
             className="text-primary mb-4"
-           style={{ fontSize:"3.5rem", fontWeight: "bold"}}
+            style={{ fontSize: "3.5rem", fontWeight: "bold" }}
           >
-            Wavv
+            {/* <img
+              src={LogoWelcome}
+              alt="Wavv Music Logo"
+              height="75"
+              className="d-inline-block align-top"
+            /> */}
           </h1>
           <div className="mb-4">
             <h3 className="text-secondary mb-3">Sintonizando...</h3>
-           <Spinner
+            <Spinner
               animation="grow"
               variant="primary"
               style={{ width: "3rem", height: "3rem" }}
@@ -55,7 +61,9 @@ return (
             />
           </div>
 
-          <p className="text-muted mt-3">Cargando tu experiencia musical...</p>
+          <p className="text-white-50 mt-3">
+            Cargando tu experiencia musical...
+          </p>
         </Col>
       </Row>
     </Container>

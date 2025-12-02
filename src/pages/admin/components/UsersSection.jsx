@@ -2,11 +2,20 @@ import React, { useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import AdminForm from "../AdminForm";
 import UserTable from "./UserTable";
+import { showError, showConfirm, toastSuccess } from "../../../helpers/alerts";
 
 const UsersSection = ({ users, setUsers }) => {
   const [editingUser, setEditingUser] = useState(null);
 
   const handleEditUser = (user) => {
+    if (user.email === "admin@wavvmusic.com") {
+      showError(
+        "No puedes editar el usuario administrador.",
+        "Acción no permitida"
+      );
+      return;
+    }
+
     setEditingUser({
       id: user.id,
       username: user.username,
@@ -15,8 +24,22 @@ const UsersSection = ({ users, setUsers }) => {
     });
   };
 
-  const handleDeleteUser = (userId) => {
-    if (!confirm("¿Estás seguro de eliminar este usuario?")) {
+  const handleDeleteUser = async (userId) => {
+    const userToDelete = users.find((user) => user.id === userId);
+    if (userToDelete && userToDelete.email === "admin@wavvmusic.com") {
+      showError(
+        "No puedes eliminar el usuario administrador.",
+        "Acción no permitida"
+      );
+      return;
+    }
+
+    const result = await showConfirm(
+      "Esta acción no se puede deshacer.",
+      "¿Estás seguro de eliminar este usuario?"
+    );
+
+    if (!result.isConfirmed) {
       return;
     }
 
@@ -24,7 +47,7 @@ const UsersSection = ({ users, setUsers }) => {
     setUsers(updatedUsers);
     localStorage.setItem("users", JSON.stringify(updatedUsers));
     window.dispatchEvent(new Event("storage"));
-    alert("✅ Usuario eliminado correctamente.");
+    toastSuccess("Usuario eliminado correctamente");
   };
 
   const handleSaveUser = () => {

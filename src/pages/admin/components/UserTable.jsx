@@ -25,32 +25,52 @@ const UserTable = ({ users, onEdit, onDelete }) => {
                   </td>
                 </tr>
               ) : (
-                users.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.username}</td>
-                    <td>{user.email}</td>
-                    <td>{user.role}</td>
-                    <td>
-                      <Button
-                        variant="warning"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => onEdit(user)}
-                        title="Editar usuario"
-                      >
-                        ✏️
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => onDelete(user.id)}
-                        title="Eliminar usuario"
-                      >
-                        ❌
-                      </Button>
-                    </td>
-                  </tr>
-                ))
+                users.map((user) => {
+                  const isAdmin = user.email === "admin@wavvmusic.com";
+                  return (
+                    <tr key={user.id}>
+                      <td>{user.username}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        {user.role}
+                        {isAdmin && (
+                          <span className="badge bg-danger ms-2">
+                            Protegido
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        <Button
+                          variant="warning"
+                          size="sm"
+                          className="me-2"
+                          onClick={() => onEdit(user)}
+                          title={
+                            isAdmin
+                              ? "Usuario admin no editable"
+                              : "Editar usuario"
+                          }
+                          disabled={isAdmin}
+                        >
+                          ✏️
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => onDelete(user.id)}
+                          title={
+                            isAdmin
+                              ? "Usuario admin no eliminable"
+                              : "Eliminar usuario"
+                          }
+                          disabled={isAdmin}
+                        >
+                          ❌
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </Table>

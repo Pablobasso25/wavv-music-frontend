@@ -3,6 +3,12 @@ import { Row, Col, Card, Form, Button } from "react-bootstrap";
 import { useToken } from "../../../context/useToken";
 import { searchArtistAndAlbums } from "../../../helpers/musicApi";
 import AlbumTable from "./AlbumTable";
+import {
+  showWarning,
+  showError,
+  showConfirm,
+  toastSuccess,
+} from "../../../helpers/alerts";
 
 const ArtistsSection = ({
   albums,
@@ -15,13 +21,13 @@ const ArtistsSection = ({
 
   const handleSearchAndSaveArtist = async () => {
     if (!artistName.trim()) {
-      alert("⚠️ Ingresá un nombre de artista válido.");
+      showWarning("Ingresá un nombre de artista válido.");
       return;
     }
 
     if (!token) {
-      alert(
-        "⚠️ No hay token de Spotify. Esperá unos segundos y volvé a intentar."
+      showWarning(
+        "No hay token de Spotify. Esperá unos segundos y volvé a intentar."
       );
       return;
     }
@@ -30,13 +36,16 @@ const ArtistsSection = ({
       const result = await searchArtistAndAlbums(token, artistName);
 
       if (!result || !result.artist || !result.album) {
-        alert("❌ Artista o álbum no encontrado. Intentá con otro nombre.");
+        showError(
+          "Artista o álbum no encontrado. Intentá con otro nombre.",
+          "No encontrado"
+        );
         return;
       }
 
       const yaExiste = savedArtists.some((a) => a.id === result.artist.id);
       if (yaExiste) {
-        alert("⚠️ Este artista ya fue guardado.");
+        showWarning("Este artista ya fue guardado.");
         return;
       }
 
@@ -56,15 +65,23 @@ const ArtistsSection = ({
       window.dispatchEvent(new Event("storage"));
 
       setArtistName("");
-      alert(`✅ Artista "${result.artist.name}" guardado correctamente.`);
+      toastSuccess(`Artista "${result.artist.name}" guardado correctamente`);
     } catch (error) {
       console.error("❌ Error al buscar artista:", error);
-      alert(`❌ Error al buscar el artista: ${error.message}`);
+      showError(
+        `Error al buscar el artista: ${error.message}`,
+        "Error de búsqueda"
+      );
     }
   };
 
-  const handleDeleteAlbum = (albumId) => {
-    if (!confirm("¿Estás seguro de eliminar este álbum?")) {
+  const handleDeleteAlbum = async (albumId) => {
+    const result = await showConfirm(
+      "Esta acción no se puede deshacer.",
+      "¿Estás seguro de eliminar este álbum?"
+    );
+
+    if (!result.isConfirmed) {
       return;
     }
 
@@ -80,7 +97,7 @@ const ArtistsSection = ({
 
     window.dispatchEvent(new Event("storage"));
 
-    alert("✅ Álbum eliminado correctamente.");
+    toastSuccess("Álbum eliminado correctamente");
   };
 
   return (

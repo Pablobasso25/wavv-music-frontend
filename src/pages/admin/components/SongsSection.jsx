@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import AdminForm from "../AdminForm";
 import SongTable from "./SongTable";
+import { showConfirm, toastSuccess } from "../../../helpers/alerts";
 
 const SongsSection = ({ songs, setSongs }) => {
   const [editingSong, setEditingSong] = useState(null);
@@ -17,8 +18,13 @@ const SongsSection = ({ songs, setSongs }) => {
     });
   };
 
-  const handleDeleteSong = (songId) => {
-    if (!confirm("¿Estás seguro de eliminar esta canción?")) {
+  const handleDeleteSong = async (songId) => {
+    const result = await showConfirm(
+      "Esta acción no se puede deshacer.",
+      "¿Estás seguro de eliminar esta canción?"
+    );
+
+    if (!result.isConfirmed) {
       return;
     }
 
@@ -26,7 +32,7 @@ const SongsSection = ({ songs, setSongs }) => {
     setSongs(updatedSongs);
     localStorage.setItem("songs", JSON.stringify(updatedSongs));
     window.dispatchEvent(new Event("storage"));
-    alert("✅ Canción eliminada correctamente.");
+    toastSuccess("Canción eliminada correctamente");
   };
 
   const handleSaveSong = () => {

@@ -53,10 +53,10 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
     >
       <div className="d-flex flex-column">
         <h6
-          className="text-white mb-3"
-          style={{ fontSize: "0.9rem", fontWeight: "600" }}
+          className="text-white mb-3 text-center"
+          style={{ fontSize: "1rem", fontWeight: "600" }}
         >
-          🎵 ARTISTAS GUARDADOS
+          TOP ARTISTAS
         </h6>
 
         {artistas.map((artista) => (
