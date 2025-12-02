@@ -1,10 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Row, Col } from "react-bootstrap";
-import AdminForm from "../../../components/AdminForm";
+import AdminForm from "../AdminForm";
 import UserTable from "./UserTable";
 
 const UsersSection = ({ users, setUsers }) => {
-
   const [editingUser, setEditingUser] = useState(null);
 
   const handleEditUser = (user) => {
@@ -15,7 +14,6 @@ const UsersSection = ({ users, setUsers }) => {
       password: user.password || "",
     });
   };
-
 
   const handleDeleteUser = (userId) => {
     if (!confirm("¿Estás seguro de eliminar este usuario?")) {
@@ -34,19 +32,26 @@ const UsersSection = ({ users, setUsers }) => {
   };
 
   return (
-    <Row className="mb-5">
-      <Col md={5}>
-        <AdminForm type="user" editData={editingUser} onSave={handleSaveUser} />
-      </Col>
-      <Col md={7}>
-        <UserTable
-          users={users}
-          onEdit={handleEditUser}
-          onDelete={handleDeleteUser}
-        />
-      </Col>
-    </Row>
+    <div className="mb-5">
+      <h2 className="text-white mb-4">Gestión de Usuarios</h2>
+      <Row className="mb-5">
+        <Col md={5}>
+          <AdminForm
+            type="user"
+            editData={editingUser}
+            onSave={handleSaveUser}
+          />
+        </Col>
+        <Col md={7}>
+          <UserTable
+            users={users}
+            onEdit={handleEditUser}
+            onDelete={handleDeleteUser}
+          />
+        </Col>
+      </Row>
+    </div>
   );
 };
 
-export default UsersSection;
+export default UsersSection;

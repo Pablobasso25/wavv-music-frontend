@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, Table, Button } from "react-bootstrap";
 
 const UserTable = ({ users, onEdit, onDelete }) => {
@@ -37,7 +38,7 @@ const UserTable = ({ users, onEdit, onDelete }) => {
                         onClick={() => onEdit(user)}
                         title="Editar usuario"
                       >
-                        ✏
+                        ✏️
                       </Button>
                       <Button
                         variant="danger"
@@ -59,4 +60,4 @@ const UserTable = ({ users, onEdit, onDelete }) => {
   );
 };
 
-export default UserTable;
+export default UserTable;

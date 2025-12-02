@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import NavBar from "../../components/NavBar";
 import UsersSection from "./components/UsersSection";
@@ -32,7 +32,11 @@ const AdminScreen = () => {
   return (
     <>
       <NavBar />
-      <Container className="py-5">
+      <Container
+        className="py-5"
+        style={{ minHeight: "100vh", backgroundColor: "#1a1a1a" }}
+      >
+        <h1 className="text-white mb-4">Panel de Administración</h1>
         <UsersSection users={users} setUsers={setUsers} />
         <SongsSection songs={songs} setSongs={setSongs} />
         <ArtistsSection

@@ -2,19 +2,25 @@
 
 export const defaultAdmin = {
   id: 1,
-  name: "Admin",
+  username: "Admin",
   email: "admin@wavvmusic.com",
   password: "admin123",
   role: "admin",
+  favorites: [],
+  playlists: [],
+  createdAt: new Date().toISOString(),
 };
 
 export const defaultUsers = [
   {
     id: 2,
-    name: "UsuarioPrueba",
+    username: "UsuarioPrueba",
     email: "usuario@wavvmusic.com",
     password: "usuario123",
-    role: "user",
+    role: "usuario",
+    favorites: [],
+    playlists: [],
+    createdAt: new Date().toISOString(),
   },
 ];
 

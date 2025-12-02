@@ -10,7 +10,7 @@ app.use(cors());
 const PORT = 3001;
 
 app.get("/", (req, res) => {
-  res.send("🎧 Bienvenido al backend de HarmonyStream");
+  res.send("🎧 Bienvenido al backend de Wavv Music");
 });
 
 app.get("/api/token", async (req, res) => {

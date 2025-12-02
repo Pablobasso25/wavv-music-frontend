@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Form, Button } from "react-bootstrap";
 
 const AdminForm = ({ type = "user", editData = null, onSave = null }) => {

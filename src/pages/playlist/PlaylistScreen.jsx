@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import ArtistasSidebar from "../components/ArtistasSidebar";
-import MusicPlayer from "../components/MusicPlayer";
-import TopSongs from "../components/TopSongs";
+import ArtistasSidebar from "../../components/ArtistasSidebar";
+import MusicPlayer from "../../components/MusicPlayer";
+import TopSongs from "../../components/TopSongs";
 
 const PlaylistScreen = () => {
   const [playlistAlbum, setPlaylistAlbum] = useState(null);
@@ -29,7 +29,7 @@ const PlaylistScreen = () => {
           duration_ms: song.duration_ms || 0,
           album: song.album,
           artist: song.artist,
-          cover: song.cover, 
+          cover: song.cover,
         })),
       };
 
