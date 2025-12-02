@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Col } from "react-bootstrap";
 //import trendImg from "../assets/trend.png"; // Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
+import { toast } from "react-toastify";
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const { playSong, currentSong, isPlaying } = useMusicPlayer();
@@ -44,32 +45,59 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     );
 
     if (exists) {
-      alert(`⚠️ Esta canción ya está en tu playlist.`);
-      return;
-    }
+      toast.success("✅ Esta canción ya está en tu playlist.", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+        transition: Slide,
+      });
 
-    const updatedPlaylist = [...playlist, songData];
-    setPlaylist(updatedPlaylist);
-    localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
-    window.dispatchEvent(new Event("storage"));
-    window.dispatchEvent(new Event("playlistUpdated"));
-    alert(`✅ "${track.name}" agregada a tu playlist.`);
-  };
+      const updatedPlaylist = [...playlist, songData];
+      setPlaylist(updatedPlaylist);
+      localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
+      window.dispatchEvent(new Event("storage"));
+      window.dispatchEvent(new Event("playlistUpdated"));
+      toast.success(`✅ "${track.name}" agregada a tu playlist.`, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Slide,
+      });
+    };
 
-  const handleRemoveFromPlaylist = (track) => {
-    if (!confirm(`¿Eliminar "${track.name}" de tu playlist?`)) {
-      return;
-    }
+    const handleRemoveFromPlaylist = (track) => {
+      if (!confirm(`¿Eliminar "${track.name}" de tu playlist?`)) {
+        return;
+      }
 
-    const updatedPlaylist = playlist.filter(
-      (song) => !(song.name === track.name && song.album === track.album)
-    );
+      const updatedPlaylist = playlist.filter(
+        (song) => !(song.name === track.name && song.album === track.album)
+      );
 
-    setPlaylist(updatedPlaylist);
-    localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
-    window.dispatchEvent(new Event("storage"));
-    window.dispatchEvent(new Event("playlistUpdated"));
-    alert(`✅ "${track.name}" eliminada de tu playlist.`);
+      setPlaylist(updatedPlaylist);
+      localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
+      window.dispatchEvent(new Event("storage"));
+      window.dispatchEvent(new Event("playlistUpdated"));
+      toast.error(`✅ "${track.name}" eliminada de tu playlist.`, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+        transition: Slide,
+      });
+
   };
 
   const isInPlaylist = (trackName) => {
@@ -166,9 +194,8 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                 <div className="actions d-flex align-items-center gap-3">
                   {track.preview_url && (
                     <i
-                      className={`bx ${
-                        isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
-                      } cursor-pointer fs-2`}
+                      className={`bx ${isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
+                        } cursor-pointer fs-2`}
                       title={
                         isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
                       }
@@ -187,11 +214,10 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                     ></i>
                   ) : (
                     <i
-                      className={`bx ${
-                        isInPlaylist(track.name)
-                          ? "bxs-check-circle text-success"
-                          : "bxs-plus-square text-secondary"
-                      } fs-4`}
+                      className={`bx ${isInPlaylist(track.name)
+                        ? "bxs-check-circle text-success"
+                        : "bxs-plus-square text-secondary"
+                        } fs-4`}
                       style={{ cursor: "pointer" }}
                       title={
                         isInPlaylist(track.name)
@@ -208,10 +234,10 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                   <span style={{ color: "#494D4E" }}>
                     {track.duration_ms
                       ? Math.floor(track.duration_ms / 1000 / 60) +
-                        ":" +
-                        String(
-                          Math.floor((track.duration_ms / 1000) % 60)
-                        ).padStart(2, "0")
+                      ":" +
+                      String(
+                        Math.floor((track.duration_ms / 1000) % 60)
+                      ).padStart(2, "0")
                       : "0:00"}
                   </span>
                 </div>
