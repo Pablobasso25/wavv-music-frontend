@@ -385,6 +385,7 @@ const NavBar = () => {
                     //Vista completa para usuarios
                     <>
                       <Dropdown.Item
+                        onClick={() => navigate("/404")}
                         className="text-white d-flex align-items-center dropdown-item-custom"
                         style={{ backgroundColor: "#000" }}
                       >
@@ -392,6 +393,7 @@ const NavBar = () => {
                         <span>Perfil</span>
                       </Dropdown.Item>
                       <Dropdown.Item
+                        onClick={() => navigate("/404")}
                         className="text-white d-flex align-items-center dropdown-item-custom"
                         style={{ backgroundColor: "#000" }}
                       >
@@ -401,6 +403,7 @@ const NavBar = () => {
 
                       {user?.role !== "admin" && (
                         <Dropdown.Item
+                          onClick={() => navigate("/404")}
                           className="text-white d-flex align-items-center dropdown-item-custom"
                           style={{ backgroundColor: "#000" }}
                         >
