@@ -1,7 +1,7 @@
 :root {
     --wavv-dark-background: #000000;
-    --wavv-blue-accent: #5d9fff;
-    --wavv-purple-accent: #935dff;
+    --wavv-blue-accent: #5D9FFF; 
+    --wavv-purple-accent: #935DFF; 
     --wavv-text-light: #f0f0f0;
     --wavv-text-muted: #aaaaaa;
 }
@@ -11,43 +11,38 @@
     color: var(--wavv-text-light);
     font-family: 'Arial', sans-serif;
     background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
-    min-height: 100vh;
+    min-height: 100vh; 
     box-shadow: 100 100 500px 1000px rgba(100, 50, 200, 0.8);
 }
 
 .wavv-logo-404 {
-    width: 250px;
+    width: 250px; 
     height: auto;
     filter: drop-shadow(0 0 8px var(--wavv-blue-accent)) drop-shadow(0 0 15px var(--wavv-purple-accent));
 }
 
 .error-code-404 {
-    font-size: 10rem;
-    font-weight: 900;
+    font-size: 10rem; 
+    font-weight: 900; 
     margin: 0;
     line-height: 1;
-
     background: linear-gradient(45deg, var(--wavv-blue-accent), var(--wavv-purple-accent));
-
-    text-shadow: 0 0 20px rgba(147, 93, 255, 0.4);
+    text-shadow: 0 0 20px rgba(147, 93, 255, 0.4); 
 }
 
 .error-code-404 {
-    font-size: 10rem;
-    font-weight: 900;
+    font-size: 10rem; 
+    font-weight: 900; 
     margin: 0;
     line-height: 1;
-
     background: linear-gradient(45deg, var(--wavv-blue-accent), var(--wavv-purple-accent));
-
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    text-shadow: 0 0 20px rgba(147, 93, 255, 0.4);
+    -webkit-background-clip: text; 
+    background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    text-shadow: 0 0 20px rgba(147, 93, 255, 0.4); 
 }
 
-.error-code-404 .eror-zero {
+.error-code-404 .error-zero {
     background: var(--wavv-blue-accent);
     -webkit-background-clip: text;
     background-clip: text;
@@ -72,16 +67,15 @@
     font-size: 1.1rem;
     font-weight: bold;
     border: none;
-    border-radius: 50px;
+    border-radius: 50px; 
     transition: all 0.5s ease;
-
     background: linear-gradient(90deg, var(--wavv-blue-accent) 0%, var(--wavv-purple-accent) 100%) !important;
-    box-shadow: 0 0 25px rgba(147, 93, 255, 0.5);
+    box-shadow: 0 0 25px rgba(147, 93, 255, 0.5); 
     color: var(--wavv-text-light);
 }
 
 .back-button-404:hover {
-    transform: translateY(-15px);
+    transform: translateY(-15px); 
     box-shadow: 0 20px 40px rgba(147, 93, 255, 0.7);
     filter: brightness(1.1);
 }
@@ -92,7 +86,7 @@
         transform: translate(0);
     }
     20% {
-        text-shadow: 2px 0 0 var(--wavv-blue-accent);
+        text-shadow: -2px 0 0 var(--wavv-blue-accent);
         transform: translate(-2px, 2px);
     }
     40% {
