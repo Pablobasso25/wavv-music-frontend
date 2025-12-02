@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Col } from "react-bootstrap";
 //import trendImg from "../assets/trend.png"; // Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
+import { toast } from "react-toastify";
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const { playSong, currentSong, isPlaying } = useMusicPlayer();
@@ -60,7 +61,17 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
       window.dispatchEvent(new Event("storage"));
       window.dispatchEvent(new Event("playlistUpdated"));
-      alert(`✅ "${track.name}" agregada a tu playlist.`);
+      toast.success(`✅ "${track.name}" agregada a tu playlist.`, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Slide,
+        });
     };
 
     const handleRemoveFromPlaylist = (track) => {
@@ -194,8 +205,8 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                     ) : (
                       <i
                         className={`bx ${isInPlaylist(track.name)
-                            ? "bxs-check-circle text-success"
-                            : "bxs-plus-square text-secondary"
+                          ? "bxs-check-circle text-success"
+                          : "bxs-plus-square text-secondary"
                           } fs-4`}
                         style={{ cursor: "pointer" }}
                         title={

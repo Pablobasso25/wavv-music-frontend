@@ -14,6 +14,7 @@ import { useToken } from "../context/useToken";
 import { searchTracks } from "../helpers/musicApi";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import Logo from "../assets/images/logo.jpg";
+import { Slide } from "react-toastify";
 const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -110,7 +111,7 @@ const NavBar = () => {
 
     const exists = playlist.some((song) => song.name === track.name);
     if (exists) {
-      toast.error("✅ Esta canción ya está en tu playlist.", {
+      toast.success("✅ Esta canción ya está en tu playlist.", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -118,6 +119,7 @@ const NavBar = () => {
         pauseOnHover: true,
         draggable: true,
         theme: "dark",
+        transition: Slide,
       });
 
 
