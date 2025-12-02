@@ -1,0 +1,114 @@
+/* colores de nuestro logo Wavv */ 
+:root {
+    --wavv-dark-background: #000000;
+    --wavv-blue-accent: #5d9fff;
+    --wavv-purple-accent: #935dff;
+    --wavv-text-light: #f0f0f0;
+    --wavv-text-muted: #aaaaaa;
+}
+
+.not-found-wrapper {
+    background-color: var(--wavv-dark-background);
+    color: var(--wavv-text-light);
+    font-family: 'Arial', sans-serif;
+    background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+    min-height: 100vh;
+}
+
+.wavv-logo-404 {
+    width: 250px;
+    height: auto;
+    filter: drop-shadow(0 0 8px var(--wavv-blue-accent)) drop-shadow(0 0 15px var(--wavv-purple-accent));
+}
+
+.error-code-404 {
+    font-size: 10rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1;
+
+    background: linear-gradient(45deg, var(--wavv-blue-accent), var(--wavv-purple-accent));
+
+    text-shadow: 0 0 20px rgba(147, 93, 255, 0.4);
+}
+
+.error-code-404 {
+    font-size: 10rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1;
+
+    background: linear-gradient(45deg, var(--wavv-blue-accent), var(--wavv-purple-accent));
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow: 0 0 20px rgba(147, 93, 255, 0.4);
+}
+
+.error-code-404 .eror-zero {
+    background: var(--wavv-blue-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.error-message-404 {
+    font-size: 1.8rem;
+    color: var(--wavv-text-light);
+    margin-top: 1.5rem;
+    font-weight: bold;
+}
+
+.error-description-404 {
+    font-size: 1rem;
+    color: var(--wavv-text-muted);
+    margin-bottom: 2.5rem;
+}
+
+.back-button-404 {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+
+    background: linear-gradient(90deg, var(--wavv-blue-accent) 0%, var(--wavv-purple-accent) 100%) !important;
+    box-shadow: 0 0 25px rgba(147, 93, 255, 0.5);
+    color: var(--wavv-text-light);
+}
+
+.back-button-404:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(147, 93, 255, 0.7);
+    filter: brightness(1.1);
+}
+
+@keyframes glitch-404 {
+    0% {
+        text-shadow: 2px 0 0 var(--wavv-purple-accent);
+        transform: translate(0);
+    }
+    20% {
+        text-shadow: 2px 0 0 var(--wavv-blue-accent);
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        text-shadow: 2px 2px 0 var(--wavv-purple-accent);
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        text-shadow: -2px -2px 0 var(--wavv-blue-accent);
+        transform: translate(2px, 2px);
+    }
+    80% {
+        text-shadow: 2px 0 0 var(--wavv-purple-accent);
+        transform: translate(2px, -2px);
+    }
+    100% {
+        text-shadow: 0 0 0 transparent;
+        transform: translate(0);
+    }
+}
