@@ -9,7 +9,7 @@ import WelcomeScreen from "./pages/WelcomeScreen";
 import PlaylistScreen from "./pages/PlaylistScreen";
 import LoginScreen from "./pages/LoginScreen";
 
-import AboutUs from "./pages/AboutUs"; 
+import AboutUs from "./pages/aboutUs/AboutUsScreen"; 
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);

@@ -6,6 +6,8 @@ import logo from "../assets/images/logo1.png";
 import RominaImg from "../assets/images/romina.jpg";
 import AlvaroImg from "../assets/images/alvaro.jpg";
 import JuanImg from "../assets/images/juan.jpg"
+import PabloImg from "../assets/images/pablo.jpg"
+import PatricioImg from "../assets/images/patricio.jpg"
 
 const colors = {
     bgPrimary: "#111111",
@@ -48,36 +50,36 @@ const AboutUs = () => {
                 >
                     <TeamMember
                         name="Pablo"
-                        img={AlvaroImg}
-                        text="Hola soy Pablo"
+                        img={PabloImg}
+                        text="Organizado, responsable y siempre dispuesto a dar una mano al equipo."
                         colors={colors}
                     />
 
                     <TeamMember
                         name="Alvaro"
                         img={AlvaroImg}
-                        text="Hola soy Alvaro"
+                        text="Proactivo, resolutivo y con una visión clara para mejorar cada proyecto."
                         colors={colors}
                     />
 
                     <TeamMember
                         name="Romina"
                         img={RominaImg}
-                        text="En otra vida fui psicóloga"
+                        text="Enfocada, detallista y con una energía que contagia al equipo."
                         colors={colors}
                     />
 
                     <TeamMember
                         name="Juan"
                         img={JuanImg}
-                        text="Hola soy Juan"
+                        text="Creativo, curioso y con una energía que impulsa al grupo."
                         colors={colors}
                     />
 
                     <TeamMember
                         name="Patricio"
-                        img={AlvaroImg}
-                        text="Hola soy Patricio"
+                        img={PatricioImg}
+                        text="Analítico, tranquilo y enfocado en encontrar soluciones eficientes."
                         colors={colors}
                     />
                 </Row>
