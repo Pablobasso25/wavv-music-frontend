@@ -12,6 +12,8 @@ import AdminScreen from "./pages/admin/AdminScreen";
 import Footer from "./components/Footer";
 import Error404Screen from "./pages/error404/Error404Screen";
 
+import AboutUs from "./pages/aboutUs/AboutUsScreen"; 
+
 const App = () => {
   const [welcome, setWelcome] = useState(true);
 
