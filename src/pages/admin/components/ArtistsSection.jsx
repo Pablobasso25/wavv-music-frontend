@@ -107,7 +107,7 @@ const ArtistsSection = ({
         <Col md={12}>
           <Card className="bg-dark text-white border-secondary">
             <Card.Body>
-              <h4 className="mb-3">Buscar y guardar artista desde Spotify</h4>
+              <h4 className="mb-3">Buscar y guardar artista</h4>
               <Form>
                 <Row>
                   <Col md={8}>
