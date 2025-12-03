@@ -69,7 +69,7 @@ const ArtistsSection = ({
     } catch (error) {
       console.error("❌ Error al buscar artista:", error);
       showError(
-        `Error al buscar el artista: ${error.message}`,
+        error.message || "No se pudo conectar con Spotify. Intentá nuevamente.",
         "Error de búsqueda"
       );
     }

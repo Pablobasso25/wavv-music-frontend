@@ -1,6 +1,5 @@
 import React from "react";
 import { Container, ProgressBar } from "react-bootstrap";
-// import trendImg from "../assets/trend.png"; // TODO: Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -15,8 +14,6 @@ const MusicPlayer = () => {
     togglePlay,
     handleTimeUpdate,
     handleSeek,
-    skipNext,
-    skipPrevious,
   } = useMusicPlayer();
 
   const formatTime = (seconds) => {
@@ -28,8 +25,15 @@ const MusicPlayer = () => {
 
   return (
     <Container
-      className="music-player rounded-4 p-4 d-flex flex-column gap-4"
-      style={{ width: "20vw", height: "80vh" }}
+      className="music-player rounded-4 p-3 p-lg-4 d-flex flex-column gap-3 gap-lg-4"
+      style={{
+        width: "100%",
+        maxWidth: "400px",
+        height: "auto",
+        minHeight: "500px",
+        position: "relative",
+        zIndex: 1,
+      }}
     >
       {currentSong?.audio && (
         <audio
@@ -42,23 +46,28 @@ const MusicPlayer = () => {
 
       <div className="song-info text-center flex-grow-1">
         <img
-          className="rounded-3"
+          className="rounded-3 w-100 mb-3"
           src={
             currentSong?.cover ||
             "https://via.placeholder.com/150x150/8b5cf6/ffffff?text=Music"
           }
           alt={currentSong?.title || "Album cover"}
-          style={{ maxWidth: "280px", height: "200px", objectFit: "cover" }}
+          style={{
+            maxWidth: "100%",
+            height: "auto",
+            aspectRatio: "1/1",
+            objectFit: "cover",
+          }}
         />
 
-        <div className="description mb-4">
-          <h3 className="fw-bold mb-2">
+        <div className="description mb-3 mb-lg-4">
+          <h3 className="fw-bold mb-2 fs-5 fs-lg-4">
             {currentSong?.title || "Ripple Echoes"}
           </h3>
-          <h5 className="text-white-50 mb-1">
+          <h5 className="text-white-50 mb-1 fs-6">
             {currentSong?.artist || "Kael Fischer"}
           </h5>
-          <p className="text-secondary small fw-bold">
+          <p className="text-secondary small fw-bold mb-0">
             {currentSong?.album || "Best of 2024"} •{" "}
             {currentSong?.genre || "Electronic"}
           </p>
@@ -105,8 +114,8 @@ const MusicPlayer = () => {
           </div>
         </div>
       </div>
-      <div className="player-actions bg-primary rounded p-3 mt-auto">
-        <div className="buttons d-flex justify-content-center align-items-center gap-4 mb-3">
+      <div className="player-actions bg-primary rounded p-2 p-lg-3 mt-auto">
+        <div className="buttons d-flex justify-content-center align-items-center gap-3 gap-lg-4 mb-2 mb-lg-3">
           <i
             className="bx bx-repeat fs-5 cursor-pointer hover-scale"
             title="Repeat"
@@ -114,9 +123,8 @@ const MusicPlayer = () => {
           ></i>
           <i
             className="bx bx-skip-previous fs-4 cursor-pointer hover-scale"
-            title="Previous"
-            style={{ cursor: "pointer" }}
-            onClick={skipPrevious}
+            title="Anterior (próximamente)"
+            style={{ cursor: "not-allowed", opacity: 0.4 }}
           ></i>
           <i
             className={`bx ${
@@ -128,9 +136,8 @@ const MusicPlayer = () => {
           ></i>
           <i
             className="bx bx-skip-next fs-4 cursor-pointer hover-scale"
-            title="Next"
-            style={{ cursor: "pointer" }}
-            onClick={skipNext}
+            title="Siguiente (próximamente)"
+            style={{ cursor: "not-allowed", opacity: 0.4 }}
           ></i>
           <i
             className="bx bx-shuffle fs-5 cursor-pointer hover-scale"

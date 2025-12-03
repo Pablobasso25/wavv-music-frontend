@@ -5,6 +5,7 @@ import React, {
   useRef,
   useEffect,
 } from "react";
+import { toastError } from "../helpers/alerts";
 
 const MusicPlayerContext = createContext();
 
@@ -26,6 +27,7 @@ export const MusicPlayerProvider = ({ children }) => {
         .then(() => setIsPlaying(true))
         .catch((error) => {
           console.error("Error al reproducir:", error);
+          toastError("No se pudo reproducir la canción. Intentá nuevamente.");
           setIsPlaying(false);
         });
 
@@ -69,14 +71,6 @@ export const MusicPlayerProvider = ({ children }) => {
     }
   };
 
-  const skipNext = () => {
-    console.log("Siguiente canción");
-  };
-
-  const skipPrevious = () => {
-    console.log("Canción anterior");
-  };
-
   return (
     <MusicPlayerContext.Provider
       value={{
@@ -90,8 +84,6 @@ export const MusicPlayerProvider = ({ children }) => {
         togglePlay,
         handleTimeUpdate,
         handleSeek,
-        skipNext,
-        skipPrevious,
       }}
     >
       {children}

@@ -15,6 +15,8 @@ import { searchTracks } from "../helpers/musicApi";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import Logo from "../assets/images/logo.jpg";
 import { toast, Slide } from "react-toastify";
+import { showConfirm } from "../helpers/alerts";
+
 const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -27,11 +29,18 @@ const NavBar = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
-  const lastSearchRef = useRef(""); // Para evitar búsquedas deplicadas
+  const lastSearchRef = useRef("");
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    const result = await showConfirm(
+      "¿Estás seguro que deseas cerrar sesión?",
+      "Cerrar Sesión"
+    );
+
+    if (result.isConfirmed) {
+      logout();
+      navigate("/login");
+    }
   };
 
   const isAdminPage = location.pathname === "/admin";
@@ -60,16 +69,13 @@ const NavBar = () => {
     }
 
     const timer = setTimeout(async () => {
-      console.log("🔍 Buscando:", searchQuery);
       lastSearchRef.current = searchQuery;
       setIsSearching(true);
       try {
         const results = await searchTracks(token, searchQuery, 8);
-        console.log("✅ Resultados:", results);
         setSearchResults(results);
         setShowDropdown(true);
       } catch (error) {
-        console.log("❌ Error al buscar:", error);
         setSearchResults([]);
         setShowDropdown(false);
       } finally {
@@ -155,8 +161,14 @@ const NavBar = () => {
   };
 
   return (
-    <Navbar expand="lg" className="py-3" style={{ backgroundColor: "#000" }}>
-      <Container>
+    <Navbar
+      expand="lg"
+      className="py-2"
+      fixed="top"
+      style={{ backgroundColor: "#000", zIndex: 1030 }}
+    >
+      <Container fluid className="position-relative">
+       
         <Navbar.Brand
           onClick={() => navigate("/")}
           style={{ cursor: "pointer" }}
@@ -165,20 +177,57 @@ const NavBar = () => {
           <img
             src={Logo}
             alt="Wavv Music Logo"
-            height="75"
+            height="50"
             className="d-inline-block align-top"
           />
         </Navbar.Brand>
 
-        <Navbar.Toggle
-          aria-controls="basic-navbar-nav"
-          className="text-secondary border-0"
-        />
+       
+        <Navbar.Toggle aria-controls="basic-navbar-nav" className="border-0" />
 
         <Navbar.Collapse id="basic-navbar-nav">
-          <div className="ms-auto d-flex align-items-center gap-3">
+          <Nav className="ms-auto d-flex align-items-center gap-3">
+          
             {!isAdminPage && (
-              <div className="search position-relative" ref={searchRef}>
+              <NavLink
+                to="/playlist"
+                className="text-secondary text-uppercase fw-bold nav-link-custom"
+                style={{ textDecoration: "none" }}
+              >
+                Playlist
+              </NavLink>
+            )}
+
+           
+            {!isAdminPage && (
+              <NavLink
+                to="/about-us"
+                className="text-secondary text-uppercase fw-bold nav-link-custom"
+                style={{ textDecoration: "none" }}
+              >
+                Nosotros
+              </NavLink>
+            )}
+
+          
+            {isAdminPage && (
+              <NavLink
+                to="/"
+                className="text-secondary text-uppercase fw-bold nav-link-custom"
+                style={{ textDecoration: "none" }}
+              >
+                <i className="bx bx-home-alt me-1"></i>
+                Home
+              </NavLink>
+            )}
+
+           
+            {!isAdminPage && (
+              <div
+                className="search position-relative"
+                ref={searchRef}
+                style={{ maxWidth: "250px", width: "100%" }}
+              >
                 <i className="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
                 {isSearching && (
                   <div
@@ -191,12 +240,11 @@ const NavBar = () => {
                 )}
                 <Form.Control
                   type="text"
-                  className="ps-5 border-dark text-white custom-search-input"
+                  className="ps-5 border-dark text-white custom-search-input w-100"
                   placeholder="Buscar canciones..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{
-                    width: "250px",
                     backgroundColor: "#1a1a1a",
                     borderColor: "#000000ff",
                     color: "#fff",
@@ -208,11 +256,14 @@ const NavBar = () => {
                     className="search-dropdown position-absolute mt-2 rounded-3 shadow-lg"
                     style={{
                       backgroundColor: "#202026",
-                      width: "400px",
+                      width: "100%",
+                      minWidth: "300px",
+                      maxWidth: "400px",
                       maxHeight: "500px",
                       overflowY: "auto",
                       zIndex: 1050,
                       border: "1px solid #333",
+                      left: 0,
                     }}
                   >
                     {isSearching ? (
@@ -299,80 +350,101 @@ const NavBar = () => {
                 )}
               </div>
             )}
-            <Nav className="d-flex align-items-center gap-3">
-              {isAdminPage ? (
-                <NavLink
-                  to="/"
-                  className="text-secondary text-uppercase fw-bold nav-link-custom"
-                  style={{ textDecoration: "none" }}
-                >
-                  <i className="bx bx-home-alt me-1"></i>
-                  Home
-                </NavLink>
-              ) : (
-                <>
-                  <NavLink
-                    to="/playlist"
-                    className="text-secondary text-uppercase fw-bold nav-link-custom"
-                    style={{ textDecoration: "none" }}
-                  >
-                    <i className="bx bx-list-ul me-1"></i>
-                    Playlist
-                  </NavLink>
-                  <NavLink
-                    to="/about-us"
-                    className="text-secondary text-uppercase fw-bold nav-link-custom"
-                    style={{ textDecoration: "none" }}
-                  >
-                    NOSOTROS
-                  </NavLink>
-                  {user?.role === "admin" && (
-                    <NavLink
-                      to="/admin"
-                      className="text-warning text-uppercase fw-bold nav-link-custom"
-                      style={{ textDecoration: "none" }}
-                    >
-                      <i className="bx bx-cog me-1"></i>
-                      ADMIN
-                    </NavLink>
-                  )}
-                </>
-              )}
 
-              <Dropdown align="end">
-                <Dropdown.Toggle
-                  variant="dark"
-                  id="dropdown-user"
-                  className="d-flex align-items-center profile-toggle"
-                  style={{ backgroundColor: "transparent" }}
-                >
-                  <div className="d-flex align-items-center">
-                    <div className="bg-secondary rounded-start p-1">
-                      <img
-                        src="assets/profile.png"
-                        className="rounded"
-                        width="35"
-                        height="35"
-                        alt="Profile"
-                        onError={(e) => {
-                          e.target.src =
-                            "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=35&h=35&fit=crop&crop=face";
-                        }}
-                      />
-                    </div>
-                    <div className="rounded-end p-2 d-md-block">
-                      <h6 className="mb-0 text-white">
-                        {user?.username || "Usuario"}
-                      </h6>
-                    </div>
+            <Dropdown align="end" drop="down" className="user-dropdown">
+              <Dropdown.Toggle
+                as="div"
+                id="dropdown-user"
+                className="d-flex align-items-center profile-toggle"
+                style={{
+                  backgroundColor: "transparent",
+                  cursor: "pointer",
+                }}
+              >
+                <div className="d-flex align-items-center">
+                  <div className="bg-secondary rounded-start p-1">
+                    <img
+                      src="assets/profile.png"
+                      className="rounded"
+                      width="35"
+                      height="35"
+                      alt="Profile"
+                      onError={(e) => {
+                        e.target.src =
+                          "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=35&h=35&fit=crop&crop=face";
+                      }}
+                    />
                   </div>
-                </Dropdown.Toggle>
+                  <div className="rounded-end p-2 d-md-block">
+                    <h6 className="mb-0 text-white">
+                      {user?.username || "Usuario"}
+                    </h6>
+                  </div>
+                </div>
+              </Dropdown.Toggle>
 
-                <Dropdown.Menu
-                  className="border-secondary"
-                  style={{ backgroundColor: "#000", borderColor: "#000" }}
-                >
-                  {isAdminPage ? (
+              <Dropdown.Menu
+                className="border-secondary user-dropdown-menu"
+                renderOnMount
+                style={{
+                  backgroundColor: "#000",
+                  borderColor: "#000",
+                }}
+              >
+                {isAdminPage ? (
+                  <Dropdown.Item
+                    onClick={handleLogout}
+                    className="text-white d-flex align-items-center dropdown-item-custom"
+                    style={{ backgroundColor: "#000" }}
+                  >
+                    <i className="bx bx-log-out me-2"></i>
+                    <span>Cerrar Sesión</span>
+                  </Dropdown.Item>
+                ) : (
+                  <>
+                    <Dropdown.Item
+                      onClick={() => navigate("/404")}
+                      className="text-white d-flex align-items-center dropdown-item-custom"
+                      style={{ backgroundColor: "#000" }}
+                    >
+                      <i className="bx bx-user me-2"></i>
+                      <span>Perfil</span>
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => navigate("/404")}
+                      className="text-white d-flex align-items-center dropdown-item-custom"
+                      style={{ backgroundColor: "#000" }}
+                    >
+                      <i className="bx bx-cog me-2"></i>
+                      <span>Configuración</span>
+                    </Dropdown.Item>
+
+                    {user?.role !== "admin" && (
+                      <Dropdown.Item
+                        onClick={() => navigate("/404")}
+                        className="text-white d-flex align-items-center dropdown-item-custom"
+                        style={{ backgroundColor: "#000" }}
+                      >
+                        <i className="bx bx-crown me-2"></i>
+                        <span>Premium</span>
+                        <Badge bg="warning" text="dark" className="ms-2">
+                          PRO
+                        </Badge>
+                      </Dropdown.Item>
+                    )}
+
+                    {user?.role === "admin" && (
+                      <Dropdown.Item
+                        onClick={() => navigate("/admin")}
+                        className="text-warning d-flex align-items-center dropdown-item-custom"
+                        style={{ backgroundColor: "#000" }}
+                      >
+                        <i className="bx bx-shield me-2"></i>
+                        <span>Panel Admin</span>
+                      </Dropdown.Item>
+                    )}
+
+                    <Dropdown.Divider className="border-secondary" />
                     <Dropdown.Item
                       onClick={handleLogout}
                       className="text-white d-flex align-items-center dropdown-item-custom"
@@ -381,66 +453,11 @@ const NavBar = () => {
                       <i className="bx bx-log-out me-2"></i>
                       <span>Cerrar Sesión</span>
                     </Dropdown.Item>
-                  ) : (
-                    //Vista completa para usuarios
-                    <>
-                      <Dropdown.Item
-                        onClick={() => navigate("/404")}
-                        className="text-white d-flex align-items-center dropdown-item-custom"
-                        style={{ backgroundColor: "#000" }}
-                      >
-                        <i className="bx bx-user me-2"></i>
-                        <span>Perfil</span>
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => navigate("/404")}
-                        className="text-white d-flex align-items-center dropdown-item-custom"
-                        style={{ backgroundColor: "#000" }}
-                      >
-                        <i className="bx bx-cog me-2"></i>
-                        <span>Configuración</span>
-                      </Dropdown.Item>
-
-                      {user?.role !== "admin" && (
-                        <Dropdown.Item
-                          onClick={() => navigate("/404")}
-                          className="text-white d-flex align-items-center dropdown-item-custom"
-                          style={{ backgroundColor: "#000" }}
-                        >
-                          <i className="bx bx-crown me-2"></i>
-                          <span>Premium</span>
-                          <Badge bg="warning" text="dark" className="ms-2">
-                            PRO
-                          </Badge>
-                        </Dropdown.Item>
-                      )}
-
-                      {user?.role === "admin" && (
-                        <Dropdown.Item
-                          onClick={() => navigate("/admin")}
-                          className="text-warning d-flex align-items-center dropdown-item-custom"
-                          style={{ backgroundColor: "#000" }}
-                        >
-                          <i className="bx bx-shield me-2"></i>
-                          <span>Panel Admin</span>
-                        </Dropdown.Item>
-                      )}
-
-                      <Dropdown.Divider className="border-secondary" />
-                      <Dropdown.Item
-                        onClick={handleLogout}
-                        className="text-white d-flex align-items-center dropdown-item-custom"
-                        style={{ backgroundColor: "#000" }}
-                      >
-                        <i className="bx bx-log-out me-2"></i>
-                        <span>Cerrar Sesión</span>
-                      </Dropdown.Item>
-                    </>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Nav>
-          </div>
+                  </>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+          </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>

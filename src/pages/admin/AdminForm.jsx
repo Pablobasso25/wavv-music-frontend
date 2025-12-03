@@ -27,7 +27,6 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
     if (isUser) {
       const users = JSON.parse(localStorage.getItem("users")) || [];
       if (isEditing) {
-        // Editar usuario existente
         const updatedUsers = users.map((user) =>
           user.id === editData.id ? { ...user, ...formData } : user
         );
@@ -37,7 +36,6 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
         setFormData({ username: "", email: "", password: "" });
         if (onSave) onSave();
       } else {
-        // Agregar nuevo usuario
         const newUser = {
           ...formData,
           id: Date.now(),
@@ -59,7 +57,6 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
       const songs = JSON.parse(localStorage.getItem("songs")) || [];
 
       if (isEditing) {
-        // Editar canción existente
         const updatedSongs = songs.map((song) =>
           song.id === editData.id
             ? {
@@ -104,7 +101,6 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
         setFormData({ title: "", artist: "", url: "", cover: "", plays: "" });
         if (onSave) onSave();
       } else {
-        // Agregar nueva canción
         const newSong = {
           id: Date.now(),
           title: formData.title,
@@ -122,7 +118,6 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
         const updatedSongs = [...songs, newSong];
         localStorage.setItem("songs", JSON.stringify(updatedSongs));
 
-        // También guarda como trending (la última canción agregada)
         localStorage.setItem("trendingSong", JSON.stringify(newSong));
 
         window.dispatchEvent(new Event("storage"));

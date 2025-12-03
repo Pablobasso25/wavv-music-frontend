@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-// import trendImg from "../assets/trend.png"; // TODO: Agregar imagen cuando exista
 import { defaultAlbum } from "../data/dataDefault";
 
 const ArtistasSidebar = ({ onAlbumSelect }) => {
@@ -10,7 +9,6 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
   useEffect(() => {
     const loadArtists = () => {
       const stored = JSON.parse(localStorage.getItem("artistas")) || [];
-      console.log("🎤 Artistas guardados:", stored);
 
       const defaultArtist = {
         id: "default-artist",
@@ -41,7 +39,6 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
   }, []);
 
   const handleClick = (album) => {
-    console.log("📀 Álbum seleccionado:", album);
     localStorage.setItem("selectedAlbum", JSON.stringify(album));
     onAlbumSelect(album);
   };
@@ -104,7 +101,10 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
             >
               {artista.name}
             </span>
-            <small className="text-muted mt-1" style={{ fontSize: "0.75rem" }}>
+            <small
+              className="text-secondary mt-1"
+              style={{ fontSize: "0.75rem" }}
+            >
               Reproducir
             </small>
           </div>

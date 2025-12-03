@@ -30,14 +30,18 @@ const TrendingSong = () => {
   }, []);
 
   return (
-    <Container style={{ width: "60vw", margin: "1rem" }}>
+    <Container fluid className="px-2 px-lg-3 mb-3">
       <Row
-        className="align-items-center p-4 rounded-4"
+        className="align-items-center p-3 p-lg-4 rounded-4 mx-0"
         style={{ backgroundColor: "#000000ff" }}
       >
-        <Col md={7} className="d-flex flex-column gap-3">
-          <h2 className="display-5">{trendingSong.title}</h2>
-          <h4>{trendingSong.artist}</h4>
+        <Col
+          xs={12}
+          md={7}
+          className="d-flex flex-column gap-2 gap-lg-3 mb-3 mb-md-0"
+        >
+          <h2 className="h3 h2-lg">{trendingSong.title}</h2>
+          <h4 className="h5 h4-lg">{trendingSong.artist}</h4>
           {trendingSong.plays && (
             <p className="text-secondary mb-0">
               <i className="bx bx-play-circle me-2"></i>
@@ -70,16 +74,21 @@ const TrendingSong = () => {
             ></i>
           </div>
         </Col>
-        <Col md={4} className="d-flex justify-content-center">
+        <Col xs={12} md={4} className="d-flex justify-content-center">
           <img
             src={
               trendingSong.cover ||
               "https://via.placeholder.com/300x300/8b5cf6/ffffff?text=Trending"
             }
             alt={trendingSong.title}
-            width="250"
-            height="250"
             className="img-fluid rounded-3"
+            style={{
+              maxWidth: "250px",
+              width: "100%",
+              height: "auto",
+              aspectRatio: "1/1",
+              objectFit: "cover",
+            }}
           />
         </Col>
       </Row>

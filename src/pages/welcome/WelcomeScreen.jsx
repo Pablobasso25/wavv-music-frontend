@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
-/* import LogoWelcome from "../assets/images/logo.png"; */
+import LogoWelcome from "../../assets/images/logo1.png";
 
 const WelcomeScreen = () => {
   const [progress, setProgress] = useState(0);
@@ -30,17 +30,17 @@ const WelcomeScreen = () => {
     >
       <Row className="align-items-center text-white text-center">
         <Col>
-          <h1
-            className="text-primary mb-4"
-            style={{ fontSize: "3.5rem", fontWeight: "bold" }}
-          >
-            {/* <img
+          <div className="mb-4">
+            <img
               src={LogoWelcome}
               alt="Wavv Music Logo"
-              height="75"
-              className="d-inline-block align-top"
-            /> */}
-          </h1>
+              height="100"
+              className="mb-3"
+              style={{
+                filter: "drop-shadow(0 0 20px rgba(13, 110, 253, 0.5))",
+              }}
+            />
+          </div>
           <div className="mb-4">
             <h3 className="text-secondary mb-3">Sintonizando...</h3>
             <Spinner

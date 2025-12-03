@@ -6,7 +6,7 @@ import logo from "../../assets/images/logo1.png";
 import RominaImg from "../../assets/images/romina.jpg";
 import AlvaroImg from "../../assets/images/alvaro.jpg";
 import JuanImg from "../../assets/images/juan.jpg";
-import PabloImg from "../../assets/images/pablo.jpg";
+import PabloImg from "../../assets/images/pablo.jpeg";
 import PatricioImg from "../../assets/images/patricio.jpg";
 
 const colors = {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Container, Col } from "react-bootstrap";
-//import trendImg from "../assets/trend.png"; // Agregar imagen cuando exista
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import { toast, Slide } from "react-toastify";
 import { showConfirm } from "../helpers/alerts";
@@ -128,12 +127,14 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   }
 
   return (
-    <Container style={{ width: "60vw" }}>
+    <Container fluid className="px-2 px-lg-3">
       <div
         className="music-list p-3 rounded-4"
         style={{
           backgroundColor: "#111111",
-          height: fromHome ? "calc(80vh - 280px)" : "80vh",
+          height: fromHome ? "auto" : "80vh",
+          minHeight: fromHome ? "400px" : "auto",
+          maxHeight: fromHome ? "calc(100vh - 350px)" : "80vh",
           overflowY: "auto",
         }}
       >

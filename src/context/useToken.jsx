@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getTokenApi } from "../helpers/musicApi";
+import { showError } from "../helpers/alerts";
 
 const TokenContext = createContext();
 
@@ -17,6 +18,10 @@ export const TokenProvider = ({ children }) => {
         setExpiresAt(expires_at);
       } catch (error) {
         console.error("Error al obtener el token de Spotify:", error);
+        showError(
+          "No se pudo conectar con Spotify. Verificá tu conexión a internet.",
+          "Error de conexión"
+        );
       } finally {
         setLoading(false);
       }
@@ -26,7 +31,6 @@ export const TokenProvider = ({ children }) => {
 
     const interval = setInterval(() => {
       if (expiresAt && Date.now() >= expiresAt) {
-        console.log("🔄 Token vencido, renovando...");
         fetchToken();
       }
     }, 5 * 60 * 1000);

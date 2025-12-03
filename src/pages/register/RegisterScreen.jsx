@@ -172,7 +172,6 @@ const RegisterScreen = () => {
 
       localStorage.setItem("users", JSON.stringify([...users, newUser]));
 
-      // ENVIAR EMAIL
       let emailFueEnviado = false;
       try {
         const templateParams = {
