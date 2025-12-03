@@ -1,6 +1,6 @@
 # 🎵 Wavv Music
 
-**Wavv Music** es una aplicación web moderna de streaming de música que te conecta con tus canciones favoritas. Desarrollada con React y Vite, ofrece una experiencia fluida y responsive para descubrir, reproducir y gestionar tu música.
+**Wavv Music** es una aplicación web moderna de streaming de música que te conecta con tus canciones favoritas. Desarrollada con React y Vite, ofrece una experiencia fluida  para descubrir, reproducir y gestionar tu música.
 
 ## ✨ Características
 
@@ -8,8 +8,7 @@
 
 - **Reproductor integrado** con controles completos (play, pause, skip)
 - **Barra de progreso interactiva** con control de tiempo
-- **Previsualizaciones de Spotify** de alta calidad
-- **Modo shuffle y repeat**
+- **Previsualizaciones** de alta calidad
 
 ### 🔍 Búsqueda Inteligente
 
@@ -123,7 +122,7 @@ npm run dev
 
 La aplicación estará disponible en `http://localhost:5173`
 
-## 🏗️ Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 Wavv-Music/
@@ -165,7 +164,7 @@ Wavv-Music/
 └── README.md
 ```
 
-## 🎮 Uso
+##  Uso
 
 ### Para Usuarios
 
@@ -240,7 +239,7 @@ El sistema utiliza localStorage para gestionar sesiones:
 - Renovación automática
 - Context API para compartir token globalmente
 
-## 🚢 Despliegue
+##  Despliegue
 
 ### Netlify (Recomendado)
 
@@ -259,13 +258,7 @@ VITE_EMAILJS_TEMPLATE_ID
 VITE_EMAILJS_PUBLIC_KEY
 ```
 
-## 👥 Equipo
 
-- **Pablo** - Organizado, responsable y siempre dispuesto a dar una mano
-- **Alvaro** - Proactivo, resolutivo y con visión clara
-- **Romina** - Enfocada, detallista y con energía contagiosa
-- **Juan** - Creativo, curioso e impulsor del grupo
-- **Patricio** - Analítico, tranquilo y enfocado en soluciones
 
 ## 📄 Licencia
 
@@ -275,17 +268,16 @@ Este proyecto es privado y de uso educativo.
 
 Actualmente este es un proyecto privado. Si deseas contribuir, contacta al equipo.
 
-## 📞 Contacto
 
-- **GitHub**: [Pablobasso25/Wavv-Music](https://github.com/Pablobasso25/Wavv-Music)
-- **Email**: A través del formulario en la sección "Nosotros"
+##  Equipo
 
-## 🙏 Agradecimientos
 
-- Spotify Web API por el catálogo de música
-- React y Vite por las excelentes herramientas de desarrollo
-- Bootstrap por el framework CSS
-- La comunidad open source
+- **[Alvaro](https://github.com/alvaro-morillo)**
+- **[Romina](https://github.com/RominaDanelutto)**
+- **[Pablo](https://github.com/pablobasso25)** 
+- **[Juan](https://github.com/JuanFerreyra18)** 
+- **[Patricio](https://github.com/pato1404)**
+
 
 ---
 
