@@ -2,8 +2,8 @@ import fetch from "node-fetch";
 
 export async function handler(event, context) {
   try {
-    const clientId = process.env.SPOTIFY_CLIENT_ID;
-    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+    const clientId = process.env.VITE_SPOTIFY_CLIENT_ID;
+    const clientSecret = process.env.VITE_SPOTIFY_CLIENT_SECRET;
 
     const response = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
