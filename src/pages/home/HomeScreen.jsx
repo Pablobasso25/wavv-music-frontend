@@ -9,13 +9,18 @@ const HomeScreen = () => {
   const [selectedAlbum, setSelectedAlbum] = useState(defaultAlbum);
 
   return (
-    <div className="d-flex">
+    <div className="home-layout">
       <ArtistasSidebar onAlbumSelect={setSelectedAlbum} />
-      <div className="mx-auto">
+      <div
+        className="home-content"
+        style={{ minWidth: 0, overflow: "hidden", width: "100%" }}
+      >
         <TrendingSong />
         <TopSongs album={selectedAlbum} fromHome={true} />
       </div>
-      <MusicPlayer />
+      <div className="home-player" style={{ width: "100%" }}>
+        <MusicPlayer />
+      </div>
     </div>
   );
 };

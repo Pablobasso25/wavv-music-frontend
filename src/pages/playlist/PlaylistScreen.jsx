@@ -62,14 +62,15 @@ const PlaylistScreen = () => {
   const isShowingPlaylist = !selectedAlbum;
 
   return (
-    <Col lg={12}>
-      <div className="d-flex">
-        <ArtistasSidebar onAlbumSelect={handleAlbumSelect} />
+    <div className="home-layout">
+      <ArtistasSidebar onAlbumSelect={handleAlbumSelect} />
+
+      <div className="home-content">
         <div>
           {isShowingPlaylist ? (
             <>
               <h2 className="m-4">Mi Playlist</h2>
-              <p className="text-secondary">
+              <p className="text-secondary ms-4">
                 {playlistAlbum?.total_tracks || 0} canciones guardadas
               </p>
             </>
@@ -86,7 +87,7 @@ const PlaylistScreen = () => {
                   {selectedAlbum?.name || "Álbum"}
                 </h2>
               </div>
-              <p className="text-secondary">
+              <p className="text-secondary ms-4">
                 {selectedAlbum?.artists?.[0]?.name || "Artista"} •{" "}
                 {selectedAlbum?.total_tracks || 0} canciones
               </p>
@@ -101,9 +102,12 @@ const PlaylistScreen = () => {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="home-player">
         <MusicPlayer />
       </div>
-    </Col>
+    </div>
   );
 };
 
