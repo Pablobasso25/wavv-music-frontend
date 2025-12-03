@@ -214,7 +214,7 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
                   name="url"
                   value={formData.url}
                   onChange={handleChange}
-                  placeholder="https://example.com/song.mp3"
+                  placeholder="https://www.soundhelix.com/song.mp3"
                   required
                 />
               </Form.Group>
@@ -225,7 +225,7 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
                   name="cover"
                   value={formData.cover}
                   onChange={handleChange}
-                  placeholder="https://example.com/cover.jpg"
+                  placeholder="https://pexels.com/cover.jpg"
                 />
               </Form.Group>
               <Form.Group className="mb-3">
@@ -235,7 +235,7 @@ const AdminForm = ({ type = "user", editData = null, onSave = null }) => {
                   name="plays"
                   value={formData.plays}
                   onChange={handleChange}
-                  placeholder="Ej: 5 Million Plays"
+                  placeholder="Ej: 5000000 M"
                 />
               </Form.Group>
               <Button type="submit" variant="success">

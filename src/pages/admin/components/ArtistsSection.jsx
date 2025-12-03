@@ -117,7 +117,7 @@ const ArtistsSection = ({
                         type="text"
                         value={artistName}
                         onChange={(e) => setArtistName(e.target.value)}
-                        placeholder="Ej: Bad Bunny, Taylor Swift, The Weeknd..."
+                        placeholder="Ej: Bad Bunny, Eminem, Dua Lipa..."
                         required
                       />
                     </Form.Group>
