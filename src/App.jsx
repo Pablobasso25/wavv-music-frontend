@@ -31,7 +31,6 @@ const App = () => {
           element={
             <>
               <LoginScreen />
-              <Footer />
             </>
           }
         />
@@ -40,7 +39,6 @@ const App = () => {
           element={
             <>
               <RegisterScreen />
-              <Footer />
             </>
           }
         />

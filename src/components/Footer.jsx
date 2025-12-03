@@ -41,7 +41,7 @@ const Footer = () => {
                 cursor: "pointer",
               }}
             >
-              Inicio
+              INICIO
             </a>
             <a
               href="#"
@@ -55,7 +55,7 @@ const Footer = () => {
                 cursor: "pointer",
               }}
             >
-              Nosotros
+              NOSOTROS
             </a>
           </Col>
 
