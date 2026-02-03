@@ -58,7 +58,9 @@ const App = () => {
           path="/profile"
           element={
             <ProtectedRoute>
+              <NavBar />
               <ProfileScreen />
+              <Footer />
             </ProtectedRoute>
           }
         />

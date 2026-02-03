@@ -60,7 +60,7 @@ function ProfileScreen() {
                     </div>
                   </Col>
                   <Col md={8}>
-                    <h3 className="mb-3 text-white">{userData.username}</h3>               
+                    <h3 className="mb-3 text-info-emphasis fw-semibold fs-3">{userData.username}</h3>               
                     <div className="d-flex align-items-start justify-content-between">
                       <p
                         className="text-light mb-4 flex-fill"
