@@ -190,8 +190,7 @@ const serverErrors = error.response?.data;
             <Card.Header className="border-secondary">
               <h4 className="text-center mb-0">Registro en WavvMusic</h4>
               <small className="text-center d-block text-warning mt-1">
-                🔒 Contraseña debe ser <strong>MUY FUERTE</strong> para
-                registrarse
+                🔒 Contraseña debe ser <strong>SEGURA</strong> para                 registrarse
               </small>
             </Card.Header>
             <Card.Body className="p-4">
@@ -234,7 +233,7 @@ const serverErrors = error.response?.data;
                   <Form.Label>Email *</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="correo@ejemplo.com"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.email}
                     maxLength={50}
@@ -258,7 +257,7 @@ const serverErrors = error.response?.data;
                   <Form.Label>Contraseña *</Form.Label>
                   <Form.Control
                     type="password"
-                    placeholder="Crea una contraseña MUY FUERTE (8-20 caracteres)"
+                    placeholder="Crea una contraseña SEGURA (8-20 caracteres)"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.password && forcePassword < 99}
                     maxLength={20}
@@ -274,14 +273,17 @@ const serverErrors = error.response?.data;
                         message:
                           "La contraseña no puede tener más de 20 caracteres",
                       },
-                      onChange: (e) => {
-                        e.target.value = e.target.value.replace(/[<>\s]/g, "");
+                      onChange: (event) => {
+                        event.target.value = event.target.value.replace(
+/[<>\s]/g,
+                          "",
+);
                       },
                       validate: {
                         fuerza: () =>
                           forcePassword >= 99 ||
                           (forcePassword > 0 &&
-                            "La contraseña debe ser MUY FUERTE"),
+                            "La contraseña debe ser SEGURA"),
                         noEspacios: (value) =>
                           !/\s/.test(value) ||
                           "La contraseña no puede contener espacios",
@@ -334,7 +336,7 @@ const serverErrors = error.response?.data;
                       />
 
                       {Object.keys(validations).some(
-                        (key) => !validations[key]
+                        (key) => !validations[key],
                       ) &&
                         forcePassword < 99 && (
                           <div
@@ -416,8 +418,11 @@ const serverErrors = error.response?.data;
                     maxLength={20}
                     {...register("confirmarPassword", {
                       required: "Confirma tu contraseña",
-                      onChange: (e) => {
-                        e.target.value = e.target.value.replace(/[<>\s]/g, "");
+                      onChange: (event) => {
+                        event.target.value = event.target.value.replace(
+/[<>\s]/g,
+                          "",
+);
                       },
                       validate: (value) =>
                         value === password || "Las contraseñas no coinciden",
@@ -440,12 +445,18 @@ const serverErrors = error.response?.data;
                       Registrando...
                     </>
                   ) : forcePassword < 99 ? (
-                    "🔒 Contraseña debe ser MUY FUERTE"
+                    "🔒 Contraseña debe ser SEGURA"
                   ) : (
                     "Registrarse"
                   )}
                 </Button>
               </Form>
+<p className="text-secondary mt-3 text-center">
+                ¿Ya tienes cuenta?{" "}
+                <Link to="/login" className="text-primary text-decoration-none">
+                  Ingresar
+                </Link>
+              </p>
             </Card.Body>
           </Card>
         </Col>
