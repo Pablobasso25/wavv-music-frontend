@@ -11,8 +11,10 @@ import LoginScreen from "./pages/login/LoginScreen";
 import AdminScreen from "./pages/admin/AdminScreen";
 import Footer from "./components/Footer";
 import Error404Screen from "./pages/error404/Error404Screen";
-
 import AboutUs from "./pages/aboutUs/AboutUsScreen";
+import ProfileScreen from "./pages/profile/ProfileScreen.jsx";
+
+
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
@@ -49,6 +51,14 @@ const App = () => {
               <NavBar />
               <HomeScreen />
               <Footer />
+            </ProtectedRoute>
+          }
+        />
+             <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfileScreen />
             </ProtectedRoute>
           }
         />
