@@ -131,7 +131,7 @@ const { signup, errors: registerErrors } = useAuth();
     if (forcePassword < 99) {
       Swal.fire({
         title: "🔒 Contraseña insuficiente",
-        text: "La contraseña debe ser MUY FUERTE para registrarse",
+        text: "La contraseña debe ser SEGURA para registrarse",
         icon: "warning",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
@@ -142,73 +142,41 @@ const { signup, errors: registerErrors } = useAuth();
     }
 
     setSend(true);
-    setErrorEmail("");
-
     try {
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const exists = users.some((user) => user.email === data.email);
+      // 1. Registro en el backend
+      await signup(data);
 
-      if (exists) {
-        Swal.fire({
-          title: "❌ Error",
-          text: "Ya existe un usuario con ese email",
-          icon: "error",
-          background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-          color: "#ffffff",
-          confirmButtonText: "Entendido",
-          confirmButtonColor: "#dc3545",
-        });
-        setSend(false);
-        return;
-      }
-
-      const newUser = {
-        id: Date.now(),
-        username: data.username,
-        email: data.email,
-        password: data.password,
-        role: "usuario",
-        favorites: [],
-        playlists: [],
-        createdAt: new Date().toISOString(),
-        verificado: false,
-      };
-
-      localStorage.setItem("users", JSON.stringify([...users, newUser]));
-
-      let emailFueEnviado = false;
+      // 2. Intento de envío de mail (esto no debe frenar el registro)
       try {
         const templateParams = {
           to_name: data.username,
           to_email: data.email,
-          email: data.email,
-          from_name: "Harmony Stream",
-          fecha: new Date().toISOString().split("T")[0],
+                    from_name: "Wavv Music",
+          fecha: new Date().toLocaleDateString(),
         };
-
         await emailjs.send(
           EMAILJS_CONFIG.SERVICE_ID,
           EMAILJS_CONFIG.TEMPLATE_ID,
           templateParams,
-          EMAILJS_CONFIG.PUBLIC_KEY
+          EMAILJS_CONFIG.PUBLIC_KEY,
         );
-
-        emailFueEnviado = true;
-      } catch (emailError) {
-        emailFueEnviado = false;
+      } catch (error) {
+        console.error("Error al enviar email:", error);
       }
 
-      showSuccessAlert(emailFueEnviado);
+// 3. LA CLAVE: Llamamos a la alerta y nos aseguramos de que redireccione
+      showSuccessAlert(true);
     } catch (error) {
+const serverErrors = error.response?.data;
       Swal.fire({
         title: "❌ Error",
-        text: "Hubo un problema con el registro. Intenta nuevamente.",
+        text: Array.isArray(serverErrors)
+          ? serverErrors[0]
+          : "Error de conexión",
         icon: "error",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#dc3545",
-      });
+              });
     } finally {
       setSend(false);
     }
