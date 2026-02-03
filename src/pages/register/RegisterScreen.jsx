@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import {
   Container,
   Row,
@@ -15,6 +16,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
+import { registerRequest } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 const EMAILJS_CONFIG = {
   SERVICE_ID: "service_46a3s63",
