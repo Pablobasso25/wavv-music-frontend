@@ -30,7 +30,7 @@ const RegisterScreen = () => {
   const [send, setSend] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
   const [emailEnviado, setEmailEnviado] = useState(false);
-
+const { signup, errors: registerErrors } = useAuth();
   const {
     register,
     handleSubmit,
@@ -64,7 +64,7 @@ const RegisterScreen = () => {
       diferenteAlUsername: password !== username,
       noCaracteresPeligrosos: !/[<>]/.test(password),
       noPalabrasComunes: !/(password|123456|admin|12345678|123456789)/i.test(
-        password
+        password,
       ),
     };
 
@@ -93,21 +93,21 @@ const RegisterScreen = () => {
     if (forcePassword < 50) return { texto: "Débil", variant: "danger" };
     if (forcePassword < 80) return { texto: "Regular", variant: "warning" };
     if (forcePassword < 99) return { texto: "Buena", variant: "info" };
-    return { texto: "Muy Fuerte", variant: "success" };
+    return { texto: "Segura", variant: "success" };
   };
 
   const infoForce = informationForce();
 
   const showSuccessAlert = (emailEnviado = true) => {
     const mensaje = emailEnviado
-      ? "¡Te hemos enviado un email de confirmación! Redirigiendo al login..."
-      : "⚠️ Registro exitoso, pero no se pudo enviar el email. Redirigiendo al login...";
+      ? "¡Te hemos enviado un email de bienvenida! Entrando a Wavv Music..."
+      : "⚠️ Registro exitoso. ¡Ya puedes empezar a escuchar música!";
 
     Swal.fire({
-      title: "✔️¡Registro Exitoso!",
+      title: "✔️ ¡Bienvenido!",
       html: `
         <div style="text-align: center;">
-          <p style="margin-bottom: 10px; font-size: 16px;">¡Bienvenido a <strong>Wavv Music</strong>!</p>
+          <p style="margin-bottom: 10px; font-size: 16px;">Tu cuenta ha sido creada con éxito en <strong>Wavv Music</strong>.</p>
           <p style="margin-bottom: 0; font-size: 14px; color: ${
             emailEnviado ? "#b0b0b0" : "#ffc107"
           };">${mensaje}</p>
@@ -117,12 +117,13 @@ const RegisterScreen = () => {
       background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
       color: "#ffffff",
       iconColor: "#6f42c1",
-      confirmButtonText: "¡Empezar!",
+      confirmButtonText: "¡Empezar a escuchar!",
       confirmButtonColor: "#6f42c1",
-      timer: 4000,
+      timer: 3000,
       timerProgressBar: true,
     }).then(() => {
-      navigate("/login");
+//  navegación al Home si todo sale bien
+      navigate("/");
     });
   };
 
