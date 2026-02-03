@@ -31,12 +31,13 @@ function ProfileScreen() {
             >
               <Card.Body className="p-4 p-md-5">
                 <Row className="align-items-center">
-                  <Col md={4} className="text-center mb-4 mb-md-0">
+                  <Col xs={12} md={4} className="text-center mb-4 mb-md-0">
                     <div className="position-relative d-inline-block">
                       <Image
                         src="https://images.pexels.com/photos/2599136/pexels-photo-2599136.jpeg"
                         alt="Profile"
                         roundedCircle
+                        className="img-fluid"
                         style={{
                           width: "180px",
                           height: "180px",
@@ -59,9 +60,9 @@ function ProfileScreen() {
                       </Button>
                     </div>
                   </Col>
-                  <Col md={8}>
+                  <Col xs={12} md={8}>
                     <h3 className="mb-3 text-info-emphasis fw-semibold fs-3">{userData.username}</h3>               
-                    <div className="d-flex align-items-start justify-content-between">
+                    <div className="d-flex flex-column flex-sm-row align-items-start justify-content-between">
                       <p
                         className="text-light mb-4 flex-fill"
                         style={{ lineHeight: "1.6" }}
@@ -69,7 +70,7 @@ function ProfileScreen() {
                         {userData.bio}
                       </p>
                       <Button
-                        className="ms-3 p-2 rounded"
+                        className="ms-sm-3 p-2 rounded align-self-end align-self-sm-start"
                         style={{
                           background:
                             "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -98,14 +99,14 @@ function ProfileScreen() {
                 <div className="mb-4 p-3 rounded" style={{background: "rgba(15,52,96,0.3)"}}>
                   <div className="d-flex align-items-center justify-content-between">
                     <div className="d-flex align-items-center flex-fill">
-                      <div className="me-3 d-flex align-items-center justify-content-center rounded" style={{
+                      <div className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0" style={{
                         width: "48px",
                         height: "48px",
                         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
                       }}>
                         <User size={24} color="white" />
                       </div>
-                      <div>
+                      <div className="text-break">
                         <small className="text-white">Nombre:</small>
                         <p className="text-white fw-medium mb-0">
                           {userData.name}
@@ -119,14 +120,14 @@ function ProfileScreen() {
                 </div>
                 <div className="mb-4 p-3 rounded" style={{background: "rgba(15,52,96,0.3)"}}>
                   <div className="d-flex align-items-center">
-                    <div className="me-3 d-flex align-items-center justify-content-center rounded" style={{
+                    <div className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0" style={{
                       width: "48px",
                       height: "48px",
                       background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
                     }}>
                       <Mail size={24} color="white" />
                     </div>
-                    <div>
+                    <div className="text-break">
                       <small className="text-white">Email:</small>
                       <p className="text-white fw-medium mb-0">
                         {userData.email}
@@ -137,7 +138,7 @@ function ProfileScreen() {
                 <div className="mb-4 p-3 rounded" style={{background: "rgba(15,52,96,0.3)"}}>
                   <div className="d-flex align-items-center justify-content-between">
                     <div className="d-flex align-items-center flex-fill">
-                      <div className="me-3 d-flex align-items-center justify-content-center rounded" style={{
+                      <div className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0" style={{
                         width: "48px",
                         height: "48px",
                         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
@@ -156,7 +157,7 @@ function ProfileScreen() {
                 </div>
                 <div className="p-3 rounded" style={{background: "rgba(15,52,96,0.3)"}}>
                   <div className="d-flex align-items-center">
-                    <div className="me-3 d-flex align-items-center justify-content-center rounded" style={{
+                    <div className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0" style={{
                       width: "48px",
                       height: "48px",
                       background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
