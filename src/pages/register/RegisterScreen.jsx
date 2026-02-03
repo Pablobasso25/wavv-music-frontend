@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import {
   Container,
   Row,
@@ -15,6 +16,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
+import { registerRequest } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 const EMAILJS_CONFIG = {
   SERVICE_ID: "service_46a3s63",
@@ -27,7 +30,7 @@ const RegisterScreen = () => {
   const [send, setSend] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
   const [emailEnviado, setEmailEnviado] = useState(false);
-
+const { signup, errors: registerErrors } = useAuth();
   const {
     register,
     handleSubmit,
@@ -61,7 +64,7 @@ const RegisterScreen = () => {
       diferenteAlUsername: password !== username,
       noCaracteresPeligrosos: !/[<>]/.test(password),
       noPalabrasComunes: !/(password|123456|admin|12345678|123456789)/i.test(
-        password
+        password,
       ),
     };
 
@@ -90,21 +93,21 @@ const RegisterScreen = () => {
     if (forcePassword < 50) return { texto: "Débil", variant: "danger" };
     if (forcePassword < 80) return { texto: "Regular", variant: "warning" };
     if (forcePassword < 99) return { texto: "Buena", variant: "info" };
-    return { texto: "Muy Fuerte", variant: "success" };
+    return { texto: "Segura", variant: "success" };
   };
 
   const infoForce = informationForce();
 
   const showSuccessAlert = (emailEnviado = true) => {
     const mensaje = emailEnviado
-      ? "¡Te hemos enviado un email de confirmación! Redirigiendo al login..."
-      : "⚠️ Registro exitoso, pero no se pudo enviar el email. Redirigiendo al login...";
+      ? "¡Te hemos enviado un email de bienvenida! Entrando a Wavv Music..."
+      : "⚠️ Registro exitoso. ¡Ya puedes empezar a escuchar música!";
 
     Swal.fire({
-      title: "✔️¡Registro Exitoso!",
+      title: "✔️ ¡Bienvenido!",
       html: `
         <div style="text-align: center;">
-          <p style="margin-bottom: 10px; font-size: 16px;">¡Bienvenido a <strong>Wavv Music</strong>!</p>
+          <p style="margin-bottom: 10px; font-size: 16px;">Tu cuenta ha sido creada con éxito en <strong>Wavv Music</strong>.</p>
           <p style="margin-bottom: 0; font-size: 14px; color: ${
             emailEnviado ? "#b0b0b0" : "#ffc107"
           };">${mensaje}</p>
@@ -114,12 +117,13 @@ const RegisterScreen = () => {
       background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
       color: "#ffffff",
       iconColor: "#6f42c1",
-      confirmButtonText: "¡Empezar!",
+      confirmButtonText: "¡Empezar a escuchar!",
       confirmButtonColor: "#6f42c1",
-      timer: 4000,
+      timer: 3000,
       timerProgressBar: true,
     }).then(() => {
-      navigate("/login");
+//  navegación al Home si todo sale bien
+      navigate("/");
     });
   };
 
@@ -127,7 +131,7 @@ const RegisterScreen = () => {
     if (forcePassword < 99) {
       Swal.fire({
         title: "🔒 Contraseña insuficiente",
-        text: "La contraseña debe ser MUY FUERTE para registrarse",
+        text: "La contraseña debe ser SEGURA para registrarse",
         icon: "warning",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
@@ -138,73 +142,41 @@ const RegisterScreen = () => {
     }
 
     setSend(true);
-    setErrorEmail("");
-
     try {
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const exists = users.some((user) => user.email === data.email);
+      // 1. Registro en el backend
+      await signup(data);
 
-      if (exists) {
-        Swal.fire({
-          title: "❌ Error",
-          text: "Ya existe un usuario con ese email",
-          icon: "error",
-          background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-          color: "#ffffff",
-          confirmButtonText: "Entendido",
-          confirmButtonColor: "#dc3545",
-        });
-        setSend(false);
-        return;
-      }
-
-      const newUser = {
-        id: Date.now(),
-        username: data.username,
-        email: data.email,
-        password: data.password,
-        role: "usuario",
-        favorites: [],
-        playlists: [],
-        createdAt: new Date().toISOString(),
-        verificado: false,
-      };
-
-      localStorage.setItem("users", JSON.stringify([...users, newUser]));
-
-      let emailFueEnviado = false;
+      // 2. Intento de envío de mail (esto no debe frenar el registro)
       try {
         const templateParams = {
           to_name: data.username,
           to_email: data.email,
-          email: data.email,
-          from_name: "Harmony Stream",
-          fecha: new Date().toISOString().split("T")[0],
+                    from_name: "Wavv Music",
+          fecha: new Date().toLocaleDateString(),
         };
-
         await emailjs.send(
           EMAILJS_CONFIG.SERVICE_ID,
           EMAILJS_CONFIG.TEMPLATE_ID,
           templateParams,
-          EMAILJS_CONFIG.PUBLIC_KEY
+          EMAILJS_CONFIG.PUBLIC_KEY,
         );
-
-        emailFueEnviado = true;
-      } catch (emailError) {
-        emailFueEnviado = false;
+      } catch (error) {
+        console.error("Error al enviar email:", error);
       }
 
-      showSuccessAlert(emailFueEnviado);
+// 3. LA CLAVE: Llamamos a la alerta y nos aseguramos de que redireccione
+      showSuccessAlert(true);
     } catch (error) {
+const serverErrors = error.response?.data;
       Swal.fire({
         title: "❌ Error",
-        text: "Hubo un problema con el registro. Intenta nuevamente.",
+        text: Array.isArray(serverErrors)
+          ? serverErrors[0]
+          : "Error de conexión",
         icon: "error",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#dc3545",
-      });
+              });
     } finally {
       setSend(false);
     }
@@ -218,8 +190,7 @@ const RegisterScreen = () => {
             <Card.Header className="border-secondary">
               <h4 className="text-center mb-0">Registro en WavvMusic</h4>
               <small className="text-center d-block text-warning mt-1">
-                🔒 Contraseña debe ser <strong>MUY FUERTE</strong> para
-                registrarse
+                🔒 Contraseña debe ser <strong>SEGURA</strong> para                 registrarse
               </small>
             </Card.Header>
             <Card.Body className="p-4">
@@ -262,7 +233,7 @@ const RegisterScreen = () => {
                   <Form.Label>Email *</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="correo@ejemplo.com"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.email}
                     maxLength={50}
@@ -286,7 +257,7 @@ const RegisterScreen = () => {
                   <Form.Label>Contraseña *</Form.Label>
                   <Form.Control
                     type="password"
-                    placeholder="Crea una contraseña MUY FUERTE (8-20 caracteres)"
+                    placeholder="Crea una contraseña SEGURA (8-20 caracteres)"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.password && forcePassword < 99}
                     maxLength={20}
@@ -302,14 +273,17 @@ const RegisterScreen = () => {
                         message:
                           "La contraseña no puede tener más de 20 caracteres",
                       },
-                      onChange: (e) => {
-                        e.target.value = e.target.value.replace(/[<>\s]/g, "");
+                      onChange: (event) => {
+                        event.target.value = event.target.value.replace(
+/[<>\s]/g,
+                          "",
+);
                       },
                       validate: {
                         fuerza: () =>
                           forcePassword >= 99 ||
                           (forcePassword > 0 &&
-                            "La contraseña debe ser MUY FUERTE"),
+                            "La contraseña debe ser SEGURA"),
                         noEspacios: (value) =>
                           !/\s/.test(value) ||
                           "La contraseña no puede contener espacios",
@@ -362,7 +336,7 @@ const RegisterScreen = () => {
                       />
 
                       {Object.keys(validations).some(
-                        (key) => !validations[key]
+                        (key) => !validations[key],
                       ) &&
                         forcePassword < 99 && (
                           <div
@@ -444,8 +418,11 @@ const RegisterScreen = () => {
                     maxLength={20}
                     {...register("confirmarPassword", {
                       required: "Confirma tu contraseña",
-                      onChange: (e) => {
-                        e.target.value = e.target.value.replace(/[<>\s]/g, "");
+                      onChange: (event) => {
+                        event.target.value = event.target.value.replace(
+/[<>\s]/g,
+                          "",
+);
                       },
                       validate: (value) =>
                         value === password || "Las contraseñas no coinciden",
@@ -468,12 +445,18 @@ const RegisterScreen = () => {
                       Registrando...
                     </>
                   ) : forcePassword < 99 ? (
-                    "🔒 Contraseña debe ser MUY FUERTE"
+                    "🔒 Contraseña debe ser SEGURA"
                   ) : (
                     "Registrarse"
                   )}
                 </Button>
               </Form>
+<p className="text-secondary mt-3 text-center">
+                ¿Ya tienes cuenta?{" "}
+                <Link to="/login" className="text-primary text-decoration-none">
+                  Ingresar
+                </Link>
+              </p>
             </Card.Body>
           </Card>
         </Col>
