@@ -69,7 +69,6 @@ const RegisterScreen = () => {
     };
 
     let force = 0;
-
     force += Math.min(password.length * 4, 32);
     if (validations.longitud) force += 10;
     if (validations.mayuscula) force += 10;
@@ -122,7 +121,6 @@ const RegisterScreen = () => {
       timer: 3000,
       timerProgressBar: true,
     }).then(() => {
-      //  navegación al Home si todo sale bien
       navigate("/");
     });
   };
@@ -142,10 +140,7 @@ const RegisterScreen = () => {
 
     setSend(true);
     try {
-      // 1. Registro en el backend
       await signup(data);
-
-      // 2. Intento de envío de mail (esto no debe frenar el registro)
       try {
         const templateParams = {
           to_name: data.username,
@@ -163,7 +158,6 @@ const RegisterScreen = () => {
         console.error("Error al enviar email:", error);
       }
 
-      // 3. LA CLAVE: Llamamos a la alerta y nos aseguramos de que redireccione
       showSuccessAlert(true);
     } catch (error) {
       const serverErrors = error.response?.data;
