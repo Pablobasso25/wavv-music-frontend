@@ -30,7 +30,7 @@ const RegisterScreen = () => {
   const [send, setSend] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
   const [emailEnviado, setEmailEnviado] = useState(false);
-const { signup, errors: registerErrors } = useAuth();
+  const { signup, errors: registerErrors } = useAuth();
   const {
     register,
     handleSubmit,
@@ -122,11 +122,10 @@ const { signup, errors: registerErrors } = useAuth();
       timer: 3000,
       timerProgressBar: true,
     }).then(() => {
-//  navegación al Home si todo sale bien
+      //  navegación al Home si todo sale bien
       navigate("/");
     });
   };
-
   const onSubmit = async (data) => {
     if (forcePassword < 99) {
       Swal.fire({
@@ -151,7 +150,7 @@ const { signup, errors: registerErrors } = useAuth();
         const templateParams = {
           to_name: data.username,
           to_email: data.email,
-                    from_name: "Wavv Music",
+          from_name: "Wavv Music",
           fecha: new Date().toLocaleDateString(),
         };
         await emailjs.send(
@@ -164,10 +163,10 @@ const { signup, errors: registerErrors } = useAuth();
         console.error("Error al enviar email:", error);
       }
 
-// 3. LA CLAVE: Llamamos a la alerta y nos aseguramos de que redireccione
+      // 3. LA CLAVE: Llamamos a la alerta y nos aseguramos de que redireccione
       showSuccessAlert(true);
     } catch (error) {
-const serverErrors = error.response?.data;
+      const serverErrors = error.response?.data;
       Swal.fire({
         title: "❌ Error",
         text: Array.isArray(serverErrors)
@@ -176,7 +175,7 @@ const serverErrors = error.response?.data;
         icon: "error",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
-              });
+      });
     } finally {
       setSend(false);
     }
@@ -190,7 +189,7 @@ const serverErrors = error.response?.data;
             <Card.Header className="border-secondary">
               <h4 className="text-center mb-0">Registro en WavvMusic</h4>
               <small className="text-center d-block text-warning mt-1">
-                🔒 Contraseña debe ser <strong>SEGURA</strong> para                 registrarse
+                🔒 Contraseña debe ser <strong>SEGURA</strong> para registrarse
               </small>
             </Card.Header>
             <Card.Body className="p-4">
@@ -275,9 +274,9 @@ const serverErrors = error.response?.data;
                       },
                       onChange: (event) => {
                         event.target.value = event.target.value.replace(
-/[<>\s]/g,
+                          /[<>\s]/g,
                           "",
-);
+                        );
                       },
                       validate: {
                         fuerza: () =>
@@ -420,9 +419,9 @@ const serverErrors = error.response?.data;
                       required: "Confirma tu contraseña",
                       onChange: (event) => {
                         event.target.value = event.target.value.replace(
-/[<>\s]/g,
+                          /[<>\s]/g,
                           "",
-);
+                        );
                       },
                       validate: (value) =>
                         value === password || "Las contraseñas no coinciden",
@@ -451,7 +450,7 @@ const serverErrors = error.response?.data;
                   )}
                 </Button>
               </Form>
-<p className="text-secondary mt-3 text-center">
+              <p className="text-secondary mt-3 text-center">
                 ¿Ya tienes cuenta?{" "}
                 <Link to="/login" className="text-primary text-decoration-none">
                   Ingresar
