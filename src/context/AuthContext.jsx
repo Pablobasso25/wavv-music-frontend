@@ -27,31 +27,61 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = (email, password) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-
-    const found = users.find(
-      (u) => u.email === email && u.password === password
-    );
-
-    if (found) {
-      setUser(found);
-      localStorage.setItem("user", JSON.stringify(found));
-      return true;
+  const login = async (user) => {
+    try {
+      const res = await loginRequest(user);
+      setUser(res.data);
+      setIsAuthenticated(true);
+    } catch (error) {
+      if (Array.isArray(error.response.data)) {
+        return setErrors(error.response.data);
     }
-
-    return false;
+      setErrors([error.response.data.message]);
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await logoutRequest(); 
+    Cookies.remove("token");
+    setIsAuthenticated(false); 
     setUser(null);
-    localStorage.removeItem("user");
   };
+  useEffect(() => {
+    async function checkLogin() {
+      const cookies = Cookies.get();
+      if (!cookies.token) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return setUser(null);
+      }
+      try {
+        const res = await verifyTokenRequest(cookies.token);
+        if (!res.data) {
+          setIsAuthenticated(false);
+          setLoading(false);
+          return;
+        }
+
+        setIsAuthenticated(true);
+        setUser(res.data);
+        setLoading(false);
+      } catch (error) {
+        setIsAuthenticated(false);
+        setUser(null);
+        setLoading(false);
+      }
+    }
+    checkLogin();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{ signup, login, logout, user, isAuthenticated, errors, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
 export const useAuth = () => useContext(AuthContext);
+
