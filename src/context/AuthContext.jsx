@@ -11,23 +11,21 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [errors, setErrors] = useState([]); // Para mostrar errores de Zod en el Front
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    const storedUsers = JSON.parse(localStorage.getItem("users"));
-    const storedSongs = JSON.parse(localStorage.getItem("songs"));
-
-    if (!storedUsers)
-      localStorage.setItem(
-        "users",
-        JSON.stringify([defaultAdmin, ...defaultUsers])
-      );
-
-    if (!storedSongs)
-      localStorage.setItem("songs", JSON.stringify(defaultSongs));
-
-    if (storedUser) setUser(storedUser);
-  }, []);
+  const signup = async (user) => {
+    try {
+      const res = await registerRequest(user);
+      setUser(res.data);
+      setIsAuthenticated(true);
+      return res.data;
+    } catch (error) {
+      setErrors(error.response.data);
+      throw error;
+    }
+  };
 
   const login = (email, password) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
