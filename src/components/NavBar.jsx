@@ -15,7 +15,6 @@ import { useMusicPlayer } from "../context/MusicPlayerContext";
 import Logo from "../assets/images/logo.jpg";
 import { toast, Slide } from "react-toastify";
 import { showConfirm } from "../helpers/alerts";
-
 const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();

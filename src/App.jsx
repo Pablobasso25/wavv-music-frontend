@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import Error404Screen from "./pages/error404/Error404Screen";
 import AboutUs from "./pages/aboutUs/AboutUsScreen";
 import ProfileScreen from "./pages/profile/ProfileScreen.jsx";
+import SubscriptionScreen from "./pages/subscription/SubscriptionScreen.jsx";
 
 
 
@@ -91,6 +92,14 @@ const App = () => {
               <AboutUs />
               <Footer />
             </>
+          }
+        />
+          <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <SubscriptionScreen/>
+            </ProtectedRoute>
           }
         />
         <Route path="*" element={<Error404Screen />} />
