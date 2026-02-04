@@ -14,7 +14,6 @@ const ArtistsSection = ({
   savedArtists,
   setSavedArtists,
 }) => {
-  const { token } = useToken();
   const [artistName, setArtistName] = useState("");
 
   const handleSearchAndSaveArtist = async () => {
