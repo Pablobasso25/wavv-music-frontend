@@ -11,8 +11,11 @@ import LoginScreen from "./pages/login/LoginScreen";
 import AdminScreen from "./pages/admin/AdminScreen";
 import Footer from "./components/Footer";
 import Error404Screen from "./pages/error404/Error404Screen";
-
 import AboutUs from "./pages/aboutUs/AboutUsScreen";
+import ProfileScreen from "./pages/profile/ProfileScreen.jsx";
+import SubscriptionScreen from "./pages/subscription/SubscriptionScreen.jsx";
+
+
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
@@ -52,6 +55,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+             <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <ProfileScreen />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin"
           element={
@@ -79,6 +92,16 @@ const App = () => {
               <AboutUs />
               <Footer />
             </>
+          }
+        />
+          <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <SubscriptionScreen/>
+               <Footer />
+            </ProtectedRoute>
           }
         />
         <Route path="*" element={<Error404Screen />} />
