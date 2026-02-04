@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Row, Col, Card, Form, Button } from "react-bootstrap";
-import { useToken } from "../../../context/useToken";
-import { searchArtistAndAlbums } from "../../../helpers/musicApi";
 import AlbumTable from "./AlbumTable";
 import {
   showWarning,
@@ -16,7 +14,6 @@ const ArtistsSection = ({
   savedArtists,
   setSavedArtists,
 }) => {
-  const { token } = useToken();
   const [artistName, setArtistName] = useState("");
 
   const handleSearchAndSaveArtist = async () => {

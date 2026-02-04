@@ -10,8 +10,6 @@ import {
 } from "react-bootstrap";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useToken } from "../context/useToken";
-import { searchTracks } from "../helpers/musicApi";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import Logo from "../assets/images/logo.jpg";
 import { toast, Slide } from "react-toastify";
@@ -21,7 +19,6 @@ const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { token, loading: tokenLoading } = useToken();
   const { playSong } = useMusicPlayer();
 
   const [searchQuery, setSearchQuery] = useState("");
