@@ -16,7 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const EMAILJS_CONFIG = {
   SERVICE_ID: "service_46a3s63",
