@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { defaultAdmin, defaultUsers, defaultSongs } from "../data/dataDefault";
+import {
+  loginRequest,
+  registerRequest,
+  verifyTokenRequest,
+  logoutRequest,
+} from "../api/auth";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
