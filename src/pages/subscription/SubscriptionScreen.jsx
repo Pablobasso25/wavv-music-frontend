@@ -84,8 +84,8 @@ const SubscriptionScreen = () => {
               borderWidth: "2px",
             }}
           >
-            <div className="position-absolute top-0 end-0 m-3">
-              <span className="badge bg-success text-dark">RECOMENDADO</span>
+            <div className="position-absolute top-0 end-0 p-2 ">
+              <span className="badge bg-success text-dark" style={{fontSize: "0.7rem"}}>PROMO</span>
             </div>
             <Card.Body className="d-flex flex-column">
               <Card.Title className="fs-2 fw-bold text-success">
@@ -142,8 +142,8 @@ const SubscriptionScreen = () => {
               borderWidth: "2px",
             }}
           >
-            <div className="position-absolute top-0 end-0 m-3">
-              <span className="badge bg-info text-dark">MEJOR VALOR</span>
+            <div className="position-absolute top-0 end-0 p-2 ">
+              <span className="badge bg-info text-dark" style={{fontSize: "0.7rem"}}>FAVORITO</span>
             </div>
             <Card.Body className="d-flex flex-column">
               <Card.Title className="fs-2 fw-bold text-info">
