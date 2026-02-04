@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./SubscriptonScreen.css";
 import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
 /* import axios from "../../api/axios";  */
 import { useAuth } from "../../context/AuthContext";
@@ -77,17 +78,17 @@ const SubscriptionScreen = () => {
         </Col>
         <Col md={5} lg={3}>
           <Card
-            className="text-white h-100 shadow-lg border-primary"
+            className="text-white h-100 shadow-lg border-success"
             style={{
               background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
               borderWidth: "2px",
             }}
           >
             <div className="position-absolute top-0 end-0 m-3">
-              <span className="badge bg-primary">RECOMENDADO</span>
+              <span className="badge bg-success text-dark">RECOMENDADO</span>
             </div>
             <Card.Body className="d-flex flex-column">
-              <Card.Title className="fs-2 fw-bold text-primary">
+              <Card.Title className="fs-2 fw-bold text-success">
                 Premium
               </Card.Title>
               <h3 className="mb-4">
@@ -95,46 +96,57 @@ const SubscriptionScreen = () => {
               </h3>
               <ListGroup variant="flush" className="bg-transparent mb-4">
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-primary me-2"></i>
+                  <i className="bx bx-check text-success me-2"></i>
                   Playlist <strong>Ilimitada</strong>
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-primary me-2"></i>
+                  <i className="bx bx-check text-success me-2"></i>
                   Sin anuncios
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-primary me-2"></i>
+                  <i className="bx bx-check text-success me-2"></i>
                   Calidad de audio superior
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-primary me-2"></i>
+                  <i className="bx bx-check text-success me-2"></i>
                   Soporte 24/7
                 </ListGroup.Item>
               </ListGroup>
               <Button
-                onClick={() => handleBuy("Premium", 500)}
-                disabled={loading}
-                className="mt-auto w-100 py-2 fw-bold"
-                style={{ backgroundColor: "#6f42c1", border: "none" }}
-              >
-                {loading ? "Procesando..." : "Suscribirme ahora"}
-              </Button>
+  onClick={() => handleBuy("Familiar", 750)}
+  disabled={loading}
+  className="mt-auto w-100 py-2  btn-expand"
+  style={{
+    backgroundColor: "#198754",
+    color: "#000000",
+    border: "none",
+  }}
+>
+  <span className="btn-icon">
+    <i className="bx bx-cart"></i>
+  </span>
+
+  <span className="btn-text">
+    {loading ? "Procesando..." : "Suscribirme ahora"}
+  </span>
+</Button>
+
             </Card.Body>
           </Card>
         </Col>
         <Col md={5} lg={3}>
           <Card
-            className="text-white h-100 shadow-lg border-danger"
+            className="text-white h-100 shadow-lg border-info"
             style={{
               background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
               borderWidth: "2px",
             }}
           >
             <div className="position-absolute top-0 end-0 m-3">
-              <span className="badge bg-danger text-white">MEJOR VALOR</span>
+              <span className="badge bg-info text-dark">MEJOR VALOR</span>
             </div>
             <Card.Body className="d-flex flex-column">
-              <Card.Title className="fs-2 fw-bold text-danger">
+              <Card.Title className="fs-2 fw-bold text-info">
                 Familiar
               </Card.Title>
               <h3 className="mb-4">
@@ -142,38 +154,46 @@ const SubscriptionScreen = () => {
               </h3>
               <ListGroup variant="flush" className="bg-transparent mb-4">
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-danger me-2"></i>
+                  <i className="bx bx-check text-info me-2"></i>
                   Playlist <strong>Ilimitada</strong>
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-danger me-2"></i>
+                  <i className="bx bx-check text-info me-2"></i>
                   Sin anuncios
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-danger me-2"></i>
+                  <i className="bx bx-check text-info me-2"></i>
                   Calidad de audio superior
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-danger me-2"></i>
+                  <i className="bx bx-check text-info me-2"></i>
                   Soporte 24/7
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-danger me-2"></i>
+                  <i className="bx bx-check text-info me-2"></i>
                   <strong>Hasta 3 dispositivos simultáneos</strong>
                 </ListGroup.Item>
               </ListGroup>
-              <Button
-                onClick={() => handleBuy("Familiar", 750)}
-                disabled={loading}
-                className="mt-auto w-100 py-2 fw-bold"
-                style={{
-                  backgroundColor: "#ee3a3a",
-                  color: "#ffffff",
-                  border: "none",
-                }}
-              >
-                {loading ? "Procesando..." : "Suscribirme ahora"}
-              </Button>
+             <Button
+  onClick={() => handleBuy("Familiar", 750)}
+  disabled={loading}
+  className="mt-auto w-100 py-2  btn-expand"
+  style={{
+    backgroundColor: "#0dcaf0",
+    color: "#000000",
+    border: "none",
+  }}
+>
+  <span className="btn-icon">
+    <i className="bx bx-cart"></i>
+  </span>
+
+  <span className="btn-text">
+    {loading ? "Procesando..." : "Suscribirme ahora"}
+  </span>
+</Button>
+
+
             </Card.Body>
           </Card>
         </Col>

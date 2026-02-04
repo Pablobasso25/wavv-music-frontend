@@ -98,7 +98,9 @@ const App = () => {
           path="/subscription"
           element={
             <ProtectedRoute>
+              <NavBar />
               <SubscriptionScreen/>
+               <Footer />
             </ProtectedRoute>
           }
         />
