@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, ProgressBar } from "react-bootstrap";
-import { useMusicPlayer } from "../context/MusicPlayerContext";
+import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const MusicPlayer = () => {
