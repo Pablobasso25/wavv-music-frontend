@@ -26,4 +26,22 @@ export function SongProvider({ children }) {
       console.error("Error al obtener canciones de DB:", error);
     }
   };
+  const createSong = async (song) => {
+    try {
+      const res = await createSongRequest(song);
+      setSongs([...songs, res.data]);
+    } catch (error) {
+      console.error("Error al crear canción:", error);
+    }
+  };
+  const searchExternalSongs = async (searchTerm) => {
+    try {
+      const res = await searchExternalSongsRequest(searchTerm);
+      setSearchResults(res.data);
+      return res.data;
+    } catch (error) {
+      console.error("Error en búsqueda externa:", error);
+      setSearchResults([]);
+    }
+  };
 }
