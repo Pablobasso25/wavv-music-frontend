@@ -9,10 +9,10 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
       ? artistas
       : [
           {
-        id: "default-artist",
-        name: "Rion Clarke",
-        image: defaultAlbum.image,
-        album: defaultAlbum,
+            id: "default-artist",
+            name: "Rion Clarke",
+            image: defaultAlbum.image,
+            album: defaultAlbum,
           },
         ];
 
