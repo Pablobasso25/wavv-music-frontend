@@ -13,37 +13,13 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
         name: "Rion Clarke",
         image: defaultAlbum.image,
         album: defaultAlbum,
-      };
-      setArtistas([defaultArtist, ...stored]);
-    };
-
-    loadArtists();
-
-    window.addEventListener("storage", loadArtists);
-    return () => window.removeEventListener("storage", loadArtists);
-  }, []);
-
-  useEffect(() => {
-    const content = contentRef.current;
-    if (!content) return;
-
-    const handleWheel = (e) => {
-      e.preventDefault();
-      content.scrollTop += e.deltaY;
-    };
-
-    content.addEventListener("wheel", handleWheel, { passive: false });
-    return () => content.removeEventListener("wheel", handleWheel);
-  }, []);
-
-  const handleClick = (album) => {
-    localStorage.setItem("selectedAlbum", JSON.stringify(album));
-    onAlbumSelect(album);
-  };
+          },
+        ];
 
   return (
     <div
       className="artistas-sidebar p-3"
+      ref={contentRef}
       style={{ width: "240px", height: "100vh", overflowY: "auto" }}
     >
       <div className="d-flex flex-column">
@@ -54,9 +30,9 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
           TOP ARTISTAS
         </h6>
 
-        {artistas.map((artista) => (
+        {displayList.map((artista, index) => (
           <div
-            key={artista.id}
+            key={artista.id || index}
             className="artista-item d-flex flex-column align-items-center p-3 border-0 rounded mb-3"
             style={{
               cursor: "pointer",
