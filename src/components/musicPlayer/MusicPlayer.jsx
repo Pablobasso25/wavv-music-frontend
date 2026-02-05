@@ -1,8 +1,22 @@
-import React from "react";
-import { Container, ProgressBar } from "react-bootstrap";
-import { useMusicPlayer } from "../../context/MusicPlayerContext";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Play,
+  Pause,
+  X,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  Minimize2,
+  Shuffle,
+  Repeat,
+  FileText,
+  Heart,
+} from "lucide-react";
+import { useLocation } from "react-router-dom";
+import "./MusicPlayer.css";
 
+const PLAYER_WIDTH = 300;
+const MARGIN = 20;
 const MusicPlayer = () => {
   const {
     currentSong,
