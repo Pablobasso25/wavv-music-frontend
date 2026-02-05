@@ -7,26 +7,23 @@
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
     overflow: hidden;
 }
-
 .floating-player {
     position: fixed;
     z-index: 9999;
 }
-
 .fixed-player {
     margin: auto;
     height: 500px;
     display: flex;
     flex-direction: column;
 }
-
 .fixed-artwork {
     padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex: 1;
-
+}
 .fixed-artwork img {
     width: 180px;
     height: 180px;
@@ -34,25 +31,20 @@
     object-fit: cover;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
-
 .fixed-song-info {
     text-align: center;
     padding: 0 20px 16px;
 }
-
 .fixed-song-info .title {
     font-size: 18px;
     margin: 0 0 6px 0;
     font-weight: 600;
 }
-
 .fixed-song-info .artist {
     font-size: 14px;
     color: #9aa4b2;
     margin: 0;
 }
-
-/* HEADER */
 .player-header {
     padding: 12px 16px;
     display: flex;
@@ -61,39 +53,31 @@
     font-size: 13px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .header-actions button {
     background: none;
     border: none;
     color: #aaa;
     cursor: pointer;
 }
-
-/* MAIN */
 .player-main {
     display: flex;
     align-items: center;
     gap: 14px;
     padding: 16px;
 }
-
 .cover {
     width: 80px;
     height: 80px;
     border-radius: 12px;
 }
-
 .song-meta .title {
     font-size: 15px;
     margin: 0;
 }
-
 .song-meta .artist {
     font-size: 13px;
     color: #9aa4b2;
 }
-
-/* PROGRESS */
 .player-progress {
     display: flex;
     align-items: center;
@@ -101,12 +85,9 @@
     padding: 0 16px;
     font-size: 11px;
 }
-
 .player-progress input {
     flex: 1;
 }
-
-/* CONTROLS */
 .controls {
     display: flex;
     justify-content: center;
@@ -114,14 +95,12 @@
     gap: 16px;
     padding: 14px;
 }
-
 .controls button {
     background: none;
     border: none;
     color: #ccc;
     cursor: pointer;
 }
-
 .controls .play {
     background: #5773ff;
     width: 46px;
@@ -129,48 +108,38 @@
     border-radius: 50%;
     color: white;
 }
-
-/* EXTRAS */
 .extras {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 16px 16px;
 }
-
 .extras button {
     background: none;
     border: none;
     color: #ccc;
 }
-
 .extras .liked {
     color: #ff2e2e;
 }
-
 .volume {
     display: flex;
     align-items: center;
     gap: 6px;
 }
-
 .volume input {
     width: 70px;
 }
-
-/* LYRICS */
 .lyrics-panel {
     background: rgba(0, 0, 0, 0.85);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .lyrics-header {
     display: flex;
     justify-content: space-between;
     padding: 10px 14px;
     font-size: 13px;
 }
-
 .lyrics-header .lyrics-close-btn {
     background: rgba(255, 255, 255, 0.03);
     border: none;
@@ -184,17 +153,14 @@
     cursor: pointer;
     transition: background 0.15s ease, transform 0.06s ease, color 0.15s;
 }
-
 .lyrics-header .lyrics-close-btn:hover {
     background: rgba(255, 255, 255, 0.06);
     color: #fff;
     transform: translateY(-1px);
 }
-
 .lyrics-header .lyrics-close-btn:active {
     transform: scale(0.98);
 }
-
 .lyrics-body {
     padding: 12px 14px;
     max-height: 160px;
@@ -202,16 +168,12 @@
     font-size: 13px;
     color: #ccc;
 }
-
-/* MINIMIZED */
 .minimized {
     height: 52px;
 }
-
 .minimized> :not(.player-header) {
     display: none;
 }
-
 .player-toggle-btn {
     background: linear-gradient(135deg, #5773ff, #4a63e6);
     border: none;
@@ -229,24 +191,14 @@
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.1);
 }
-
 .player-toggle-btn:hover {
     background: linear-gradient(135deg, #4a63e6, #3d52d9);
     transform: scale(1.1);
     box-shadow: 0 12px 30px rgba(87, 115, 255, 0.6);
 }
-
 .player-toggle-btn:active {
     transform: scale(0.95);
 }
-
-/* =============================
-   MOBILE / TABLET LAYOUT (<=992px)
-   - Bottom fixed full-width player
-   - Album artwork at the left, info center, controls right
-   - Preserve existing button design (smaller where needed)
-   ============================= */
-
 .music-player.mobile-player {
     position: fixed;
     left: 0;
@@ -264,24 +216,20 @@
     z-index: 10000;
     overflow: hidden;
 }
-
 .mobile-content {
     display: flex;
     align-items: center;
     gap: 16px;
-    /* aumentado para separar un poco la carátula */
     width: 100%;
     padding-top: 20px;
-    /* separa la carátula de la barra de progreso superior */
-}
 
+}
 .mobile-artwork img {
     width: 56px;
     height: 56px;
     border-radius: 10px;
     object-fit: cover;
 }
-
 .mobile-info {
     flex: 1 1 auto;
     min-width: 0;
@@ -289,7 +237,6 @@
     flex-direction: column;
     justify-content: center;
 }
-
 .mobile-info .song-title {
     font-size: 14px;
     margin: 0;
@@ -298,7 +245,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .mobile-info .song-artist {
     font-size: 12px;
     color: #9aa4b2;
@@ -307,13 +253,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .mobile-controls {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-
 .control-btn {
     background: none;
     border: none;
@@ -324,7 +268,6 @@
     align-items: center;
     justify-content: center;
 }
-
 .mobile-play-btn {
     background: #5773ff;
     width: 44px;
@@ -337,48 +280,36 @@
     border: none;
     box-shadow: 0 8px 22px rgba(87, 115, 255, 0.28);
 }
-
 .mobile-play-btn:active {
     transform: scale(0.96);
 }
-
-/* Hide floating/fixed large-player UI on smaller viewports */
 @media (max-width: 992px) {
     .floating-player {
         display: none !important;
     }
-
     .fixed-player {
         display: none !important;
     }
-
     .player-toggle-btn {
         display: none !important;
     }
 }
-
-/* Small tweaks for very small devices */
 @media (max-width: 420px) {
     .mobile-info .song-title {
         font-size: 13px;
     }
-
     .mobile-info .song-artist {
         font-size: 11px;
     }
-
     .mobile-artwork img {
         width: 48px;
         height: 48px;
     }
-
     .mobile-play-btn {
         width: 40px;
         height: 40px;
     }
 }
-
-/* Mobile progress bar (top edge) */
 .mobile-progress {
     position: absolute;
     top: 10px;
@@ -391,13 +322,11 @@
     border-radius: 6px;
     z-index: 10001;
 }
-
 .mobile-progress::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 6px;
     background: transparent;
 }
-
 .mobile-progress::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 12px;
@@ -408,13 +337,11 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     cursor: pointer;
 }
-
 .mobile-progress::-moz-range-track {
     height: 6px;
     border-radius: 6px;
     background: transparent;
 }
-
 .mobile-progress::-moz-range-thumb {
     width: 12px;
     height: 12px;

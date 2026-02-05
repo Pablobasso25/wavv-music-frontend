@@ -100,7 +100,7 @@ const MusicPlayer = () => {
     setCurrentTime((e.target.value / 100) * duration);
   };
   if (isMobile) {
-  return (
+    return (
       <div className="music-player mobile-player">
         <input
           aria-label="Mobile progress"
@@ -124,7 +124,7 @@ const MusicPlayer = () => {
           <div className="mobile-info">
             <p className="song-title">Song Name</p>
             <p className="song-artist">Artist Name</p>
-        </div>
+          </div>
           <div className="mobile-controls">
             <button className="control-btn">
               <SkipBack size={16} />
@@ -154,7 +154,7 @@ const MusicPlayer = () => {
             y: 80,
           });
         }}
-            style={{
+        style={{
           position: "fixed",
           bottom: "20px",
           right: "20px",
@@ -298,14 +298,12 @@ const MusicPlayer = () => {
               </div>
               <div className="lyrics-body">
                 <p>Lyrics will be displayed here...</p>
-        </div>
-      </div>
+              </div>
+            </div>
           )}
         </>
       )}
-      </div>
-    </Container>
+    </div>
   );
 };
-
 export default MusicPlayer;
