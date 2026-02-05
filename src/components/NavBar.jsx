@@ -82,13 +82,12 @@ const NavBar = () => {
 
   const handlePlaySong = (track) => {
     const songData = {
-      title: track.name,
-      artists: track.artists[0]?.name || "artista",
-      album: track.album.name,
-      cover: track.album.images[0]?.url,
-      audio: track.preview_url,
-      genre: "music",
-      name: track.name,
+      title: track.title,
+      artist: track.artist,
+      album: track.album,
+      cover: track.image,
+      audio: track.audio,
+      name: track.title,
     };
     playSong(songData);
     setShowDropdown(false);
@@ -165,7 +164,6 @@ const NavBar = () => {
           />
         </Navbar.Brand>
 
-       
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="border-0" />
 
         <Navbar.Collapse id="basic-navbar-nav">
@@ -181,7 +179,6 @@ const NavBar = () => {
               </NavLink>
             )}
 
-           
             {!isAdminPage && (
               <NavLink
                 to="/about-us"
@@ -192,7 +189,6 @@ const NavBar = () => {
               </NavLink>
             )}
 
-          
             {isAdminPage && (
               <NavLink
                 to="/"
@@ -204,7 +200,6 @@ const NavBar = () => {
               </NavLink>
             )}
 
-           
             {!isAdminPage && (
               <div
                 className="search position-relative"
@@ -274,51 +269,32 @@ const NavBar = () => {
                               cursor: "pointer",
                               transition: "background-color 0.2s",
                             }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.backgroundColor =
+                            onMouseEnter={(event) =>
+                              (event.currentTarget.style.backgroundColor =
                                 "#2a2a30")
                             }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.backgroundColor =
+                            onMouseLeave={(event) =>
+                              (event.currentTarget.style.backgroundColor =
                                 "transparent")
                             }
-                            onClick={() => {
-                              const songData = {
-                                title: track.name,
-                                artist:
-                                  track.artists
-                                    ?.map((a) => a.name)
-                                    .join(", ") || "Unknown",
-                                album: track.album?.name || "Unknown Album",
-                                cover: track.album.images[0]?.url,
-                                audio: track.preview_url,
-                                genre: "Music",
-                                name: track.name,
-                              };
-                              playSong(songData);
-                              setShowDropdown(false);
-                              setSearchQuery("");
-                            }}
+                            onClick={() => handlePlaySong(track)}
                           >
                             <img
-                              src={
-                                track.album.images[2]?.url ||
-                                track.album.images[0]?.url
-                              }
-                              alt={track.name}
+                              src={track.image}
+                              alt={track.title}
                               width="50"
                               height="50"
                               className="rounded"
                             />
                             <div className="flex-grow-1">
                               <div className="text-white fw-semibold">
-                                {track.name}
+                                {track.title}
                               </div>
                               <div className="text-secondary small">
-                                {track.artists?.map((a) => a.name).join(", ")}
+                                {track.artist}
                               </div>
                             </div>
-                            {track.preview_url && (
+                            {track.audio && (
                               <i className="bx bx-play-circle fs-4 text-primary"></i>
                             )}
                           </div>
@@ -339,21 +315,18 @@ const NavBar = () => {
                 as="div"
                 id="dropdown-user"
                 className="d-flex align-items-center profile-toggle"
-                style={{
-                  backgroundColor: "transparent",
-                  cursor: "pointer",
-                }}
+                style={{ backgroundColor: "transparent", cursor: "pointer" }}
               >
                 <div className="d-flex align-items-center">
                   <div className="bg-secondary rounded-start p-1">
                     <img
-                      src="assets/profile.png"
+                      src="assets/images/juan.png"
                       className="rounded"
                       width="35"
                       height="35"
                       alt="Profile"
-                      onError={(e) => {
-                        e.target.src =
+                      onError={(event) => {
+                        event.target.src =
                           "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=35&h=35&fit=crop&crop=face";
                       }}
                     />
@@ -369,74 +342,25 @@ const NavBar = () => {
               <Dropdown.Menu
                 className="border-secondary user-dropdown-menu"
                 renderOnMount
-                style={{
-                  backgroundColor: "#000",
-                  borderColor: "#000",
-                }}
+                style={{ backgroundColor: "#000", borderColor: "#000" }}
               >
-                {isAdminPage ? (
+                <Dropdown.Item
+                  onClick={handleLogout}
+                  className="text-white d-flex align-items-center dropdown-item-custom"
+                  style={{ backgroundColor: "#000" }}
+                >
+                  <i className="bx bx-log-out me-2"></i>
+                  <span>Cerrar Sesión</span>
+                </Dropdown.Item>
+                {user?.role === "admin" && !isAdminPage && (
                   <Dropdown.Item
-                    onClick={handleLogout}
-                    className="text-white d-flex align-items-center dropdown-item-custom"
+                    onClick={() => navigate("/admin")}
+                    className="text-warning d-flex align-items-center dropdown-item-custom"
                     style={{ backgroundColor: "#000" }}
                   >
-                    <i className="bx bx-log-out me-2"></i>
-                    <span>Cerrar Sesión</span>
+                    <i className="bx bx-shield me-2"></i>
+                    <span>Panel Admin</span>
                   </Dropdown.Item>
-                ) : (
-                  <>
-                    <Dropdown.Item
-                      onClick={() => navigate("/404")}
-                      className="text-white d-flex align-items-center dropdown-item-custom"
-                      style={{ backgroundColor: "#000" }}
-                    >
-                      <i className="bx bx-user me-2"></i>
-                      <span>Perfil</span>
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      onClick={() => navigate("/404")}
-                      className="text-white d-flex align-items-center dropdown-item-custom"
-                      style={{ backgroundColor: "#000" }}
-                    >
-                      <i className="bx bx-cog me-2"></i>
-                      <span>Configuración</span>
-                    </Dropdown.Item>
-
-                    {user?.role !== "admin" && (
-                      <Dropdown.Item
-                        onClick={() => navigate("/404")}
-                        className="text-white d-flex align-items-center dropdown-item-custom"
-                        style={{ backgroundColor: "#000" }}
-                      >
-                        <i className="bx bx-crown me-2"></i>
-                        <span>Premium</span>
-                        <Badge bg="warning" text="dark" className="ms-2">
-                          PRO
-                        </Badge>
-                      </Dropdown.Item>
-                    )}
-
-                    {user?.role === "admin" && (
-                      <Dropdown.Item
-                        onClick={() => navigate("/admin")}
-                        className="text-warning d-flex align-items-center dropdown-item-custom"
-                        style={{ backgroundColor: "#000" }}
-                      >
-                        <i className="bx bx-shield me-2"></i>
-                        <span>Panel Admin</span>
-                      </Dropdown.Item>
-                    )}
-
-                    <Dropdown.Divider className="border-secondary" />
-                    <Dropdown.Item
-                      onClick={handleLogout}
-                      className="text-white d-flex align-items-center dropdown-item-custom"
-                      style={{ backgroundColor: "#000" }}
-                    >
-                      <i className="bx bx-log-out me-2"></i>
-                      <span>Cerrar Sesión</span>
-                    </Dropdown.Item>
-                  </>
                 )}
               </Dropdown.Menu>
             </Dropdown>
