@@ -1,16 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useRef } from "react";
 import { defaultAlbum } from "../data/dataDefault";
 
-const ArtistasSidebar = ({ onAlbumSelect }) => {
-  const [artistas, setArtistas] = useState([]);
+const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
   const contentRef = useRef(null);
 
-  useEffect(() => {
-    const loadArtists = () => {
-      const stored = JSON.parse(localStorage.getItem("artistas")) || [];
-
-      const defaultArtist = {
+  const displayList =
+    artistas.length > 0
+      ? artistas
+      : [
+          {
         id: "default-artist",
         name: "Rion Clarke",
         image: defaultAlbum.image,
