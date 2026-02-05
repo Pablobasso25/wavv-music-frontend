@@ -1,24 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Navbar,
-  Nav,
-  Container,
-  Form,
-  Dropdown,
-  Badge,
-  Alert,
-} from "react-bootstrap";
+import { Navbar, Nav, Container, Form, Dropdown, Badge } from "react-bootstrap";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useSongs } from "../context/SongContext"; // Nueva lógica
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import Logo from "../assets/images/logo.jpg";
 import { toast, Slide } from "react-toastify";
 import { showConfirm } from "../helpers/alerts";
+
 const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { playSong } = useMusicPlayer();
+  const { searchExternalSongs } = useSongs();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -30,7 +25,7 @@ const NavBar = () => {
   const handleLogout = async () => {
     const result = await showConfirm(
       "¿Estás seguro que deseas cerrar sesión?",
-      "Cerrar Sesión"
+      "Cerrar Sesión",
     );
 
     if (result.isConfirmed) {
@@ -40,7 +35,6 @@ const NavBar = () => {
   };
 
   const isAdminPage = location.pathname === "/admin";
-
   useEffect(() => {
     if (searchQuery.length === 0) {
       setSearchResults([]);
@@ -55,21 +49,14 @@ const NavBar = () => {
       setShowDropdown(false);
       return;
     }
-
-    if (!token || tokenLoading) {
-      return;
-    }
-
-    if (lastSearchRef.current === searchQuery) {
-      return;
-    }
+        if (lastSearchRef.current === searchQuery) return;
 
     const timer = setTimeout(async () => {
       lastSearchRef.current = searchQuery;
       setIsSearching(true);
       try {
-        const results = await searchTracks(token, searchQuery, 8);
-        setSearchResults(results);
+        const results = await searchExternalSongs(searchQuery);
+        setSearchResults(results || []);
         setShowDropdown(true);
       } catch (error) {
         setSearchResults([]);
@@ -77,10 +64,10 @@ const NavBar = () => {
       } finally {
         setIsSearching(false);
       }
-    }, 300);
+    }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, token, tokenLoading]);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
