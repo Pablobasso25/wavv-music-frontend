@@ -5,7 +5,6 @@ import { useAuth } from "../context/AuthContext";
 import { useSongs } from "../context/SongContext"; // Nueva lógica
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import Logo from "../assets/images/logo.jpg";
-import { toast, Slide } from "react-toastify";
 import { showConfirm } from "../helpers/alerts";
 
 const NavBar = () => {
@@ -75,7 +74,6 @@ const NavBar = () => {
         setShowDropdown(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -94,54 +92,6 @@ const NavBar = () => {
     setSearchQuery("");
   };
 
-  const handleAddToPlaylist = (track) => {
-    const playlist = JSON.parse(localStorage.getItem("userPlaylist")) || [];
-
-    const exists = playlist.some((song) => song.name === track.name);
-    if (exists) {
-      toast.info("✅ Esta canción ya está en tu playlist.", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-        transition: Slide,
-      });
-      return;
-    }
-
-    const songData = {
-      id: Date.now(),
-      title: track.name,
-      artist: track.artists[0]?.name || "artista",
-      album: track.album.name,
-      cover: track.album.images[0]?.url,
-      audio: track.preview_url,
-      genre: "music",
-      name: track.name,
-      duration_ms: track.duration_ms,
-    };
-    const updatedPlaylist = [...playlist, songData];
-    localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
-    window.dispatchEvent(new Event("storage"));
-    window.dispatchEvent(new Event("playlistUpdated"));
-    toast.success(`✅ "${track.name}" agregada a tu playlist.`, {
-      position: "bottom-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "dark",
-      transition: Slide,
-    });
-    setShowDropdown(false);
-    setSearchQuery("");
-    setSearchResults([]);
-  };
-
   return (
     <Navbar
       expand="lg"
@@ -150,7 +100,6 @@ const NavBar = () => {
       style={{ backgroundColor: "#000", zIndex: 1030 }}
     >
       <Container fluid className="position-relative">
-       
         <Navbar.Brand
           onClick={() => navigate("/")}
           style={{ cursor: "pointer" }}
@@ -168,7 +117,6 @@ const NavBar = () => {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto d-flex align-items-center gap-3">
-          
             {!isAdminPage && (
               <NavLink
                 to="/playlist"
