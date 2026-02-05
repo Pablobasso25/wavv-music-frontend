@@ -18,23 +18,86 @@ import "./MusicPlayer.css";
 const PLAYER_WIDTH = 300;
 const MARGIN = 20;
 const MusicPlayer = () => {
-  const {
-    currentSong,
-    isPlaying,
-    progress,
-    currentTime,
-    duration,
-    audioRef,
-    togglePlay,
-    handleTimeUpdate,
-    handleSeek,
-  } = useMusicPlayer();
-
-  const formatTime = (seconds) => {
-    if (!seconds || isNaN(seconds)) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  const [playing, setPlaying] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [minimized, setMinimized] = useState(false);
+  const [position, setPosition] = useState({ x: 20, y: 80 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration] = useState(180);
+  const [volume, setVolume] = useState(50);
+  const [isLiked, setIsLiked] = useState(false);
+  const [showLyrics, setShowLyrics] = useState(false);
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [repeatMode, setRepeatMode] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const dragRef = useRef(null);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const location = useLocation();
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 992;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setPosition({
+          x: Math.max(MARGIN, window.innerWidth - PLAYER_WIDTH - MARGIN),
+          y: 80,
+        });
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  const isMusicPage =
+    location.pathname === "/" || location.pathname === "/home";
+  const isFloating = !isMusicPage && visible && !isMobile;
+  const handleMouseDown = (e) => {
+    if (!e.target.closest(".player-header")) return;
+    const rect = dragRef.current.getBoundingClientRect();
+    offsetRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+    setIsDragging(true);
+    e.preventDefault();
+  };
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const maxX = window.innerWidth - PLAYER_WIDTH - MARGIN;
+    const maxY = window.innerHeight - 120;
+    setPosition({
+      x: Math.min(Math.max(MARGIN, e.clientX - offsetRef.current.x), maxX),
+      y: Math.min(Math.max(MARGIN, e.clientY - offsetRef.current.y), maxY),
+    });
+  };
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    document.body.style.userSelect = "";
+  };
+  useEffect(() => {
+    if (isDragging && isFloating) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.body.style.userSelect = "none";
+      return () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        document.body.style.userSelect = "";
+      };
+    }
+  }, [isDragging, isFloating]);
+  useEffect(() => {
+    if (!playing) return;
+    const interval = setInterval(() => {
+      setCurrentTime((prev) => (prev < duration ? prev + 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [playing, duration]);
+  const formatTime = (s) =>
+    `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  const handleProgressChange = (e) => {
+    setCurrentTime((e.target.value / 100) * duration);
   };
 
   return (
