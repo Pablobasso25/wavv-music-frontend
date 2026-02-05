@@ -44,4 +44,32 @@ export function SongProvider({ children }) {
       setSearchResults([]);
     }
   };
+  const addSongToPlaylist = async (songId) => {
+    try {
+      // Llamada a la ruta del backend que configuramos en songs.js
+      const res = await addSongToPlaylistRequest(songId);
+      return { success: true, data: res.data };
+    } catch (error) {
+      // Si el backend devuelve 403, devolvemos el error para manejarlo en el componente
+      return {
+        success: false,
+        status: error.response?.status,
+        code: error.response?.data.code,
+      };
+    }
+  };
+  return (
+    <SongContext.Provider
+      value={{
+        songs,
+        getSongs,
+        createSong,
+        searchExternalSongs,
+        searchResults,
+        addSongToPlaylist,
+      }}
+    >
+      {children}
+    </SongContext.Provider>
+  );
 }
