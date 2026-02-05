@@ -1,0 +1,28 @@
+.music-player {
+    width: 300px;
+    background: rgba(20, 25, 35, 0.92);
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
+    color: #e6e8ec;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+}
+
+.floating-player {
+    position: fixed;
+    z-index: 9999;
+}
+
+.fixed-player {
+    margin: auto;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fixed-artwork {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
