@@ -342,3 +342,84 @@
     transform: scale(0.96);
 }
 
+/* Hide floating/fixed large-player UI on smaller viewports */
+@media (max-width: 992px) {
+    .floating-player {
+        display: none !important;
+    }
+
+    .fixed-player {
+        display: none !important;
+    }
+
+    .player-toggle-btn {
+        display: none !important;
+    }
+}
+
+/* Small tweaks for very small devices */
+@media (max-width: 420px) {
+    .mobile-info .song-title {
+        font-size: 13px;
+    }
+
+    .mobile-info .song-artist {
+        font-size: 11px;
+    }
+
+    .mobile-artwork img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .mobile-play-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Mobile progress bar (top edge) */
+.mobile-progress {
+    position: absolute;
+    top: 10px;
+    left: 8px;
+    right: 8px;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border-radius: 6px;
+    z-index: 10001;
+}
+
+.mobile-progress::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+.mobile-progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-top: -3px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.mobile-progress::-moz-range-track {
+    height: 6px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+.mobile-progress::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
