@@ -19,7 +19,6 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "js-cookie": "^3.0.5",
-    "lucide-react": "^0.563.0",
     "node-fetch": "^3.3.2",
     "react": "^19.2.0",
     "react-bootstrap": "^2.10.10",

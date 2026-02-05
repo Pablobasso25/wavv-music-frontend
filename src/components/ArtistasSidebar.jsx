@@ -105,7 +105,7 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
               className="text-secondary mt-1"
               style={{ fontSize: "0.75rem" }}
             >
-              Reproducir
+              Reproducirrr
             </small>
           </div>
         ))}
