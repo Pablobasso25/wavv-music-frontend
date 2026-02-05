@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import ArtistasSidebar from "../../components/ArtistasSidebar";
-import MusicPlayer from "../../components/MusicPlayer";
+import MusicPlayer from "../../components/musicPlayer/MusicPlayer.jsx";
 import TopSongs from "../../components/TopSongs";
 
 const PlaylistScreen = () => {
