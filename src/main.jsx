@@ -9,10 +9,12 @@ import App from "./App.jsx";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { MusicPlayerProvider } from "./context/MusicPlayerContext.jsx";
+import { SongProvider } from "./context/SongContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
+      <SongProvider>
         <MusicPlayerProvider>
           <App />
           <ToastContainer
@@ -28,6 +30,7 @@ createRoot(document.getElementById("root")).render(
             theme="dark"
           />
         </MusicPlayerProvider>
+      </SongProvider>
     </AuthProvider>
-  </StrictMode>
+  </StrictMode>,
 );

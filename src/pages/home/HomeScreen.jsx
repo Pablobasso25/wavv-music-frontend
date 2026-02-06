@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ArtistasSidebar from "../../components/ArtistasSidebar";
 import MusicPlayer from "../../components/musicPlayer/MusicPlayer.jsx";
 import TrendingSong from "../../components/TrendingSong";
@@ -6,7 +6,7 @@ import TopSongs from "../../components/TopSongs";
 import { useSongs } from "../../context/SongContext";
 
 const HomeScreen = () => {
-  const [selectedAlbum, setSelectedAlbum] = useState(defaultAlbum);
+  const [selectedAlbum, setSelectedAlbum] = useState(null);
   const { songs, getSongs } = useSongs();
   useEffect(() => {
     getSongs();
