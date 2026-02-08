@@ -13,18 +13,21 @@ import {
   Heart,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useMusicPlayer } from "../context/MusicPlayerContext";
 import "./MusicPlayer.css";
+
 
 const PLAYER_WIDTH = 300;
 const MARGIN = 20;
 const MusicPlayer = () => {
-  const [playing, setPlaying] = useState(false);
+  const { currentSong, isPlaying, togglePlay, nextTrack, prevTrack, audioRef } =
+    useMusicPlayer();
   const [visible, setVisible] = useState(true);
   const [minimized, setMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 20, y: 80 });
   const [isDragging, setIsDragging] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration] = useState(180);
+  const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(50);
   const [isLiked, setIsLiked] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
@@ -34,6 +37,18 @@ const MusicPlayer = () => {
   const dragRef = useRef(null);
   const offsetRef = useRef({ x: 0, y: 0 });
   const location = useLocation();
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+    audio.addEventListener("timeupdate", updateTime);
+    audio.addEventListener("loadedmetadata", updateDuration);
+    return () => {
+      audio.removeEventListener("timeupdate", updateTime);
+      audio.removeEventListener("loadedmetadata", updateDuration);
+    };
+  }, [currentSong, audioRef]);
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 992;
@@ -52,16 +67,15 @@ const MusicPlayer = () => {
   const isMusicPage =
     location.pathname === "/" || location.pathname === "/home";
   const isFloating = !isMusicPage && visible && !isMobile;
+
   const handleMouseDown = (e) => {
     if (!e.target.closest(".player-header")) return;
     const rect = dragRef.current.getBoundingClientRect();
-    offsetRef.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
+    offsetRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     setIsDragging(true);
     e.preventDefault();
   };
+
   const handleMouseMove = (e) => {
     if (!isDragging) return;
     const maxX = window.innerWidth - PLAYER_WIDTH - MARGIN;
