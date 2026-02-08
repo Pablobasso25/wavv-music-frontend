@@ -85,34 +85,31 @@ const MusicPlayer = () => {
       y: Math.min(Math.max(MARGIN, e.clientY - offsetRef.current.y), maxY),
     });
   };
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    document.body.style.userSelect = "";
-  };
+
+  const handleMouseUp = () => setIsDragging(false);
+
   useEffect(() => {
     if (isDragging && isFloating) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.userSelect = "none";
       return () => {
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
-        document.body.style.userSelect = "";
       };
     }
   }, [isDragging, isFloating]);
-  useEffect(() => {
-    if (!playing) return;
-    const interval = setInterval(() => {
-      setCurrentTime((prev) => (prev < duration ? prev + 1 : 0));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [playing, duration]);
+
   const formatTime = (s) =>
-    `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+    `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
   const handleProgressChange = (e) => {
-    setCurrentTime((e.target.value / 100) * duration);
+    const time = (e.target.value / 100) * duration;
+    audioRef.current.currentTime = time;
+    setCurrentTime(time);
   };
+
+  if (!currentSong) return null; 
+
   if (isMobile) {
     return (
       <div className="music-player mobile-player">
@@ -122,34 +119,25 @@ const MusicPlayer = () => {
           type="range"
           min="0"
           max="100"
-          value={(currentTime / duration) * 100}
+          value={(currentTime / duration) * 100 || 0}
           onChange={handleProgressChange}
-          style={{
-            background: `linear-gradient(90deg, #5773ff ${(currentTime / duration) * 100}%, rgba(255,255,255,0.12) ${(currentTime / duration) * 100}%)`,
-          }}
         />
         <div className="mobile-content">
           <div className="mobile-artwork">
-            <img
-              src="https://images.pexels.com/photos/6429162/pexels-photo-6429162.jpeg"
-              alt="Song artwork"
-            />
+            <img src={currentSong.cover || currentSong.image} alt="artwork" />
           </div>
           <div className="mobile-info">
-            <p className="song-title">Song Name</p>
-            <p className="song-artist">Artist Name</p>
+            <p className="song-title">{currentSong.title}</p>
+            <p className="song-artist">{currentSong.artist}</p>
           </div>
           <div className="mobile-controls">
-            <button className="control-btn">
+            <button className="control-btn" onClick={prevTrack}>
               <SkipBack size={16} />
             </button>
-            <button
-              className="play-btn mobile-play-btn"
-              onClick={() => setPlaying(!playing)}
-            >
-              {playing ? <Pause size={20} /> : <Play size={20} />}
+            <button className="play-btn mobile-play-btn" onClick={togglePlay}>
+              {isPlaying ? <Pause size={20} /> : <Play size={20} />}
             </button>
-            <button className="control-btn">
+            <button className="control-btn" onClick={nextTrack}>
               <SkipForward size={16} />
             </button>
           </div>
@@ -157,34 +145,18 @@ const MusicPlayer = () => {
       </div>
     );
   }
-  if (!visible) {
+
+  if (!visible)
     return (
-      <button
-        className="player-toggle-btn"
-        onClick={() => {
-          setVisible(true);
-          setPosition({
-            x: window.innerWidth - PLAYER_WIDTH - MARGIN,
-            y: 80,
-          });
-        }}
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          zIndex: 1000,
-        }}
-      >
+      <button className="player-toggle-btn" onClick={() => setVisible(true)}>
         🎵
       </button>
     );
-  }
+
   return (
     <div
       ref={dragRef}
-      className={`music-player ${
-        isMusicPage ? "fixed-player" : "floating-player"
-      } ${minimized ? "minimized" : ""}`}
+      className={music-player `${isMusicPage ? "fixed-player" : "floating-player"} ${minimized ? "minimized" : ""}`}
       style={
         isFloating
           ? {
@@ -193,14 +165,6 @@ const MusicPlayer = () => {
               top: position.y,
               zIndex: 1000,
             }
-          : isMusicPage
-            ? {
-                position: "absolute",
-                right: "80px",
-                top: "55%",
-                transform: "translateY(-50%)",
-                zIndex: 1000,
-              }
             : {}
       }
       onMouseDown={isFloating ? handleMouseDown : undefined}
@@ -220,57 +184,44 @@ const MusicPlayer = () => {
       </div>
       {!minimized && (
         <>
-          {isMusicPage && (
-            <div className="fixed-artwork">
+          <div className={isMusicPage ? "fixed-artwork" : "player-main"}>
               <img
-                src="https://images.pexels.com/photos/6429162/pexels-photo-6429162.jpeg"
-                alt="Song artwork"
-              />
-            </div>
-          )}
-          {isMusicPage ? (
-            <div className="fixed-song-info">
-              <h4 className="title">Song Name</h4>
-              <p className="artist">Artist Name</p>
-            </div>
-          ) : (
-            <div className="player-main">
-              <img
-                className="cover"
-                src="https://images.pexels.com/photos/6429162/pexels-photo-6429162.jpeg"
+              className={isMusicPage ? "" : "cover"}
+              src={currentSong.cover || currentSong.image}
                 alt="cover"
               />
-              <div className="song-meta">
-                <h4 className="title">Song Name</h4>
-                <p className="artist">Artist Name</p>
-              </div>
+            <div className={isMusicPage ? "fixed-song-info" : "song-meta"}>
+              <h4 className="title">{currentSong.title}</h4>
+              <p className="artist">{currentSong.artist}</p>
             </div>
-          )}
+          </div>
+
           <div className="player-progress">
-            <span>{formatTime(Math.floor(currentTime))}</span>
+            <span>{formatTime(currentTime)}</span>
             <input
               type="range"
               min="0"
               max="100"
-              value={(currentTime / duration) * 100}
+              value={(currentTime / duration) * 100 || 0}
               onChange={handleProgressChange}
             />
-            <span>{formatTime(duration)}</span>
+            <span>{formatTime(duration || 0)}</span>
           </div>
+
           <div className="controls">
-            <button className={isShuffled ? "active" : ""}>
+            <button>
               <Shuffle size={16} />
             </button>
-            <button>
+            <button onClick={prevTrack}>
               <SkipBack size={20} />
             </button>
-            <button className="play" onClick={() => setPlaying(!playing)}>
-              {playing ? <Pause size={28} /> : <Play size={28} />}
+            <button className="play" onClick={togglePlay}>
+              {isPlaying ? <Pause size={28} /> : <Play size={28} />}
             </button>
-            <button>
+            <button onClick={nextTrack}>
               <SkipForward size={20} />
             </button>
-            <button className={repeatMode ? "active" : ""}>
+            <button>
               <Repeat size={16} />
             </button>
           </div>
@@ -301,7 +252,7 @@ const MusicPlayer = () => {
           {showLyrics && (
             <div className="lyrics-panel">
               <div className="lyrics-header">
-                <span>Lyrics</span>
+                <span>Letra</span>
                 <button
                   className="lyrics-close-btn"
                   onClick={() => setShowLyrics(false)}
@@ -311,7 +262,7 @@ const MusicPlayer = () => {
                 </button>
               </div>
               <div className="lyrics-body">
-                <p>Lyrics will be displayed here...</p>
+                <p>Letra no disponible</p>
               </div>
             </div>
           )}
