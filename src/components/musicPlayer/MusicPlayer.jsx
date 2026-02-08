@@ -165,7 +165,7 @@ const MusicPlayer = () => {
               top: position.y,
               zIndex: 1000,
             }
-            : {}
+          : {}
       }
       onMouseDown={isFloating ? handleMouseDown : undefined}
     >
@@ -185,11 +185,11 @@ const MusicPlayer = () => {
       {!minimized && (
         <>
           <div className={isMusicPage ? "fixed-artwork" : "player-main"}>
-              <img
+            <img
               className={isMusicPage ? "" : "cover"}
               src={currentSong.cover || currentSong.image}
-                alt="cover"
-              />
+              alt="cover"
+            />
             <div className={isMusicPage ? "fixed-song-info" : "song-meta"}>
               <h4 className="title">{currentSong.title}</h4>
               <p className="artist">{currentSong.artist}</p>
