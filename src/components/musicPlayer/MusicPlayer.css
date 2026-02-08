@@ -151,7 +151,10 @@
     justify-content: center;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.15s ease, transform 0.06s ease, color 0.15s;
+  transition:
+    background 0.15s ease,
+    transform 0.06s ease,
+    color 0.15s;
 }
 .lyrics-header .lyrics-close-btn:hover {
     background: rgba(255, 255, 255, 0.06);
@@ -171,7 +174,7 @@
 .minimized {
     height: 52px;
 }
-.minimized> :not(.player-header) {
+.minimized > :not(.player-header) {
     display: none;
 }
 .player-toggle-btn {
@@ -222,7 +225,6 @@
     gap: 16px;
     width: 100%;
     padding-top: 20px;
-
 }
 .mobile-artwork img {
     width: 56px;
