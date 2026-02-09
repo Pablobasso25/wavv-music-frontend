@@ -3,6 +3,7 @@ import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./LoginScreen.css";
+import ShowPassword from "./ShowPassword";
 
 const LoginScreen = ({ show, handleClose }) => {
   const { login, isAuthenticated, errors: authErrors } = useAuth();
@@ -83,16 +84,16 @@ const LoginScreen = ({ show, handleClose }) => {
 
           <Form.Group className="mb-4">
             <Form.Label className="login-label">Contraseña</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="Contraseña"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="login-input"
-            />
-          </Form.Group>
+                <ShowPassword
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="login-input"
+                  placeholder="Contraseña"
+                  type="password"
+                />
+                </Form.Group>
 
           <Button type="submit" className="login-btn w-100" disabled={loading}>
             {loading ? "Iniciando sesión..." : "Ingresar"}
@@ -115,3 +116,4 @@ const LoginScreen = ({ show, handleClose }) => {
 };
 
 export default LoginScreen;
+
