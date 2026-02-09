@@ -21,13 +21,12 @@ const LoginScreen = ({ show, handleClose }) => {
 
   const handleChange = (e) => {
     let value = e.target.value;
-   if (e.target.name === "password") {
+    if (e.target.name === "password") {
       value = value.replace(/[<>\s]/g, "");
     }
     setFormData({ ...formData, [e.target.name]: value });
   };
 
-  
   useEffect(() => {
     if (!show) {
       setError(null);
@@ -62,7 +61,6 @@ const LoginScreen = ({ show, handleClose }) => {
     >
       <Modal.Body className="login-modal-body">
         <h2 className="login-title">Iniciar sesión</h2>
-        
 
         {(error || (authErrors && authErrors.length > 0)) && (
           <Alert variant="danger">{error || authErrors[0]}</Alert>
@@ -84,16 +82,15 @@ const LoginScreen = ({ show, handleClose }) => {
 
           <Form.Group className="mb-4">
             <Form.Label className="login-label">Contraseña</Form.Label>
-                <ShowPassword
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="login-input"
-                  placeholder="Contraseña"
-                  type="password"
-                />
-                </Form.Group>
+            <ShowPassword
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="login-input"
+              placeholder="Contraseña"
+            />
+          </Form.Group>
 
           <Button type="submit" className="login-btn w-100" disabled={loading}>
             {loading ? "Iniciando sesión..." : "Ingresar"}
@@ -116,4 +113,3 @@ const LoginScreen = ({ show, handleClose }) => {
 };
 
 export default LoginScreen;
-

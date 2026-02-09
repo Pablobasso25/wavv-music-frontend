@@ -14,11 +14,11 @@ import Error404Screen from "./pages/error404/Error404Screen";
 import AboutUs from "./pages/aboutUs/AboutUsScreen";
 import ProfileScreen from "./pages/profile/ProfileScreen.jsx";
 import SubscriptionScreen from "./pages/subscription/SubscriptionScreen.jsx";
-
-
+import { useAuth } from "./context/AuthContext";
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const loading = setTimeout(() => setWelcome(false), 3000);
@@ -32,9 +32,11 @@ const App = () => {
         <Route
           path="/login"
           element={
-            <>
-              <LoginScreen />
-            </>
+            !isAuthenticated ? (
+              <LoginScreen show={true} handleClose={() => {}} />
+            ) : (
+              <Navigate to="/" />
+            )
           }
         />
         <Route
@@ -55,7 +57,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-             <Route
+        <Route
           path="/profile"
           element={
             <ProtectedRoute>
@@ -94,13 +96,13 @@ const App = () => {
             </>
           }
         />
-          <Route
+        <Route
           path="/subscription"
           element={
             <ProtectedRoute>
               <NavBar />
-              <SubscriptionScreen/>
-               <Footer />
+              <SubscriptionScreen />
+              <Footer />
             </ProtectedRoute>
           }
         />
