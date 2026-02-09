@@ -45,14 +45,23 @@ setError(null);
   };
 
   return (
-    <Container className="vh-100 d-flex justify-content-center align-items-center">
-      <Row className="w-100 justify-content-center">
-        <Col xs={12} sm={8} md={6} lg={4}>
-          <Card className="bg-dark text-white border-secondary shadow">
-            <Card.Body>
-              <h2 className="text-center mb-4">Iniciar sesión</h2>
+    <Modal
+      show={show}
+      onHide={handleClose}
+      centered
+      backdrop="static"
+      keyboard={false}
+      dialogClassName="login-modal-dialog"
+      contentClassName="login-modal-content"
+      backdropClassName="modal-glass-backdrop"
+    >
+      <Modal.Body className="login-modal-body">
+        <h2 className="login-title">Iniciar sesión</h2>
 
-              {error && <Alert variant="danger">{error}</Alert>}
+
+        {(error || (authErrors && authErrors.length > 0)) && (
+          <Alert variant="danger">{error || authErrors[0]}</Alert>
+        )}
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
