@@ -4,8 +4,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./LoginScreen.css";
 
-const LoginScreen = () => {
-  const { login } = useAuth();
+const LoginScreen = ({ show, handleClose }) => {
+  const { login, isAuthenticated, errors: authErrors } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
