@@ -3,6 +3,7 @@ import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./LoginScreen.css";
+import VisualizacionContrasena from "./VisualizacionContrasena";
 
 const LoginScreen = ({ show, handleClose }) => {
   const { login, isAuthenticated, errors: authErrors } = useAuth();
