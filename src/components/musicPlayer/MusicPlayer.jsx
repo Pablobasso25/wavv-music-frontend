@@ -13,7 +13,7 @@ import {
   Heart,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import { useMusicPlayer } from "../context/MusicPlayerContext";
+import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import "./MusicPlayer.css";
 
 
