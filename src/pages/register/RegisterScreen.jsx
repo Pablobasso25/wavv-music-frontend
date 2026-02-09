@@ -14,16 +14,11 @@ import {
   Badge,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
+import { registerRequest } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
-
-const EMAILJS_CONFIG = {
-  SERVICE_ID: "service_46a3s63",
-  TEMPLATE_ID: "template_v81kajd",
-  PUBLIC_KEY: "W0WIYNiPDb9B0Jhf3",
-};
-emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+import { sendWelcomeEmail } from "../services/emailService";
+import "./RegisterScreen.css"
 
 const RegisterScreen = () => {
   const [send, setSend] = useState(false);
@@ -44,14 +39,11 @@ const RegisterScreen = () => {
       confirmarPassword: "",
     },
   });
-
   const navigate = useNavigate();
   const password = watch("password");
   const username = watch("username");
-
   const validatePassword = (password) => {
     if (!password) return { force: 0, validations: {} };
-
     const validations = {
       longitud: password.length >= 8,
       mayuscula: /[A-Z]/.test(password),
@@ -66,7 +58,6 @@ const RegisterScreen = () => {
         password,
       ),
     };
-
     let force = 0;
     force += Math.min(password.length * 4, 32);
     if (validations.longitud) force += 10;
@@ -76,13 +67,11 @@ const RegisterScreen = () => {
     if (validations.simbolo) force += 18;
     if (validations.noEspacios) force += 5;
     if (validations.diferenteAlUsername) force += 5;
-
     return {
       force: Math.min(force, 100),
       validations,
     };
   };
-
   const { force: forcePassword, validations } = validatePassword(password);
 
   const informationForce = () => {
