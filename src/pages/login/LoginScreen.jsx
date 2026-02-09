@@ -1,15 +1,8 @@
-import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Form,
-  Button,
-  Alert,
-} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import "./LoginScreen.css";
 
 const LoginScreen = () => {
   const { login } = useAuth();
