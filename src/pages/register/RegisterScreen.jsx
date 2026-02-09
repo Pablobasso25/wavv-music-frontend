@@ -73,7 +73,6 @@ const RegisterScreen = () => {
     };
   };
   const { force: forcePassword, validations } = validatePassword(password);
-
   const informationForce = () => {
     if (forcePassword === 0)
       return { texto: "No ingresado", variant: "secondary" };
@@ -82,14 +81,11 @@ const RegisterScreen = () => {
     if (forcePassword < 99) return { texto: "Buena", variant: "info" };
     return { texto: "Segura", variant: "success" };
   };
-
   const infoForce = informationForce();
-
   const showSuccessAlert = (emailEnviado = true) => {
     const mensaje = emailEnviado
       ? "¡Te hemos enviado un email de bienvenida! Entrando a Wavv Music..."
       : "⚠️ Registro exitoso. ¡Ya puedes empezar a escuchar música!";
-
     Swal.fire({
       title: "✔️ ¡Bienvenido!",
       html: `
@@ -116,7 +112,7 @@ const RegisterScreen = () => {
     if (forcePassword < 99) {
       Swal.fire({
         title: "🔒 Contraseña insuficiente",
-        text: "La contraseña debe ser SEGURA para registrarse",
+        text: "La contraseña debe cumplir con todos los requisitos de seguridad",
         icon: "warning",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
@@ -125,35 +121,28 @@ const RegisterScreen = () => {
       });
       return;
     }
-
     setSend(true);
     try {
       await signup(data);
       try {
-        const templateParams = {
-          to_name: data.username,
-          to_email: data.email,
-          from_name: "Wavv Music",
-          fecha: new Date().toLocaleDateString(),
-        };
-        await emailjs.send(
-          EMAILJS_CONFIG.SERVICE_ID,
-          EMAILJS_CONFIG.TEMPLATE_ID,
-          templateParams,
-          EMAILJS_CONFIG.PUBLIC_KEY,
-        );
+        await sendWelcomeEmail(data.username, data.email);
       } catch (error) {
         console.error("Error al enviar email:", error);
       }
-
       showSuccessAlert(true);
     } catch (error) {
       const serverErrors = error.response?.data;
+      let errorMessage = "Error de conexión con el servidor";
+      if (Array.isArray(serverErrors)) {
+        errorMessage = serverErrors[0];
+      } else if (typeof serverErrors === "string") {
+        errorMessage = serverErrors;
+      } else if (serverErrors?.message) {
+        errorMessage = serverErrors.message;
+      }
       Swal.fire({
-        title: "❌ Error",
-        text: Array.isArray(serverErrors)
-          ? serverErrors[0]
-          : "Error de conexión",
+        title: " Error de registro",
+        text: errorMessage,
         icon: "error",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
@@ -162,7 +151,6 @@ const RegisterScreen = () => {
       setSend(false);
     }
   };
-
   return (
     <Container className="d-flex align-items-center justify-content-center vh-100 mt-2">
       <Row className="w-100 justify-content-center">
@@ -170,9 +158,6 @@ const RegisterScreen = () => {
           <Card className="bg-dark text-white border-secondary shadow">
             <Card.Header className="border-secondary">
               <h4 className="text-center mb-0">Registro en WavvMusic</h4>
-              <small className="text-center d-block text-warning mt-1">
-                🔒 Contraseña debe ser <strong>SEGURA</strong> para registrarse
-              </small>
             </Card.Header>
             <Card.Body className="p-4">
               {errorEmail && (
@@ -185,7 +170,7 @@ const RegisterScreen = () => {
                   <Form.Label>Nombre de usuario *</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Tu nombre de usuario"
+                    placeholder="Usuario"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.username}
                     maxLength={30}
@@ -209,12 +194,11 @@ const RegisterScreen = () => {
                     {errors.username && errors.username.message}
                   </Form.Control.Feedback>
                 </Form.Group>
-
                 <Form.Group className="mb-3">
                   <Form.Label>Email *</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="correo@ejemplo.com"
+                    placeholder="ejemplo@gmail.com"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.email}
                     maxLength={50}
@@ -238,7 +222,7 @@ const RegisterScreen = () => {
                   <Form.Label>Contraseña *</Form.Label>
                   <Form.Control
                     type="password"
-                    placeholder="Crea una contraseña SEGURA (8-20 caracteres)"
+                    placeholder="Contraseña  (8-20 caracteres)"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.password && forcePassword < 99}
                     maxLength={20}
@@ -289,7 +273,6 @@ const RegisterScreen = () => {
                       forcePassword < 99 &&
                       errors.password.message}
                   </Form.Control.Feedback>
-
                   {password && (
                     <div className="text-end mt-1">
                       <small
@@ -301,7 +284,6 @@ const RegisterScreen = () => {
                       </small>
                     </div>
                   )}
-
                   {password && (
                     <div className="mt-2">
                       <div className="d-flex justify-content-between align-items-center mb-1">
@@ -315,7 +297,6 @@ const RegisterScreen = () => {
                         variant={infoForce.variant}
                         className="mb-2"
                       />
-
                       {Object.keys(validations).some(
                         (key) => !validations[key],
                       ) &&
@@ -377,7 +358,6 @@ const RegisterScreen = () => {
                             </div>
                           </div>
                         )}
-
                       {forcePassword >= 99 && (
                         <div className="border border-success rounded p-2 text-center">
                           <small className="text-success ">
@@ -388,7 +368,6 @@ const RegisterScreen = () => {
                     </div>
                   )}
                 </Form.Group>
-
                 <Form.Group className="mb-4">
                   <Form.Label>Confirmar contraseña *</Form.Label>
                   <Form.Control
