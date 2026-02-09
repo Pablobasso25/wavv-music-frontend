@@ -20,13 +20,13 @@ const LoginScreen = ({ show, handleClose }) => {
 
   const handleChange = (e) => {
     let value = e.target.value;
-    if (e.target.name === "password") {
+   if (e.target.name === "password") {
       value = value.replace(/[<>\s]/g, "");
     }
     setFormData({ ...formData, [e.target.name]: value });
   };
 
-
+  
   useEffect(() => {
     if (!show) {
       setError(null);
@@ -36,7 +36,7 @@ const LoginScreen = ({ show, handleClose }) => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setLoading(true);
-setError(null);
+    setError(null);
 
     try {
       await login(formData);
@@ -61,56 +61,56 @@ setError(null);
     >
       <Modal.Body className="login-modal-body">
         <h2 className="login-title">Iniciar sesión</h2>
-
+        
 
         {(error || (authErrors && authErrors.length > 0)) && (
           <Alert variant="danger">{error || authErrors[0]}</Alert>
         )}
 
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
             <Form.Label className="login-label">Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-placeholder="Usuario@gmail.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                                        required
-className="login-input"
-                  />
-                </Form.Group>
+            <Form.Control
+              type="email"
+              name="email"
+              placeholder="Usuario@gmail.com"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="login-input"
+            />
+          </Form.Group>
 
-                <Form.Group className="mb-4">
-                  <Form.Label className="login-label">Contraseña</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-placeholder="Contraseña"
-                    value={formData.password}
-                    onChange={handleChange}
-                                        required
-className="login-input"
-                  />
-                </Form.Group>
+          <Form.Group className="mb-4">
+            <Form.Label className="login-label">Contraseña</Form.Label>
+            <Form.Control
+              type="password"
+              name="password"
+              placeholder="Contraseña"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="login-input"
+            />
+          </Form.Group>
 
-                <Button type="submit" className="login-btn w-100" disabled={loading}>
-                  {loading ? "Iniciando sesión..." : "Ingresar"}
-                </Button>
-              </Form>
+          <Button type="submit" className="login-btn w-100" disabled={loading}>
+            {loading ? "Iniciando sesión..." : "Ingresar"}
+          </Button>
+        </Form>
 
-              <p className="login-register-text">
-                ¿No tienes cuenta?{" "}
-                <Link
-                  to="/register"
-                  className="login-register-link"
+        <p className="login-register-text">
+          ¿No tienes cuenta?{" "}
+          <Link
+            to="/register"
+            className="login-register-link"
             onClick={handleClose}
-                >
-                  Regístrate aquí
-                </Link>
-              </p>
-            </Modal.Body>
-          </Modal>
+          >
+            Regístrate aquí
+          </Link>
+        </p>
+      </Modal.Body>
+    </Modal>
   );
 };
 
