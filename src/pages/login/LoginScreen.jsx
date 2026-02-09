@@ -22,16 +22,24 @@ const LoginScreen = ({ show, handleClose }) => {
     setFormData({ ...formData, [e.target.name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+
+  useEffect(() => {
+    if (!show) {
+      setError(null);
+    }
+  }, [show]);
+
+  const handleSubmit = async (e) => {
+if (e)     e.preventDefault();
     setLoading(true);
+setError(null);
 
-    const success = login(formData.email, formData.password);
-
-    if (success) {
-      navigate("/");
-    } else {
-      setError("Credenciales incorrectas");
+    try {
+      await login(formData);
+    } catch (err) {
+      console.error("Error capturado en el componente:", err);
+      if (!err.response) setError("No se pudo conectar con el servidor");
+    } finally {
       setLoading(false);
     }
   };
