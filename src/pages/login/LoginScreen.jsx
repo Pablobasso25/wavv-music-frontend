@@ -10,15 +10,19 @@ const LoginScreen = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      handleClose();
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate, handleClose]);
 
   const handleChange = (e) => {
     let value = e.target.value;
-
     if (e.target.name === "password") {
       value = value.replace(/[<>\s]/g, "");
     }
-
     setFormData({ ...formData, [e.target.name]: value });
   };
 
@@ -30,7 +34,7 @@ const LoginScreen = ({ show, handleClose }) => {
   }, [show]);
 
   const handleSubmit = async (e) => {
-if (e)     e.preventDefault();
+    if (e) e.preventDefault();
     setLoading(true);
 setError(null);
 
