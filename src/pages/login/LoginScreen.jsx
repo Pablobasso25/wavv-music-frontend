@@ -65,50 +65,48 @@ setError(null);
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
+            <Form.Label className="login-label">Email</Form.Label>
                   <Form.Control
                     type="email"
                     name="email"
+placeholder="Usuario@gmail.com"
                     value={formData.email}
                     onChange={handleChange}
-                    className="bg-dark text-white border-secondary"
-                    maxLength={50}
-                    required
+                                        required
+className="login-input"
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-4">
-                  <Form.Label>Contraseña</Form.Label>
+                  <Form.Label className="login-label">Contraseña</Form.Label>
                   <Form.Control
                     type="password"
                     name="password"
+placeholder="Contraseña"
                     value={formData.password}
                     onChange={handleChange}
-                    className="bg-dark text-white border-secondary"
-                    maxLength={20}
-                    required
+                                        required
+className="login-input"
                   />
                 </Form.Group>
 
-                <Button type="submit" className="btn-primary-custom w-100 py-2">
+                <Button type="submit" className="login-btn w-100" disabled={loading}>
                   {loading ? "Iniciando sesión..." : "Ingresar"}
                 </Button>
               </Form>
 
-              <p className="text-secondary mt-3 text-center">
+              <p className="login-register-text">
                 ¿No tienes cuenta?{" "}
                 <Link
                   to="/register"
-                  className="text-primary text-decoration-none"
+                  className="login-register-link"
+            onClick={handleClose}
                 >
                   Regístrate aquí
                 </Link>
               </p>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+            </Modal.Body>
+          </Modal>
   );
 };
 
