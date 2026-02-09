@@ -1,49 +1,36 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useRef,
-  useEffect,
-} from "react";
-import { toastError } from "../helpers/alerts";
+import React, { createContext, useContext, useState, useRef, useEffect } from "react";
+import { useAuth } from "./AuthContext";
+import { toast } from "react-toastify";
 
 const MusicPlayerContext = createContext();
 
 export const MusicPlayerProvider = ({ children }) => {
+  const { user } = useAuth();
   const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
-  const audioRef = useRef(null);
+  const [queue, setQueue] = useState([]); 
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [skipsCount, setSkipsCount] = useState(0); 
+  const audioRef = useRef(new Audio());
 
-  useEffect(() => {
-    if (shouldAutoPlay && currentSong && audioRef.current) {
-      audioRef.current.load();
-
-      audioRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch((error) => {
-          console.error("Error al reproducir:", error);
-          toastError("No se pudo reproducir la canción. Intentá nuevamente.");
-          setIsPlaying(false);
-        });
-
-      setShouldAutoPlay(false);
+  const playSong = (song, songList = []) => {
+    if (songList.length > 0) {
+      setQueue(songList);
+      const index = songList.findIndex(s => s.title === song.title);
+      setCurrentIndex(index !== -1 ? index : 0);
+    } else {
+      setQueue([song]);
+      setCurrentIndex(0);
     }
-  }, [shouldAutoPlay]);
 
-  const playSong = (song) => {
     setCurrentSong(song);
-    setProgress(0);
-    setCurrentTime(0);
-    setShouldAutoPlay(true);
+    audioRef.current.src = song.audio || song.youtubeUrl || song.preview_url;
+    audioRef.current.play();
+    setIsPlaying(true);
   };
 
   const togglePlay = () => {
-    if (audioRef.current) {
+    if (audioRef.current.src) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
@@ -53,21 +40,33 @@ export const MusicPlayerProvider = ({ children }) => {
     }
   };
 
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      const current = audioRef.current.currentTime;
-      const total = audioRef.current.duration;
-      setCurrentTime(current);
-      setDuration(total);
-      setProgress((current / total) * 100);
+  const nextTrack = () => {
+    if (user?.subscription?.status === "free" && skipsCount >= 3) {
+      toast.info("¡Límite de saltos alcanzado! Pasate a Premium.");
+      return;
+    }
+
+    if (currentIndex < queue.length - 1) {
+      const nextIdx = currentIndex + 1;
+      setCurrentIndex(nextIdx);
+      setSkipsCount(prev => prev + 1);
+      const nextSong = queue[nextIdx];
+      setCurrentSong(nextSong);
+      audioRef.current.src = nextSong.audio || nextSong.youtubeUrl || nextSong.preview_url;
+      audioRef.current.play();
+      setIsPlaying(true);
     }
   };
 
-  const handleSeek = (value) => {
-    if (audioRef.current) {
-      const seekTime = (value / 100) * audioRef.current.duration;
-      audioRef.current.currentTime = seekTime;
-      setProgress(value);
+  const prevTrack = () => {
+    if (currentIndex > 0) {
+      const prevIdx = currentIndex - 1;
+      setCurrentIndex(prevIdx);
+      const prevSong = queue[prevIdx];
+      setCurrentSong(prevSong);
+      audioRef.current.src = prevSong.audio || prevSong.youtubeUrl || prevSong.preview_url;
+      audioRef.current.play();
+      setIsPlaying(true);
     }
   };
 
@@ -76,14 +75,12 @@ export const MusicPlayerProvider = ({ children }) => {
       value={{
         currentSong,
         isPlaying,
-        progress,
-        currentTime,
-        duration,
-        audioRef,
         playSong,
         togglePlay,
-        handleTimeUpdate,
-        handleSeek,
+        nextTrack,
+        prevTrack,
+        audioRef,
+        queue
       }}
     >
       {children}
