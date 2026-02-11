@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { registerRequest } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
-import { sendWelcomeEmail } from "../services/emailService";
+/* import { sendWelcomeEmail } from "../services/emailService"; */
 import "./RegisterScreen.css"
 
 const RegisterScreen = () => {
