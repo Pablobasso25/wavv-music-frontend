@@ -85,7 +85,12 @@ const SubscriptionScreen = () => {
             }}
           >
             <div className="position-absolute top-0 end-0 p-2 ">
-              <span className="badge bg-success text-dark" style={{fontSize: "0.7rem"}}>PROMO</span>
+              <span
+                className="badge bg-success text-dark"
+                style={{ fontSize: "0.7rem" }}
+              >
+                PROMO
+              </span>
             </div>
             <Card.Body className="d-flex flex-column">
               <Card.Title className="fs-2 fw-bold text-success">
@@ -113,24 +118,23 @@ const SubscriptionScreen = () => {
                 </ListGroup.Item>
               </ListGroup>
               <Button
-  onClick={() => handleBuy("Familiar", 750)}
-  disabled={loading}
-  className="mt-auto w-100 py-2  btn-expand"
-  style={{
-    backgroundColor: "#198754",
-    color: "#000000",
-    border: "none",
-  }}
->
-  <span className="btn-icon">
-    <i className="bx bx-cart"></i>
-  </span>
+                onClick={() => handleBuy("Familiar", 750)}
+                disabled={loading}
+                className="mt-auto w-100 py-2  btn-expand"
+                style={{
+                  backgroundColor: "#198754",
+                  color: "#000000",
+                  border: "none",
+                }}
+              >
+                <span className="btn-icon">
+                  <i className="bx bx-cart"></i>
+                </span>
 
-  <span className="btn-text">
-    {loading ? "Procesando..." : "Suscribirme ahora"}
-  </span>
-</Button>
-
+                <span className="btn-text">
+                  {loading ? "Procesando..." : "Suscribirme ahora"}
+                </span>
+              </Button>
             </Card.Body>
           </Card>
         </Col>
@@ -143,7 +147,12 @@ const SubscriptionScreen = () => {
             }}
           >
             <div className="position-absolute top-0 end-0 p-2 ">
-              <span className="badge bg-info text-dark" style={{fontSize: "0.7rem"}}>FAVORITO</span>
+              <span
+                className="badge bg-info text-dark"
+                style={{ fontSize: "0.7rem" }}
+              >
+                FAVORITO
+              </span>
             </div>
             <Card.Body className="d-flex flex-column">
               <Card.Title className="fs-2 fw-bold text-info">
@@ -174,26 +183,24 @@ const SubscriptionScreen = () => {
                   <strong>Hasta 3 dispositivos simultáneos</strong>
                 </ListGroup.Item>
               </ListGroup>
-             <Button
-  onClick={() => handleBuy("Familiar", 750)}
-  disabled={loading}
-  className="mt-auto w-100 py-2  btn-expand"
-  style={{
-    backgroundColor: "#0dcaf0",
-    color: "#000000",
-    border: "none",
-  }}
->
-  <span className="btn-icon">
-    <i className="bx bx-cart"></i>
-  </span>
+              <Button
+                onClick={() => handleBuy("Familiar", 750)}
+                disabled={loading}
+                className="mt-auto w-100 py-2  btn-expand"
+                style={{
+                  backgroundColor: "#0dcaf0",
+                  color: "#000000",
+                  border: "none",
+                }}
+              >
+                <span className="btn-icon">
+                  <i className="bx bx-cart"></i>
+                </span>
 
-  <span className="btn-text">
-    {loading ? "Procesando..." : "Suscribirme ahora"}
-  </span>
-</Button>
-
-
+                <span className="btn-text">
+                  {loading ? "Procesando..." : "Suscribirme ahora"}
+                </span>
+              </Button>
             </Card.Body>
           </Card>
         </Col>

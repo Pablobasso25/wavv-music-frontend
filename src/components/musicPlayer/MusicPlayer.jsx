@@ -156,7 +156,7 @@ const MusicPlayer = () => {
   return (
     <div
       ref={dragRef}
-      className={music-player `${isMusicPage ? "fixed-player" : "floating-player"} ${minimized ? "minimized" : ""}`}
+      className={`music-player ${isMusicPage ? "fixed-player" : "floating-player"} ${minimized ? "minimized" : ""}`}
       style={
         isFloating
           ? {

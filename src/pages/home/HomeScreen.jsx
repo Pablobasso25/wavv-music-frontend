@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ArtistasSidebar from "../../components/ArtistasSidebar";
-import MusicPlayer from "../../components/musicPlayer/MusicPlayer.jsx";
+import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
 import TrendingSong from "../../components/TrendingSong";
 import TopSongs from "../../components/TopSongs";
 import { useSongs } from "../../context/SongContext";
