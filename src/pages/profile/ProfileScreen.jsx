@@ -1,13 +1,5 @@
 import React, { useRef, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Image,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Button, Form } from "react-bootstrap";
 import { Mail, Calendar, Edit2, Camera, Lock, User } from "lucide-react";
 
 import useUserProfile from "./UserProfile";
@@ -423,14 +415,6 @@ function ProfileScreen() {
                 </div>
               </Card.Body>
             </Card>
-
-
-
-
-
-
-
-
           </Col>
         </Row>
       </Container>
