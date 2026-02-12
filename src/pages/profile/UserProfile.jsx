@@ -111,7 +111,6 @@ export default function useUserProfile() {
     setUser(seeded);
   }
 }, []);
-}
 
 const persist = (data) => {
     setUser(data);
@@ -139,3 +138,34 @@ const persist = (data) => {
     });
     setMode("view");
   };
+
+  const updateAvatar = (file) => {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Subí un archivo de imagen (jpg, png, etc.).");
+      return;
+    }
+
+    const MAX = 2 * 1024 * 1024; 
+    if (file.size > MAX) {
+      alert("La imagen es muy pesada. Probá con una de menos de 2MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      persist({ ...user, avatarUrl: reader.result });
+    };
+    reader.readAsDataURL(file);
+}
+return {
+    user,
+    mode,
+    setMode,
+    handleUpdate,
+    handleDelete,
+    resetAvatar,
+    updateAvatar,
+  };
+}
