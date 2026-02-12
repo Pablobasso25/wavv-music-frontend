@@ -75,3 +75,19 @@ function ProfileScreen() {
     border: "none",
   };
 }
+return (
+    <div
+      className="min-vh-100 py-5"
+      style={{
+        background:
+          "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)",
+      }}
+    >
+      <Container className="px-4">
+        <Row className="justify-content-center">
+          <Col lg={10} xl={8}></Col>
+          
+      </Row>
+    </Container>
+  </div>
+);
