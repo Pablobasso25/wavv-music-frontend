@@ -16,7 +16,6 @@ import { useLocation } from "react-router-dom";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import "./MusicPlayer.css";
 
-
 const PLAYER_WIDTH = 300;
 const MARGIN = 20;
 const MusicPlayer = () => {
@@ -108,7 +107,7 @@ const MusicPlayer = () => {
     setCurrentTime(time);
   };
 
-  if (!currentSong) return null; 
+  if (!currentSong) return null;
 
   if (isMobile) {
     return (
@@ -262,7 +261,7 @@ const MusicPlayer = () => {
                 </button>
               </div>
               <div className="lyrics-body">
-                <p>Letra no disponible</p>
+                <p> No disponible</p>
               </div>
             </div>
           )}
