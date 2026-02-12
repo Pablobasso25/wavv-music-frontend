@@ -112,3 +112,30 @@ export default function useUserProfile() {
   }
 }, []);
 }
+
+const persist = (data) => {
+    setUser(data);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  };
+
+  const handleUpdate = (partial) => {
+    persist({ ...user, ...partial });
+    setMode("view");
+  };
+
+  const handleDelete = () => {
+    const ok = window.confirm(
+      "¿Estás seguro de que querés eliminar los datos del perfil?"
+    );
+    if (!ok) return;
+
+    persist({
+      ...INITIAL_USER,
+      name: "",
+      username: "",
+      email: "",
+      bio: "",
+      avatarUrl: "",
+    });
+    setMode("view");
+  };
