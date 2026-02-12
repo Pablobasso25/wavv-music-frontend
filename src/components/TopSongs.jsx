@@ -45,17 +45,32 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       getUserPlaylist();
     } else if (result.status === 403 && result.code === "PREMIUM_REQUIRED") {
       Swal.fire({
-        title: " ¡Pásate a Premium!",
-        text: "Alcanzaste el límite de 5 canciones gratis. Suscríbete para tener playlist ilimitada.",
-        icon: "info",
+        title: "¡Pásate a Premium!",
+        text: "Solo puedes agregar 5 canciones con el plan gratuito. Pásate a Premium para tener playlist ilimitada.",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Ver Suscripciones",
+        confirmButtonText: "Ver Planes",
+        cancelButtonText: "Seguir en el plan gratuito",
+        confirmButtonColor: "#8b5cf6",
         cancelButtonColor: "#d33",
-        confirmButtonColor: "#6f42c1",
-        background: "#111",
+        background: "#191B1B",
         color: "#fff",
+        iconColor: "#ffbb33",
       }).then((res) => {
-        if (res.isConfirmed) navigate("/subscriptions");
+        if (res.isConfirmed) {
+          navigate("/subscription");
+        }
+      });
+    } else {
+      toast.info(result.message || "Esta canción ya está en tu playlist.", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+        transition: Slide,
       });
     }
   };
