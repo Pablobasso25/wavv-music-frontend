@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Col } from "react-bootstrap";
 import ArtistasSidebar from "../../components/ArtistasSidebar";
 import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
@@ -7,17 +7,25 @@ import { useSongs } from "../../context/SongContext";
 
 const PlaylistScreen = () => {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
-  const { songs } = useSongs();
+  const { songs, getSongs } = useSongs();
+
+  useEffect(() => {
+    getSongs();
+  }, []);
 
   const playlistAlbum = {
     id: "user-playlist",
     name: "Mi Playlist",
     image: "https://via.placeholder.com/300/8b5cf6/ffffff?text=My+Playlist",
     tracks: songs.map((song) => ({
+      _id: song._id,
+      id: song._id,
       name: song.title,
-      preview_url: song.youtubeUrl,
+      preview_url: song.youtubeUrl, 
+      audio: song.youtubeUrl,
       cover: song.image,
       artist: song.artist,
+      duration_ms: song.duration,
     })),
   };
 
@@ -27,7 +35,7 @@ const PlaylistScreen = () => {
     <div className="bg-black min-vh-100 text-white">
       <div className="d-flex">
         <ArtistasSidebar onAlbumSelect={setSelectedAlbum} artistas={[]} />
-        <div className="flex-grow-1 p-4">
+        <div className="flex-grow-1 p-4" style={{ marginBottom: "100px" }}>
           <h2>{selectedAlbum ? selectedAlbum.name : "Mi Playlist"}</h2>
           <TopSongs album={displayAlbum} isPlaylist={!selectedAlbum} />
         </div>
