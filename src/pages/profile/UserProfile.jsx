@@ -80,3 +80,35 @@ export const FieldEditForm = ({
     </div>
   );
 };
+
+export default function useUserProfile() {
+  const [user, setUser] = useState(INITIAL_USER);
+  const [mode, setMode] = useState("view");
+ 
+
+  useEffect(() => {
+  const raw = localStorage.getItem(STORAGE_KEY);
+
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+
+      if (!parsed.joinDate) {
+        const fixed = { ...parsed, joinDate: getToday() };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(fixed));
+        setUser(fixed);
+      } else {
+        setUser(parsed);
+      }
+    } catch {
+      const seeded = { ...INITIAL_USER, joinDate: getToday() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+      setUser(seeded);
+    }
+  } else {
+    const seeded = { ...INITIAL_USER, joinDate: getToday() };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+    setUser(seeded);
+  }
+}, []);
+}
