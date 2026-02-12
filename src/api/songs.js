@@ -6,4 +6,6 @@ export const deleteSongRequest = (id) => axios.delete(`/songs/${id}`);
 export const getSongRequest = (id) => axios.get(`/songs/${id}`);
 export const searchExternalSongsRequest = (term) =>
   axios.get(`/search-external?search=${term}`);
-export const addSongToPlaylistRequest = (songId) => axios.post("/playlist/add", { songId });
+export const addSongToPlaylistRequest = (songId) =>
+  axios.post("/playlist/add", { songId });
+export const getPlaylistRequest = () => axios.get("/playlist");
