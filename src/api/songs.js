@@ -9,3 +9,5 @@ export const searchExternalSongsRequest = (term) =>
 export const addSongToPlaylistRequest = (songId) =>
   axios.post("/playlist/add", { songId });
 export const getPlaylistRequest = () => axios.get("/playlist");
+export const getUserPlaylistRequest = () => axios.get("/playlist");
+export const removeSongFromPlaylistRequest = (songId) => axios.delete(`/playlist/${songId}`);
