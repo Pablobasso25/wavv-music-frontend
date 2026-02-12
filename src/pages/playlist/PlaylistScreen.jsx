@@ -7,17 +7,17 @@ import { useSongs } from "../../context/SongContext";
 
 const PlaylistScreen = () => {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
-  const { songs, getSongs } = useSongs();
+  const { userPlaylist, getUserPlaylist } = useSongs();
 
   useEffect(() => {
-    getSongs();
+    getUserPlaylist();
   }, []);
 
   const playlistAlbum = {
     id: "user-playlist",
     name: "Mi Playlist",
     image: "https://via.placeholder.com/300/8b5cf6/ffffff?text=My+Playlist",
-    tracks: songs.map((song) => ({
+    tracks: (userPlaylist || []).map((song) => ({
       _id: song._id,
       id: song._id,
       name: song.title,
