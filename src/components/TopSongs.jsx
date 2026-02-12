@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Container, Col } from "react-bootstrap";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import { useSongs } from "../context/SongContext";
