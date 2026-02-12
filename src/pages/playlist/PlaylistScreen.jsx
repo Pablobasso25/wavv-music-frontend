@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Col } from "react-bootstrap";
 import ArtistasSidebar from "../../components/ArtistasSidebar";
-import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
+import  MusicPlayer from "../../components/musicPlayer/MusicPlayer";
 import TopSongs from "../../components/TopSongs";
 import { useSongs } from "../../context/SongContext";
 
