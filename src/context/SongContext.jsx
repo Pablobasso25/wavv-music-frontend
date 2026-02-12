@@ -5,6 +5,7 @@ import {
   createSongRequest,
   addSongToPlaylistRequest,
   getUserPlaylistRequest,
+  removeSongFromPlaylistRequest,
 } from "../api/songs";
 
 const SongContext = createContext();
@@ -67,6 +68,22 @@ export function SongProvider({ children }) {
       };
     }
   };
+
+  const deleteSongFromPlaylist = async (songId) => {
+    try {
+      await removeSongFromPlaylistRequest(songId);
+
+      setUserPlaylist(
+        userPlaylist.filter(
+          (song) => song._id !== songId && song.id !== songId,
+        ),
+      );
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Error al eliminar canción" };
+    }
+  };
   return (
     <SongContext.Provider
       value={{
@@ -78,6 +95,7 @@ export function SongProvider({ children }) {
         addSongToPlaylist,
         getUserPlaylist,
         userPlaylist,
+        deleteSongFromPlaylist,
       }}
     >
       {children}
