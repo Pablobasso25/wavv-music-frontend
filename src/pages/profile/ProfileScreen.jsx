@@ -217,6 +217,212 @@ function ProfileScreen() {
               </Card.Body>
             </Card>
 
+            <Card
+              className="border-0 shadow-lg"
+              style={{
+                background: "rgba(26, 26, 46, 0.8)",
+                backdropFilter: "blur(10px)",
+                borderRadius: "20px",
+              }}
+            >
+              <Card.Body className="p-4 p-md-5">
+                <h4 className="text-white mb-4 fs-4 fw-bold">
+                  Información Personal
+                </h4>
+
+                <div
+                  className="mb-4 p-3 rounded"
+                  style={{ background: "rgba(15,52,96,0.3)" }}
+                >
+                  <div className="d-flex align-items-start justify-content-between gap-3">
+                    <div className="d-flex align-items-center flex-fill">
+                      <div
+                        className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0"
+                        style={{
+                          width: "48px",
+                          height: "48px",
+                          ...gradientBtn,
+                        }}
+                      >
+                        <User size={24} color="white" />
+                      </div>
+
+                      <div className="w-100">
+                        <small className="text-white">Nombre:</small>
+
+                        {editing === "name" ? (
+                          <>
+                            <Form.Control
+                              value={draft.name}
+                              onChange={(e) =>
+                                setDraft((d) => ({
+                                  ...d,
+                                  name: e.target.value,
+                                }))
+                              }
+                            />
+                            <div className="d-flex gap-2 justify-content-end mt-2">
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={cancelEdit}
+                              >
+                                Cancelar
+                              </Button>
+                              <Button
+                                size="sm"
+                                style={gradientBtn}
+                                onClick={saveName}
+                              >
+                                Guardar
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="text-white fw-medium mb-0">
+                            {user.name || "—"}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <Button
+                      variant="link"
+                      className="p-2"
+                      onClick={() => startEdit("name")}
+                      title="Editar nombre"
+                    >
+                      <Edit2 size={18} color="#8b8ba0" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div
+                  className="mb-4 p-3 rounded"
+                  style={{ background: "rgba(15,52,96,0.3)" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <div
+                      className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0"
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        ...gradientBtn,
+                      }}
+                    >
+                      <Mail size={24} color="white" />
+                    </div>
+
+                    <div className="text-break">
+                      <small className="text-white">Email:</small>
+                      <p className="text-white fw-medium mb-0">
+                        {user.email || "—"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className="mb-4 p-3 rounded"
+                  style={{ background: "rgba(15,52,96,0.3)" }}
+                >
+                  <div className="d-flex align-items-start justify-content-between gap-3">
+                    <div className="d-flex align-items-center flex-fill">
+                      <div
+                        className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0"
+                        style={{
+                          width: "48px",
+                          height: "48px",
+                          ...gradientBtn,
+                        }}
+                      >
+                        <Lock size={24} color="white" />
+                      </div>
+
+                      <div className="w-100">
+                        <small className="text-white">Contraseña:</small>
+
+                        {editing === "password" ? (
+                          <>
+                            <Form.Control
+                              className="mt-1 mb-2"
+                              type="password"
+                              placeholder="Contraseña"
+                              value={pwd.current}
+                              onChange={(e) =>
+                                setPwd((p) => ({
+                                  ...p,
+                                  current: e.target.value,
+                                }))
+                              }
+                            />
+
+                            {pwdError && (
+                              <div className="text-danger small mb-2">
+                                {pwdError}
+                              </div>
+                            )}
+
+                            <div className="d-flex gap-2 justify-content-end">
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={cancelEdit}
+                              >
+                                Cancelar
+                              </Button>
+                              <Button
+                                size="sm"
+                                style={gradientBtn}
+                                onClick={savePassword}
+                              >
+                                Guardar
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="text-white fw-medium mb-0">••••••••</p>
+                        )}
+
+                        <Button
+                          variant="link"
+                          className="p-0 mt-1 text-decoration-none"
+                          style={{ color: "#b9b9ff" }}
+                          onClick={() => {
+                          }}
+                        >
+                          ¿Olvidaste tu contraseña?
+                        </Button>
+                      </div>
+                    </div>
+                    </div>
+                </div>
+                <div
+                  className="p-3 rounded"
+                  style={{ background: "rgba(15,52,96,0.3)" }}
+                >
+                  <div className="d-flex align-items-center">
+                    <div
+                      className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0"
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        ...gradientBtn,
+                      }}
+                    >
+                      <Calendar size={24} color="white" />
+                    </div>
+
+                    <div>
+                      <small className="text-white">Miembro desde:</small>
+                      <p className="text-white fw-medium mb-0">
+                        {user.joinDate || "—"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
 
 
 
