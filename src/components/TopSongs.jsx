@@ -3,24 +3,46 @@ import { Container, Col } from "react-bootstrap";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import { useSongs } from "../context/SongContext";
 import { useNavigate } from "react-router-dom";
+import { toast, Slide } from "react-toastify";
 import Swal from "sweetalert2";
 
-const TopSongs = ({ album, fromHome = false }) => {
+const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const { playSong, currentSong, isPlaying } = useMusicPlayer();
-  const { addSongToPlaylist } = useSongs();
+  const {
+    addSongToPlaylist,
+    userPlaylist,
+    getUserPlaylist,
+    deleteSongFromPlaylist,
+  } = useSongs();
   const navigate = useNavigate();
-  const handleAddClick = async (e, trackId) => {
-    e.stopPropagation(); 
+
+  useEffect(() => {
+    getUserPlaylist();
+  }, []);
+
+  const handleAddToPlaylist = async (e, track) => {
+    e.stopPropagation();
+    const trackId = track._id || track.id;
+
+    if (!trackId) {
+      toast.error("Error: No se pudo identificar la canción.");
+      return;
+    }
+
     const result = await addSongToPlaylist(trackId);
+
     if (result.success) {
-      Swal.fire({
-        icon: "success",
-        title: "Añadido a tu Playlist",
-        timer: 1500,
-        showConfirmButton: false,
-        background: "#111",
-        color: "#fff",
+      toast.success(`"${track.name}" agregada a tu playlist.`, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+        transition: Slide,
       });
+      getUserPlaylist();
     } else if (result.status === 403 && result.code === "PREMIUM_REQUIRED") {
       Swal.fire({
         title: " ¡Pásate a Premium!",
