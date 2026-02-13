@@ -1,51 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect} from "react";
 import { Container, Col } from "react-bootstrap";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
+import { useSongs } from "../context/SongContext";
+import { useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
-import { showConfirm } from "../helpers/alerts";
+import Swal from "sweetalert2";
+
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const { playSong, currentSong, isPlaying } = useMusicPlayer();
-  const [playlist, setPlaylist] = useState([]);
+  const {
+    addSongToPlaylist,
+    userPlaylist,
+    getUserPlaylist,
+    deleteSongFromPlaylist,
+  } = useSongs();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loadPlaylist = () => {
-      const storedPlaylist =
-        JSON.parse(localStorage.getItem("userPlaylist")) || [];
-      setPlaylist(storedPlaylist);
-    };
-
-    loadPlaylist();
-
-    window.addEventListener("storage", loadPlaylist);
-    const customListener = () => loadPlaylist();
-    window.addEventListener("playlistUpdated", customListener);
-
-    return () => {
-      window.removeEventListener("storage", loadPlaylist);
-      window.removeEventListener("playlistUpdated", customListener);
-    };
+    getUserPlaylist();
   }, []);
 
-  const handleAddToPlaylist = (track) => {
-    const songData = {
-      id: Date.now(),
-      title: track.name,
-      artist: album.artists?.[0]?.name || "Artista",
-      album: album.name,
-      cover: album.image,
-      audio: track.preview_url,
-      genre: "Music",
-      name: track.name,
-      duration_ms: track.duration_ms,
-    };
+  const handleAddToPlaylist = async (e, track) => {
+    e.stopPropagation();
+    const trackId = track._id || track.id;
 
-    const exists = playlist.some(
-      (song) => song.name === track.name && song.album === album.name
-    );
+    if (!trackId) {
+      toast.error("Error: No se pudo identificar la canción.");
+      return;
+    }
 
-    if (exists) {
-      toast.info(" Esta canción ya está en tu playlist.", {
+    const result = await addSongToPlaylist(trackId);
+
+    if (result.success) {
+      toast.success(`"${track.name}" agregada a tu playlist.`, {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -55,60 +43,77 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
         theme: "dark",
         transition: Slide,
       });
-      return;
+      getUserPlaylist();
+    } else if (result.status === 403 && result.code === "PREMIUM_REQUIRED") {
+      Swal.fire({
+        title: "¡Pásate a Premium!",
+        text: "Solo puedes agregar 5 canciones con el plan gratuito. Pásate a Premium para tener playlist ilimitada.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Ver Planes",
+        cancelButtonText: "Seguir en el plan gratuito",
+        confirmButtonColor: "#8b5cf6",
+        cancelButtonColor: "#d33",
+        background: "#191B1B",
+        color: "#fff",
+        iconColor: "#ffbb33",
+      }).then((res) => {
+        if (res.isConfirmed) {
+          navigate("/subscription");
+        }
+      });
+    } else {
+      toast.info(result.message || "Esta canción ya está en tu playlist.", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+        transition: Slide,
+      });
     }
-
-    const updatedPlaylist = [...playlist, songData];
-    setPlaylist(updatedPlaylist);
-    localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
-    window.dispatchEvent(new Event("storage"));
-    window.dispatchEvent(new Event("playlistUpdated"));
-    toast.success(`"${track.name}" agregada a tu playlist.`, {
-      position: "bottom-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-      transition: Slide,
-    });
   };
 
-  const handleRemoveFromPlaylist = async (track) => {
-    const result = await showConfirm(
-      `Esta acción eliminará "${track.name}" de tu playlist.`,
-      "¿Eliminar canción?"
-    );
+  const handleRemoveFromPlaylist = async (e, track) => {
+    e.stopPropagation();
 
-    if (!result.isConfirmed) {
-      return;
-    }
-
-    const updatedPlaylist = playlist.filter(
-      (song) => !(song.name === track.name && song.album === track.album)
-    );
-
-    setPlaylist(updatedPlaylist);
-    localStorage.setItem("userPlaylist", JSON.stringify(updatedPlaylist));
-    window.dispatchEvent(new Event("storage"));
-    window.dispatchEvent(new Event("playlistUpdated"));
-    toast.error(`"${track.name}" eliminada de tu playlist.`, {
-      position: "bottom-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "dark",
-      transition: Slide,
+    const trackId = track._id || track.id;
+    
+    const confirm = await Swal.fire({
+      title: "¿Borrar canción?",
+      text: "Se eliminará de tu playlist.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, borrar",
+      cancelButtonText: "Cancelar",
+      background: "#191B1B",
+      color: "#fff",
     });
+
+    if (confirm.isConfirmed) {
+      const result = await deleteSongFromPlaylist(trackId);
+
+      if (result.success) {
+        toast.success("Canción eliminada", {
+          position: "bottom-right",
+          theme: "dark",
+          autoClose: 2000,
+        });
+        getUserPlaylist();
+      } else {
+        toast.error("Error al eliminar", { theme: "dark" });
+      }
+    }
   };
 
-  const isInPlaylist = (trackName) => {
-    return playlist.some(
-      (song) => song.name === trackName && song.album === album.name
+  const isInPlaylist = (trackId) => {
+    if (!userPlaylist || userPlaylist.length === 0) return false;
+    return userPlaylist.some(
+      (song) => song._id === trackId || song.id === trackId,
     );
   };
 
@@ -118,8 +123,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
         <div className="music-list bg-dark text-white rounded p-3 h-100">
           <h5>⚠️ No hay canciones disponibles</h5>
           <p className="text-secondary">
-            Seleccioná un artista del sidebar o agregá uno desde el panel de
-            administración.
+            Seleccioná un artista del sidebar o agregá uno desde el panel.
           </p>
         </div>
       </Col>
@@ -139,13 +143,17 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
         }}
       >
         <div className="header d-flex justify-content-between align-items-center mb-3">
-          <h5 className="mb-0">Canciones de {album.name}</h5>
-          <span className="text-secondary small">{album.release_date}</span>
+          <h5 className="mb-0 text-white">Canciones de {album.name}</h5>
+          {album.release_date && (
+            <span className="text-secondary small">{album.release_date}</span>
+          )}
         </div>
 
         <div className="items">
           {album.tracks.map((track, index) => {
-            const isCurrentTrack = currentSong?.name === track.name;
+            const isCurrentTrack = currentSong?.title === track.name;
+            const trackId = track._id || track.id;
+            const added = isInPlaylist(trackId);
 
             return (
               <div
@@ -162,20 +170,29 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                   (e.currentTarget.style.backgroundColor = "#191B1B")
                 }
                 onClick={() => {
-                  const songData = {
+                  const songToPlay = {
                     title: track.name,
-                    artist: album.artists?.[0]?.name || "Artista",
+                    artist: album.artists?.[0]?.name || album.name || "Artista",
                     album: album.name,
                     cover: track.cover || album.image,
-                    audio: track.preview_url,
-                    genre: "Music",
+                    audio: track.preview_url || track.audio || track.youtubeUrl,
                     name: track.name,
                   };
-                  playSong(songData);
+                  const fullAlbumQueue = album.tracks.map((t) => ({
+                    title: t.name,
+                    artist: album.artists?.[0]?.name || album.name,
+                    cover: t.cover || album.image,
+                    audio: t.preview_url || t.audio || t.youtubeUrl,
+                    name: t.name,
+                  }));
+                  playSong(songToPlay, fullAlbumQueue);
                 }}
               >
                 <div className="d-flex align-items-center gap-3">
-                  <span className="fw-bold" style={{ minWidth: "30px" }}>
+                  <span
+                    className="fw-bold text-white"
+                    style={{ minWidth: "30px" }}
+                  >
                     {String(index + 1).padStart(2, "0")}
                   </span>
 
@@ -200,43 +217,33 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                 </div>
 
                 <div className="actions d-flex align-items-center gap-3">
-                  {track.preview_url && (
-                    <i
-                      className={`bx ${
-                        isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
-                      } cursor-pointer fs-2`}
-                      title={
-                        isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
-                      }
-                    ></i>
-                  )}
+                  <i
+                    className={`bx ${
+                      isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
+                    } cursor-pointer fs-2 text-white`}
+                    title={
+                      isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
+                    }
+                  ></i>
 
                   {isPlaylist ? (
                     <i
                       className="bx bxs-trash text-danger fs-4"
-                      style={{ cursor: "pointer" }}
-                      title="Eliminar de playlist"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveFromPlaylist(track);
-                      }}
+                      onClick={(e) => handleRemoveFromPlaylist(e, track)}
                     ></i>
                   ) : (
                     <i
                       className={`bx ${
-                        isInPlaylist(track.name)
+                        added
                           ? "bxs-check-circle text-success"
                           : "bxs-plus-square text-secondary"
                       } fs-4`}
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: added ? "default" : "pointer" }}
                       title={
-                        isInPlaylist(track.name)
-                          ? "Ya está en tu playlist"
-                          : "Agregar a playlist"
+                        added ? "Ya está en tu playlist" : "Agregar a playlist"
                       }
                       onClick={(e) => {
-                        e.stopPropagation();
-                        !isInPlaylist(track.name) && handleAddToPlaylist(track);
+                        if (!added) handleAddToPlaylist(e, track);
                       }}
                     ></i>
                   )}
@@ -246,9 +253,9 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                       ? Math.floor(track.duration_ms / 1000 / 60) +
                         ":" +
                         String(
-                          Math.floor((track.duration_ms / 1000) % 60)
+                          Math.floor((track.duration_ms / 1000) % 60),
                         ).padStart(2, "0")
-                      : "0:00"}
+                      : ""}
                   </span>
                 </div>
               </div>
@@ -261,3 +268,5 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
 };
 
 export default TopSongs;
+
+

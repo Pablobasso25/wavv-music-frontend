@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ArtistasSidebar from "../../components/ArtistasSidebar";
-import MusicPlayer from "../../components/musicPlayer/MusicPlayer.jsx";
+import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
 import TrendingSong from "../../components/TrendingSong";
 import TopSongs from "../../components/TopSongs";
 import { useSongs } from "../../context/SongContext";
@@ -18,7 +18,17 @@ const HomeScreen = () => {
     album: {
       name: song.title,
       image: song.image,
-      tracks: [{ name: song.title, audio: song.youtubeUrl, cover: song.image }],
+      tracks: [
+        {
+          _id: song._id,
+          id: song._id,
+          name: song.title,
+          audio: song.youtubeUrl,
+          cover: song.image,
+          artist: song.artist,
+          duration_ms: song.duration,
+        },
+      ],
     },
   }));
   return (

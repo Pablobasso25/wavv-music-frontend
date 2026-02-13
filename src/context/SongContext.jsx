@@ -4,6 +4,8 @@ import {
   getSongsRequest,
   createSongRequest,
   addSongToPlaylistRequest,
+  getUserPlaylistRequest,
+  removeSongFromPlaylistRequest,
 } from "../api/songs";
 
 const SongContext = createContext();
@@ -17,6 +19,16 @@ export const useSongs = () => {
 export function SongProvider({ children }) {
   const [songs, setSongs] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+  const [userPlaylist, setUserPlaylist] = useState([]);
+
+  const getUserPlaylist = async () => {
+    try {
+      const res = await getUserPlaylistRequest();
+      setUserPlaylist(res.data);
+    } catch (error) {
+      console.error("Error al obtener la playlist del usuario:", error);
+    }
+  };
 
   const getSongs = async () => {
     try {
@@ -46,16 +58,30 @@ export function SongProvider({ children }) {
   };
   const addSongToPlaylist = async (songId) => {
     try {
-      // Llamada a la ruta del backend que configuramos en songs.js
       const res = await addSongToPlaylistRequest(songId);
       return { success: true, data: res.data };
     } catch (error) {
-      // Si el backend devuelve 403, devolvemos el error para manejarlo en el componente
       return {
         success: false,
         status: error.response?.status,
         code: error.response?.data.code,
       };
+    }
+  };
+
+  const deleteSongFromPlaylist = async (songId) => {
+    try {
+      await removeSongFromPlaylistRequest(songId);
+
+      setUserPlaylist(
+        userPlaylist.filter(
+          (song) => song._id !== songId && song.id !== songId,
+        ),
+      );
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Error al eliminar canción" };
     }
   };
   return (
@@ -67,6 +93,9 @@ export function SongProvider({ children }) {
         searchExternalSongs,
         searchResults,
         addSongToPlaylist,
+        getUserPlaylist,
+        userPlaylist,
+        deleteSongFromPlaylist,
       }}
     >
       {children}

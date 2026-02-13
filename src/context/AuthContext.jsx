@@ -4,6 +4,7 @@ import {
   registerRequest,
   verifyTokenRequest,
   logoutRequest,
+  updateProfileRequest, 
 } from "../api/auth";
 import Cookies from "js-cookie";
 
@@ -12,8 +13,21 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [errors, setErrors] = useState([]); // Para mostrar errores de Zod en el Front
+  const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const checkPermission = (action, currentCount) => {
+    if (!user) return false;
+    if (user.subscription === "premium") return true;
+
+    if (action === "add_to_playlist" && currentCount >= 5) {
+      return false;
+    }
+    if (action === "skip_song" && currentCount >= 3) {
+      return false;
+    }
+    return true;
+  };
 
   const signup = async (user) => {
     try {
@@ -32,20 +46,38 @@ export const AuthProvider = ({ children }) => {
       const res = await loginRequest(user);
       setUser(res.data);
       setIsAuthenticated(true);
+      setErrors([]);
     } catch (error) {
-      if (Array.isArray(error.response.data)) {
-        return setErrors(error.response.data);
+      const errorData = error.response?.data;
+      if (Array.isArray(errorData)) {
+        setErrors(errorData);
+      } else if (errorData?.message) {
+        setErrors([errorData.message]);
+      } else {
+        setErrors(["Error de conexión con el servidor"]);
       }
-      setErrors([error.response.data.message]);
+    }
+  };
+  const updateProfile = async (user) => {
+    try {
+      const res = await updateProfileRequest(user);
+      setUser(res.data); 
+      setErrors([]); 
+      return res.data;
+    } catch (error) {
+      const errorData = error.response?.data;
+      setErrors(Array.isArray(errorData) ? errorData : [errorData?.message || "Error al actualizar"]);
+      throw error;
     }
   };
 
   const logout = async () => {
-    await logoutRequest(); 
+    await logoutRequest();
     Cookies.remove("token");
-    setIsAuthenticated(false); 
+    setIsAuthenticated(false);
     setUser(null);
   };
+
   useEffect(() => {
     async function checkLogin() {
       const cookies = Cookies.get();
@@ -76,7 +108,17 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ signup, login, logout, user, isAuthenticated, errors, loading }}
+      value={{
+        signup,
+        login,
+        logout,
+        updateProfile,
+        user,
+        isAuthenticated,
+        errors,
+        loading,
+        checkPermission,
+      }}
     >
       {children}
     </AuthContext.Provider>
@@ -84,4 +126,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-
