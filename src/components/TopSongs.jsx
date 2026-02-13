@@ -106,8 +106,8 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
 
   const isInPlaylist = (trackId) => {
     if (!userPlaylist || userPlaylist.length === 0) return false;
-    return userPlaylisy.some(
-      (song) => song_id === trackId || song.id === trackId,
+    return userPlaylist.some(
+      (song) => song._id === trackId || song.id === trackId,
     );
   };
 
@@ -156,8 +156,8 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
             onMouseEnter={(e) =>
             (e.currentTarget.style.backgroundColor = "#191B1B")
             }
-            onMouseLeave={(e) => {
-              (e.currentTarget.style.backgroundColor = "#191B1B")
+            onMouseLeave={(e) => 
+              e.currentTarget.style.backgroundColor = "#191B1B"
             }
             onClick={() => {
               executeActionWithAd(() => {
@@ -222,10 +222,10 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
             }
           ></i>
 
-          {isPlaylist ? (
+          {isPlay ? (
             <i 
             className="bx bxs-trash text-danger fs-4"
-            onClick={(e) => handleRemoveFromPlaylist(e, track)}
+            onClick={(e) => handleRemoveFormPlaylist(e, track)}
             ></i>
           ) : (
             <i 
@@ -244,13 +244,23 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
           ></i>
           )}
 
-          
-
-
-          );
+          <span style={{ color: "#494D4E" }}>
+            {track.duration_ms
+            ? Math.florr(track.duration_ms / 1000 / 60) + 
+          ":" +
+          String(
+            Math.floor((track.duration_ms / 1000) % 60),
+          ).padStart(2, "0")
+        : ""}
+          </span>
+          </div>
+        </div>
+        );
         })}
       </div>
     </div>
-    </Container>
+  </Container>
   );
-  };
+};
+
+export default TopSongs;
