@@ -104,5 +104,43 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
     }
   };
 
-  
+  const isInPlaylist = (trackId) => {
+    if (!userPlaylist || userPlaylist.length === 0) return false;
+    return userPlaylisy.some(
+      (song) => song_id === trackId || song.id === trackId,
+    );
+  };
+
+  if(!album || !album.tracks || album.tracks.length === 0) {
+    return (
+      <Col xs={12}>
+        <div className="music-list bg-dark text-white rounded p-3 h-100">
+          <h5>⚠️ No hay canciones disponibles</h5>
+        </div>
+      </Col>
+    );
+  }
+
+  return (
+    <Container fluid className="px-2 px-lg-3">
+      <div
+      className="music-list p-3 rounded-4"
+      style={{
+        backgroundColor: "#111111",
+          height: fromHome ? "auto" : "80vh",
+          minHeight: fromHome ? "400px" : "auto",
+          maxHeight: fromHome ? "calc(100vh - 350px)" : "80vh",
+          overflowY: "auto",
+      }}
+    >
+      <div className="header d-flex justify-content-between align-items-center mb-3">
+        <h5 className="mb-0 text-white">Canciones de {album.name}</h5>
+        {album.release_date && (
+          <span className="text-secondary small">(album. release_date)</span>
+        )}
+      </div>
+      
+    </div>
+    </Container>
+  )
   }
