@@ -170,7 +170,8 @@ const MusicPlayer = () => {
       };
     }
   }, [isDragging, isFloating]);
-  const formatTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  const formatTime = (s) =>
+    `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
   const handleProgressChange = (e) => {
     if(isAdPlaying) return; 
     
@@ -269,8 +270,12 @@ const MusicPlayer = () => {
         <span className="now-playing">Now Playing</span>
         {isFloating && (
           <div className="header-actions">
-            <button onClick={() => setMinimized(!minimized)}><Minimize2 size={16} /></button>
-            <button onClick={() => setVisible(false)}><X size={16} /></button>
+            <button onClick={() => setMinimized(!minimized)}>
+              <Minimize2 size={16} />
+            </button>
+            <button onClick={() => setVisible(false)}>
+              <X size={16} />
+            </button>
           </div>
         )}
       </div>
@@ -342,7 +347,13 @@ const MusicPlayer = () => {
             </button>
             <div className="volume">
               <Volume2 size={16} />
-              <input type="range" min="0" max="100" value={volume} onChange={(e) => setVolume(e.target.value)} />
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume}
+                onChange={(e) => setVolume(e.target.value)}
+              />
             </div>
           </div>
           {showLyrics && (

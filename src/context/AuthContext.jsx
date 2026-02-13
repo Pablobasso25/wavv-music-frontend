@@ -4,7 +4,7 @@ import {
   registerRequest,
   verifyTokenRequest,
   logoutRequest,
-  updateProfileRequest, 
+  updateProfileRequest,
 } from "../api/auth";
 import Cookies from "js-cookie";
 
@@ -15,19 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const checkPermission = (action, currentCount) => {
-    if (!user) return false;
-    if (user.subscription === "premium") return true;
-
-    if (action === "add_to_playlist" && currentCount >= 5) {
-      return false;
-    }
-    if (action === "skip_song" && currentCount >= 3) {
-      return false;
-    }
-    return true;
-  };
 
   const signup = async (user) => {
     try {
@@ -61,12 +48,16 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (user) => {
     try {
       const res = await updateProfileRequest(user);
-      setUser(res.data); 
-      setErrors([]); 
+      setUser(res.data);
+      setErrors([]);
       return res.data;
     } catch (error) {
       const errorData = error.response?.data;
-      setErrors(Array.isArray(errorData) ? errorData : [errorData?.message || "Error al actualizar"]);
+      setErrors(
+        Array.isArray(errorData)
+          ? errorData
+          : [errorData?.message || "Error al actualizar"],
+      );
       throw error;
     }
   };
@@ -117,7 +108,6 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         errors,
         loading,
-        checkPermission,
       }}
     >
       {children}
