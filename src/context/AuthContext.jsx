@@ -4,6 +4,7 @@ import {
   registerRequest,
   verifyTokenRequest,
   logoutRequest,
+  updateProfileRequest, 
 } from "../api/auth";
 import Cookies from "js-cookie";
 
@@ -20,7 +21,6 @@ export const AuthProvider = ({ children }) => {
     if (user.subscription === "premium") return true;
 
     if (action === "add_to_playlist" && currentCount >= 5) {
-      // Aquí va el Toast o Modal de "Pasate a Premium"
       return false;
     }
     if (action === "skip_song" && currentCount >= 3) {
@@ -49,7 +49,6 @@ export const AuthProvider = ({ children }) => {
       setErrors([]);
     } catch (error) {
       const errorData = error.response?.data;
-
       if (Array.isArray(errorData)) {
         setErrors(errorData);
       } else if (errorData?.message) {
@@ -57,6 +56,18 @@ export const AuthProvider = ({ children }) => {
       } else {
         setErrors(["Error de conexión con el servidor"]);
       }
+    }
+  };
+  const updateProfile = async (user) => {
+    try {
+      const res = await updateProfileRequest(user);
+      setUser(res.data); 
+      setErrors([]); 
+      return res.data;
+    } catch (error) {
+      const errorData = error.response?.data;
+      setErrors(Array.isArray(errorData) ? errorData : [errorData?.message || "Error al actualizar"]);
+      throw error;
     }
   };
 
@@ -101,6 +112,7 @@ export const AuthProvider = ({ children }) => {
         signup,
         login,
         logout,
+        updateProfile,
         user,
         isAuthenticated,
         errors,
