@@ -183,6 +183,35 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
                 playSong(songToPlay, fullAlbumQueue);
               });
             }}
+          >
+            <div className="d-flex align-items-center gap-3">
+              <span
+              className="fw-bold text-white"
+              style={{ minWidth: "30px" }}
+            >
+              {String(index + 1).padStart(2, "0")}
+            </span>
+
+            <img
+                src={track.cover || album.image}
+                className="rounded me-2 me-md-3"
+                width="40"
+                height="40"
+                 alt={track.name}
+              />
+
+              <div className="details">
+                <h6
+                className="mb-0 small"
+                style= {{
+                  color: isCurrentTrack ? "#0d6efd" : "white",
+                }}
+              >
+                {track.name}
+              </h6>
+            </div>
+          </div>
+
           
 
 
