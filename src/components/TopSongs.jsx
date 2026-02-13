@@ -139,7 +139,56 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
           <span className="text-secondary small">(album. release_date)</span>
         )}
       </div>
-      
+      <div className="items">
+        {album.tracks.map((track, index) => {
+          const isCurrentTrack = currentSong?.title === track.name;
+          const trackId = track._id || track.id;
+          const added = isInPlaylist(trackId);
+
+          return (
+            <div
+            key={index}
+            className="item d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 cursor-pointer"
+            style={{
+              backgroundColor: "#191B1B",
+                  transition: "0.2s",
+            }}
+            onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#191B1B")
+            }
+            onMouseLeave={(e) => {
+              (e.currentTarget.style.backgroundColor = "#191B1B")
+            }
+            onClick={() => {
+              executeActionWithAd(() => {
+                const songToPlay = {
+                  title: track.name,
+                      artist:
+                        album.artists?.[0]?.name || album.name || "Artista",
+                      album: album.name,
+                      cover: track.cover || album.image,
+                      audio:
+                        track.preview_url || track.audio || track.youtubeUrl,
+                      name: track.name,
+                      _id: trackId,
+                };
+                const fullAlbumQueue = album.tracks.map((t) => ({
+                  title: t.name,
+                      artist: album.artists?.[0]?.name || album.name,
+                      cover: t.cover || album.image,
+                      audio: t.preview_url || t.audio || t.youtubeUrl,
+                      name: t.name,
+                      _id: t._id || t.id,
+                }));
+                playSong(songToPlay, fullAlbumQueue);
+              });
+            }}
+          
+
+
+          )
+        })}
+      </div>
     </div>
     </Container>
   )
