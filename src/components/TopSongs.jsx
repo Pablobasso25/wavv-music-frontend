@@ -71,4 +71,38 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
       });
     }
   };
+
+  const handleRemoveFormPlaylist = async (e, track) => {
+    e.stopPropagation();
+    const trackId = track._id || track.id;
+
+    const confirm = await Swal.fire({
+      title: "¿Borrar canción?",
+      text: "Se eliminará de tu playlist.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, borrar",
+      cancelButtonText: "Cancelar",
+      background: "#191B1B",
+      color: "#fff",
+    });
+
+    if (confirm.isConfirmed) {
+      const result = await deleteSongFormPlaylist(trackId);
+      if (result.success) {
+        toast.success("Canción eliminada", {
+          position: "bottom-right",
+          theme: "dark",
+          autoClose: 2000,
+        });
+        getUserPlaylist();
+      } else {
+        toast.error("Error al eliminar", { theme: "dark" });
+      }
+    }
+  };
+
+  
   }
