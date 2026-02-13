@@ -212,13 +212,45 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
             </div>
           </div>
 
+          <div className="actions d-flex align-items-center gap-3">
+            <i
+            className={`bx ${
+              isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
+            } cursor-pointer fs-2 text-white`}
+            title={
+              isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
+            }
+          ></i>
+
+          {isPlaylist ? (
+            <i 
+            className="bx bxs-trash text-danger fs-4"
+            onClick={(e) => handleRemoveFromPlaylist(e, track)}
+            ></i>
+          ) : (
+            <i 
+            className={`bx ${
+              added
+                ? "bxs-check-circle text-success"
+                : "bxs-plus-square text-secondary"
+            } fs-4`}
+            style={{ cursor: added ? "default" : "pointer" }}
+            onTransitionCancel={
+              added ? "Ya está en tu playlist" : "Agregar a playlist"
+            }
+            onClick={(e) => {
+              if (!added) handleAddToPlaylist(e, track);
+            }}
+          ></i>
+          )}
+
           
 
 
-          )
+          );
         })}
       </div>
     </div>
     </Container>
-  )
-  }
+  );
+  };
