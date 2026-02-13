@@ -22,4 +22,14 @@ const TopSongs = ({ album, isPlay = false, fromHome = false }) => {
   useEffect(() => {
     getUserPlaylist();
   }, []);
+
+  const handleAddToPlaylist = async (e, track) => {
+    e.stopPropagation();
+    const trackId = track._id || track.id;
+
+    if(!trackId) {
+      toast.error("Error: no se pudo identificar la camción.");
+      return;
+    }
+  }
 }
