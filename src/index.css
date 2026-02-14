@@ -456,3 +456,16 @@ html, body {
     max-width: 100%;
     overflow-x: hidden;
 }
+
+.my-swal-confirm {
+  width: 80% !important;
+  border-radius: 50px !important;
+  padding: 12px !important;
+  font-weight: bold !important;
+  font-size: 1rem !important;
+  text-transform: uppercase;
+}
+.my-swal-popup {
+  border-radius: 25px !important;
+  border: 1px solid #333 !important;
+}
