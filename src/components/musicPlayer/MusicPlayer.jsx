@@ -365,7 +365,7 @@ const MusicPlayer = () => {
                 </button>
               </div>
               <div className="lyrics-body">
-                <p>{currentSong?.lyrics || "Letra no disponible."}</p>
+                <p>{currentSong?.lyrics || "No lyrics available for this track."}</p>
               </div>
             </div>
           )}
