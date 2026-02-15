@@ -95,9 +95,9 @@ const NavBar = () => {
   return (
     <NavBar className="spotify-navbar fixed-top">
       <div className="spotify-navbar-left">
-        <img src={Logo} 
-        alt="Wavv Music Logo" 
-        height="50"
+        <img src={Logo}
+          alt="Wavv Music Logo"
+          height="50"
         />
       </div>
 
@@ -194,6 +194,16 @@ const NavBar = () => {
           )}
         </div>
       )}
+      <div className="spotify-navbar-rigth">
+        {!isAdminPage && (
+          <button
+            className="btn-premium"
+            onClick={() => navigate("/premium")}
+          >
+            Explorar Premium
+          </button>  
+        )}
+      </div>
     </NavBar>
   );
 };
