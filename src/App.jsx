@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import RegisterScreen from "./pages/register/RegisterScreen";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -27,88 +27,86 @@ const App = () => {
 
   if (welcome) return <WelcomeScreen />;
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/login"
-          element={
-            !isAuthenticated ? (
-              <LoginScreen show={true} handleClose={() => {}} />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <>
-              <RegisterScreen />
-            </>
-          }
-        />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <NavBar />
-              <HomeScreen />
-              <Footer />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <NavBar />
-              <ProfileScreen />
-              <Footer />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute adminOnly>
-              <AdminScreen />
-              <Footer />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/playlist"
-          element={
-            <ProtectedRoute>
-              <NavBar />
-              <PlaylistScreen />
-              <Footer />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/about-us"
-          element={
-            <>
-              <NavBar />
-              <AboutUs />
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/subscription"
-          element={
-            <ProtectedRoute>
-              <NavBar />
-              <SubscriptionScreen />
-              <Footer />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Error404Screen />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          !isAuthenticated ? (
+            <LoginScreen show={true} handleClose={() => {}} />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <>
+            <RegisterScreen />
+          </>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <NavBar />
+            <HomeScreen />
+            <Footer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <NavBar />
+            <ProfileScreen />
+            <Footer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute adminOnly>
+            <AdminScreen />
+            <Footer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/playlist"
+        element={
+          <ProtectedRoute>
+            <NavBar />
+            <PlaylistScreen />
+            <Footer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/about-us"
+        element={
+          <>
+            <NavBar />
+            <AboutUs />
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/subscription"
+        element={
+          <ProtectedRoute>
+            <NavBar />
+            <SubscriptionScreen />
+            <Footer />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Error404Screen />} />
+    </Routes>
   );
 };
 
