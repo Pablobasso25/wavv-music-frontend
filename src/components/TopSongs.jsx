@@ -1,14 +1,23 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Container, Col } from "react-bootstrap";
 import { useMusicPlayer } from "../context/MusicPlayerContext";
 import { useSongs } from "../context/SongContext";
 import { useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
 import Swal from "sweetalert2";
+import { showPremiumAlert } from "../helpers/alerts";
+import publicidad2 from "../assets/images/publicidad2.png";
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
-  const { playSong, currentSong, isPlaying, executeActionWithAd } =
-    useMusicPlayer();
+  const {
+    playSong,
+    currentSong,
+    isPlaying,
+    executeActionWithAd,
+    audioRef,
+    setIsPlaying,
+    playUISound,
+  } = useMusicPlayer();
 
   const {
     addSongToPlaylist,
@@ -28,13 +37,18 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     const trackId = track._id || track.id;
 
     if (!trackId) {
-      toast.error("Error: No se pudo identificar la canción.");
+      playUISound("error");
+      toast.error("Error: No se pudo identificar la canción.", {
+        position: "bottom-right",
+        theme: "dark",
+      });
       return;
     }
 
     const result = await addSongToPlaylist(trackId);
 
     if (result.success) {
+      playUISound("success");
       toast.success(`"${track.name}" agregada a tu playlist.`, {
         position: "bottom-right",
         autoClose: 3000,
@@ -47,24 +61,12 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       });
       getUserPlaylist();
     } else if (result.status === 403 && result.code === "PREMIUM_REQUIRED") {
-      Swal.fire({
-        title: "¡Pásate a Premium!",
-        text: "Solo puedes agregar 5 canciones con el plan gratuito.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Ver Planes",
-        cancelButtonText: "Seguir en el plan gratuito",
-        confirmButtonColor: "#8b5cf6",
-        cancelButtonColor: "#d33",
-        background: "#191B1B",
-        color: "#fff",
-        iconColor: "#ffbb33",
-      }).then((res) => {
-        if (res.isConfirmed) {
-          navigate("/subscription");
-        }
-      });
+      if (audioRef.current) audioRef.current.pause();
+      setIsPlaying(false);
+      playUISound("error");
+      showPremiumAlert(navigate, publicidad2);
     } else {
+      playUISound("warning");
       toast.info(result.message || "Esta canción ya está en tu playlist.", {
         position: "bottom-right",
         theme: "dark",
@@ -92,14 +94,19 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     if (confirm.isConfirmed) {
       const result = await deleteSongFromPlaylist(trackId);
       if (result.success) {
-        toast.success("Canción eliminada", {
+        playUISound("success");
+        toast.info("Canción eliminada", {
           position: "bottom-right",
           theme: "dark",
           autoClose: 2000,
         });
         getUserPlaylist();
       } else {
-        toast.error("Error al eliminar", { theme: "dark" });
+        playUISound("error");
+        toast.error("Error al eliminar", {
+          theme: "dark",
+          position: "bottom-right",
+        });
       }
     }
   };
@@ -265,5 +272,3 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
 };
 
 export default TopSongs;
-
-
