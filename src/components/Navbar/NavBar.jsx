@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Navbar, Nav, Container, Form, Dropdown, Badge } from "react-bootstrap";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useSongs } from "../context/SongContext"; // Nueva lógica
-import { useMusicPlayer } from "../context/MusicPlayerContext";
+import { useAuth } from "../../context/AuthContext";
+import { useSongs } from "../../context/SongContext"; 
+import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import Logo from "../assets/images/logo.png"
-import { showConfirm } from "../helpers/alerts";
+import { showConfirm } from "../../helpers/alerts";
 
 const NavBar = () => {
   const { user, logout } = useAuth();
