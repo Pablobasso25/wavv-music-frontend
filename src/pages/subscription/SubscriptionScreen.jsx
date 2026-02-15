@@ -67,11 +67,20 @@ const SubscriptionScreen = () => {
                 </ListGroup.Item>
               </ListGroup>
               <Button
-                variant="outline-secondary"
-                className="mt-auto w-100"
                 disabled
+                className="mt-auto w-100 py-2 btn-expand"
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "#000000",
+                  border: "none",
+                  cursor: "not-allowed",
+                }}
               >
-                Tu plan actual
+                <span className="btn-icon">
+                  <i className="bx bx-lock"></i>
+                </span>
+
+                <span className="btn-text">Tu plan actual</span>
               </Button>
             </Card.Body>
           </Card>
