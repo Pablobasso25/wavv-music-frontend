@@ -6,12 +6,11 @@ import { useAuth } from "../../context/AuthContext";
 function ProfileScreen() {
   const { user, updateProfile, loading } = useAuth();
   const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef(null);
-
+  const [avatarFile, setAvatarFile] = useState(null); 
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -19,7 +18,6 @@ function ProfileScreen() {
     avatar: "",
     password: ""
   });
-
   useEffect(() => {
     if (user) {
       setFormData({
@@ -31,58 +29,50 @@ function ProfileScreen() {
       });
     }
   }, [user]);
-
   const handleImageClick = () => {
     if (isEditing) fileInputRef.current.click();
   };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, avatar: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setAvatarFile(file); 
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData(prev => ({ ...prev, avatar: reader.result }));
+    };
+    reader.readAsDataURL(file);
+  }
+};
   const handleRemoveImage = () => {
+    setAvatarFile(null); // ✅ MODIFICADO: Limpiar el archivo
     setFormData(prev => ({ ...prev, avatar: defaultAvatar }));
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-
   const handleSave = async () => {
-    if (formData.username.trim() === "") {
-      alert("El nombre de usuario no puede estar vacío");
-      return;
+  try {
+    setIsSaving(true);
+    const form = new FormData();
+    form.append("username", formData.username);
+    form.append("bio", formData.bio);
+    if (avatarFile) { 
+      form.append("avatar", avatarFile);
     }
-
-    try {
-      setIsSaving(true);
-      // Solo enviamos la password si el usuario escribió algo nuevo
-      const dataToUpdate = { ...formData };
-      if (!dataToUpdate.password) delete dataToUpdate.password;
-
-      await updateProfile(dataToUpdate);
-      
-      setIsEditing(false);
-      setShowPassword(false);
-      alert("Perfil actualizado correctamente");
-    } catch (error) {
-      console.error(error);
-      alert("Error al actualizar el perfil");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
+    await updateProfile(form);
+    setIsEditing(false);
+    alert("Perfil actualizado correctamente");
+  } catch (error) {
+    console.error(error);
+    alert("Error al actualizar el perfil");
+  } finally {
+    setIsSaving(false);
+  }
+};
+;
   const handleCancel = () => {
-    // Revertimos a los datos originales del contexto
+    setAvatarFile(null); 
     setFormData({
       username: user.username,
       email: user.email,
@@ -93,8 +83,6 @@ function ProfileScreen() {
     setIsEditing(false);
     setShowPassword(false);
   };
-
-  // Pantalla de carga mientras se verifica la sesión
   if (loading) {
     return (
       <div className="min-vh-100 d-flex align-items-center justify-content-center bg-dark">
@@ -109,14 +97,11 @@ function ProfileScreen() {
       </div>
     );
   }
-
   return (
     <div className="min-vh-100 py-5" style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)" }}>
       <Container className="px-4">
         <Row className="justify-content-center">
           <Col lg={10} xl={8}>
-
-            {/* CARD SUPERIOR: AVATAR Y BIO */}
             <Card className="border-0 shadow-lg mb-4" style={{ background: "linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%)", borderRadius: "20px" }}>
               <Card.Body className="p-4 p-md-5">
                 <Row className="align-items-center">
@@ -137,7 +122,6 @@ function ProfileScreen() {
                         }}
                         onClick={handleImageClick}
                       />
-                      
                       {isEditing && (
                         <>
                           <div 
@@ -155,7 +139,6 @@ function ProfileScreen() {
                           >
                             <X size={16} color="white" />
                           </div>
-
                           <input 
                             type="file" 
                             ref={fileInputRef} 
@@ -167,7 +150,6 @@ function ProfileScreen() {
                       )}
                     </div>
                   </Col>
-
                   <Col xs={12} md={8}>
                     {isEditing ? (
                       <input
@@ -182,7 +164,6 @@ function ProfileScreen() {
                         {formData.username}
                       </h3>
                     )}
-
                     <div className="d-flex flex-column flex-sm-row align-items-start justify-content-between">
                       {isEditing ? (
                         <textarea
@@ -199,7 +180,6 @@ function ProfileScreen() {
                           {formData.bio || "No hay biografía disponible."}
                         </p>
                       )}
-
                       <div className="d-flex gap-2 ms-sm-3 align-self-end align-self-sm-start">
                         {isEditing ? (
                           <>
@@ -237,8 +217,6 @@ function ProfileScreen() {
             <Card className="border-0 shadow-lg" style={{ background: "rgba(26, 26, 46, 0.8)", backdropFilter: "blur(10px)", borderRadius: "20px" }}>
               <Card.Body className="p-4 p-md-5">
                 <h4 className="text-white mb-4 fs-4 fw-bold">Información Personal</h4>
-
-                {/* Email (Generalmente no se edita aquí por seguridad) */}
                 <div className="mb-4 p-3 rounded" style={{background: "rgba(15,52,96,0.3)"}}>
                   <div className="d-flex align-items-center">
                     <div className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0" style={{ width: "48px", height: "48px", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
@@ -250,8 +228,6 @@ function ProfileScreen() {
                     </div>
                   </div>
                 </div>
-
-                {/* Contraseña */}
                 <div className="mb-4 p-3 rounded" style={{background: "rgba(15,52,96,0.3)"}}>
                   <div className="d-flex align-items-center">
                     <div className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0" style={{ width: "48px", height: "48px", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
@@ -277,7 +253,6 @@ function ProfileScreen() {
                             </p>
                           )}
                         </div>
-                        
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
@@ -290,8 +265,6 @@ function ProfileScreen() {
                     </div>
                   </div>
                 </div>
-
-                {/* Fecha de Registro */}
                 <div className="p-3 rounded" style={{background: "rgba(15,52,96,0.3)"}}>
                   <div className="d-flex align-items-center">
                     <div className="me-3 d-flex align-items-center justify-content-center rounded flex-shrink-0" style={{ width: "48px", height: "48px", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
@@ -305,10 +278,8 @@ function ProfileScreen() {
                     </div>
                   </div>
                 </div>
-
               </Card.Body>
             </Card>
-
           </Col>
         </Row>
       </Container>

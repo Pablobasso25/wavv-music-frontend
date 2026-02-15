@@ -63,6 +63,11 @@ export const AuthProvider = ({ children }) => {
       const res = await updateProfileRequest(user);
       setUser(res.data); 
       setErrors([]); 
+      
+      // Recargar perfil desde el servidor
+      const profileRes = await verifyTokenRequest();
+      setUser(profileRes.data);
+      
       return res.data;
     } catch (error) {
       const errorData = error.response?.data;
