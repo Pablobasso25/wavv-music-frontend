@@ -14,7 +14,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { useSongs } from "../../context/SongContext";
 import { toast } from "react-toastify";
-import Swal from "sweetalert2";
+import publicidad2 from "../../assets/images/publicidad2.png";
+import { showPremiumAlert } from "../../helpers/alerts";
 import "./MusicPlayer.css";
 
 const PLAYER_WIDTH = 300;
@@ -29,7 +30,9 @@ const MusicPlayer = () => {
     prevTrack,
     audioRef,
     executeActionWithAd,
-    isAdPlaying, 
+    isAdPlaying,
+    setIsPlaying,
+    playUISound,
   } = useMusicPlayer();
 
   const {
@@ -54,10 +57,11 @@ const MusicPlayer = () => {
   const dragRef = useRef(null);
   const offsetRef = useRef({ x: 0, y: 0 });
   const location = useLocation();
+
   useEffect(() => {
     if (currentSong && userPlaylist) {
       const isSaved = userPlaylist.some(
-        (s) => s._id === currentSong._id || s.id === currentSong._id
+        (s) => s._id === currentSong._id || s.id === currentSong._id,
       );
       setIsLiked(isSaved);
     } else {
@@ -69,37 +73,54 @@ const MusicPlayer = () => {
     if (!currentSong) return;
     const trackId = currentSong._id || currentSong.id;
 
-    if (isLiked) {
-      const res = await deleteSongFromPlaylist(trackId);
-      if (res.success) {
-        setIsLiked(false);
-        toast.info("Eliminada de tu playlist", { theme: "dark", autoClose: 1000 });
-        getUserPlaylist();
-      }
-    } else {
-      const res = await addSongToPlaylist(trackId);
-      if (res.success) {
-        setIsLiked(true);
-        toast.success("Agregada a tu playlist", { theme: "dark", autoClose: 1000 });
-        getUserPlaylist();
-      } else if (res.status === 403 && res.code === "PREMIUM_REQUIRED") {
-        Swal.fire({
-          title: "¡Límite alcanzado!",
-          text: "Solo 5 canciones en el plan gratuito.",
-          icon: "warning",
-          confirmButtonText: "Ver Planes",
-          confirmButtonColor: "#8b5cf6",
-          background: "#191B1B",
-          color: "#fff",
-        }).then((r) => {
-          if (r.isConfirmed) navigate("/subscription");
-        });
+    try {
+      if (isLiked) {
+        const res = await deleteSongFromPlaylist(trackId);
+
+        if (res.success) {
+          setIsLiked(false);
+          playUISound("success");
+          toast.info("Eliminada de tu playlist", {
+            theme: "dark",
+            autoClose: 1500,
+            position: "bottom-right",
+          });
+          getUserPlaylist();
+        }
+        return;
       } else {
-        toast.error("Error al guardar", { theme: "dark" });
+        const res = await addSongToPlaylist(trackId);
+
+        if (res.success) {
+          setIsLiked(true);
+          playUISound("success");
+          toast.success("Agregada a tu playlist", {
+            theme: "dark",
+            autoClose: 1500,
+            position: "bottom-right",
+          });
+          getUserPlaylist();
+        } else if (res.status === 403 && res.code === "PREMIUM_REQUIRED") {
+          if (audioRef.current) audioRef.current.pause();
+          setIsPlaying(false);
+          playUISound("error");
+          showPremiumAlert(navigate, publicidad2);
+        } else {
+          playUISound("error");
+          toast.error(res.message || "No se pudo agregar la canción", {
+            theme: "dark",
+            position: "bottom-right",
+          });
+        }
       }
+    } catch (error) {
+      playUISound("error");
+      toast.error("Error de conexión. Intentá más tarde.", {
+        theme: "dark",
+        position: "bottom-right",
+      });
     }
   };
-
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -139,7 +160,8 @@ const MusicPlayer = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const isMusicPage = location.pathname === "/" || location.pathname === "/home";
+  const isMusicPage =
+    location.pathname === "/" || location.pathname === "/home";
   const isFloating = !isMusicPage && visible && !isMobile;
   const handleMouseDown = (e) => {
     if (!e.target.closest(".player-header")) return;
@@ -170,10 +192,11 @@ const MusicPlayer = () => {
       };
     }
   }, [isDragging, isFloating]);
-  const formatTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  const formatTime = (s) =>
+    `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
   const handleProgressChange = (e) => {
-    if(isAdPlaying) return; 
-    
+    if (isAdPlaying) return;
+
     const newTime = (e.target.value / 100) * duration;
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
@@ -181,12 +204,14 @@ const MusicPlayer = () => {
     }
   };
 
-  const blockedStyle = isAdPlaying ? {
-      pointerEvents: 'none', 
-      opacity: 0.5,          
-      filter: 'blur(2px)',   
-      transition: 'all 0.3s ease'
-  } : { transition: 'all 0.3s ease' };
+  const blockedStyle = isAdPlaying
+    ? {
+        pointerEvents: "none",
+        opacity: 0.5,
+        filter: "blur(2px)",
+        transition: "all 0.3s ease",
+      }
+    : { transition: "all 0.3s ease" };
 
   if (isMobile) {
     if (!currentSong) return null;
@@ -209,20 +234,29 @@ const MusicPlayer = () => {
         />
         <div className="mobile-content">
           <div className="mobile-artwork">
-            <img src={currentSong?.image || "https://via.placeholder.com/150"} alt="Artwork" />
+            <img
+              src={currentSong?.image || "https://via.placeholder.com/150"}
+              alt="Artwork"
+            />
           </div>
           <div className="mobile-info">
             <p className="song-title">{currentSong?.title}</p>
             <p className="song-artist">{currentSong?.artist}</p>
           </div>
           <div className="mobile-controls">
-            <button className="control-btn" onClick={() => executeActionWithAd(prevTrack)}>
+            <button
+              className="control-btn"
+              onClick={() => executeActionWithAd(prevTrack)}
+            >
               <SkipBack size={16} />
             </button>
             <button className="play-btn mobile-play-btn" onClick={togglePlay}>
               {isPlaying ? <Pause size={20} /> : <Play size={20} />}
             </button>
-            <button className="control-btn" onClick={() => executeActionWithAd(nextTrack)}>
+            <button
+              className="control-btn"
+              onClick={() => executeActionWithAd(nextTrack)}
+            >
               <SkipForward size={16} />
             </button>
           </div>
@@ -236,7 +270,13 @@ const MusicPlayer = () => {
       <button
         className="player-toggle-btn"
         onClick={() => setVisible(true)}
-        style={{ position: "fixed", bottom: "20px", right: "20px", zIndex: 1000, ...blockedStyle }}
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          zIndex: 1000,
+          ...blockedStyle,
+        }}
       >
         <Play size={24} />
       </button>
@@ -251,17 +291,22 @@ const MusicPlayer = () => {
       }`}
       style={{
         ...(isFloating
-          ? { position: "fixed", left: position.x, top: position.y, zIndex: 10000 }
-          : isMusicPage
           ? {
-              position: "absolute",
-              right: "10px",
-              top: "45%",
-              transform: "translateY(-50%)",
-              zIndex: 1000,
+              position: "fixed",
+              left: position.x,
+              top: position.y,
+              zIndex: 10000,
             }
-          : {}),
-        ...blockedStyle 
+          : isMusicPage
+            ? {
+                position: "absolute",
+                right: "10px",
+                top: "45%",
+                transform: "translateY(-50%)",
+                zIndex: 1000,
+              }
+            : {}),
+        ...blockedStyle,
       }}
       onMouseDown={isFloating ? handleMouseDown : undefined}
     >
@@ -269,8 +314,12 @@ const MusicPlayer = () => {
         <span className="now-playing">Now Playing</span>
         {isFloating && (
           <div className="header-actions">
-            <button onClick={() => setMinimized(!minimized)}><Minimize2 size={16} /></button>
-            <button onClick={() => setVisible(false)}><X size={16} /></button>
+            <button onClick={() => setMinimized(!minimized)}>
+              <Minimize2 size={16} />
+            </button>
+            <button onClick={() => setVisible(false)}>
+              <X size={16} />
+            </button>
           </div>
         )}
       </div>
@@ -284,14 +333,18 @@ const MusicPlayer = () => {
             />
             {!isMusicPage && (
               <div className="song-meta">
-                <h4 className="title">{currentSong?.title || "Seleccione canción"}</h4>
+                <h4 className="title">
+                  {currentSong?.title || "Seleccione canción"}
+                </h4>
                 <p className="artist">{currentSong?.artist || "--"}</p>
               </div>
             )}
           </div>
           {isMusicPage && (
             <div className="fixed-song-info">
-              <h4 className="title">{currentSong?.title || "Seleccione canción"}</h4>
+              <h4 className="title">
+                {currentSong?.title || "Seleccione canción"}
+              </h4>
               <p className="artist">{currentSong?.artist || "--"}</p>
             </div>
           )}
@@ -308,7 +361,10 @@ const MusicPlayer = () => {
             <span>{formatTime(duration)}</span>
           </div>
           <div className="controls">
-            <button onClick={() => executeActionWithAd(prevTrack)} disabled={!currentSong}>
+            <button
+              onClick={() => executeActionWithAd(prevTrack)}
+              disabled={!currentSong}
+            >
               <SkipBack size={20} />
             </button>
             <button
@@ -319,7 +375,10 @@ const MusicPlayer = () => {
             >
               {isPlaying ? <Pause size={28} /> : <Play size={28} />}
             </button>
-            <button onClick={() => executeActionWithAd(nextTrack)} disabled={!currentSong}>
+            <button
+              onClick={() => executeActionWithAd(nextTrack)}
+              disabled={!currentSong}
+            >
               <SkipForward size={20} />
             </button>
           </div>
@@ -342,19 +401,30 @@ const MusicPlayer = () => {
             </button>
             <div className="volume">
               <Volume2 size={16} />
-              <input type="range" min="0" max="100" value={volume} onChange={(e) => setVolume(e.target.value)} />
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume}
+                onChange={(e) => setVolume(e.target.value)}
+              />
             </div>
           </div>
           {showLyrics && (
             <div className="lyrics-panel">
               <div className="lyrics-header">
                 <span>Lyrics</span>
-                <button className="lyrics-close-btn" onClick={() => setShowLyrics(false)}>
+                <button
+                  className="lyrics-close-btn"
+                  onClick={() => setShowLyrics(false)}
+                >
                   <X size={14} />
                 </button>
               </div>
               <div className="lyrics-body">
-                <p>{currentSong?.lyrics || "Letra no disponible."}</p>
+                <p>
+                  {currentSong?.lyrics || "No lyrics available for this track."}
+                </p>
               </div>
             </div>
           )}

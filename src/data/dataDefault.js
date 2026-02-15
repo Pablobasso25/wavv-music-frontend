@@ -128,5 +128,29 @@ export const defaultAlbum = {
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
       duration_ms: 202000,
     },
+    {
+      name: "Midnight Drive",
+      preview_url:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+      duration_ms: 238000,
+    },
+    {
+      name: "Neon Lights",
+      preview_url:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      duration_ms: 252000,
+    },
+    {
+      name: "Digital Sunset",
+      preview_url:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      duration_ms: 275000,
+    },
+    {
+      name: "Electric Dreams",
+      preview_url:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+      duration_ms: 202000,
+    },
   ],
 };
