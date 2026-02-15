@@ -4,7 +4,7 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useSongs } from "../context/SongContext"; // Nueva lógica
 import { useMusicPlayer } from "../context/MusicPlayerContext";
-import Logo from "../assets/images/logo.jpg";
+import Logo from "../assets/images/logo.png"
 import { showConfirm } from "../helpers/alerts";
 
 const NavBar = () => {
@@ -48,7 +48,7 @@ const NavBar = () => {
       setShowDropdown(false);
       return;
     }
-        if (lastSearchRef.current === searchQuery) return;
+    if (lastSearchRef.current === searchQuery) return;
 
     const timer = setTimeout(async () => {
       lastSearchRef.current = searchQuery;
@@ -93,229 +93,108 @@ const NavBar = () => {
   };
 
   return (
-    <Navbar
-      expand="lg"
-      className="py-2"
-      fixed="top"
-      style={{ backgroundColor: "#000", zIndex: 1030 }}
-    >
-      <Container fluid className="position-relative">
-        <Navbar.Brand
-          onClick={() => navigate("/")}
-          style={{ cursor: "pointer" }}
-          className="text-white fw-bold logo-custom"
-        >
-          <img
-            src={Logo}
-            alt="Wavv Music Logo"
-            height="50"
-            className="d-inline-block align-top"
-          />
-        </Navbar.Brand>
+    <NavBar className="spotify-navbar fixed-top">
+      <div className="spotify-navbar-left">
+        <img src={Logo} 
+        alt="Wavv Music Logo" 
+        height="50"
+        />
+      </div>
 
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className="border-0" />
+      {!isAdminPage && (
+        <div className="spotify-navbar-center" ref={searchRef}>
+          <div className="spotify-search">
+            <i className="bi bi-search spotify-search-icon"></i>
 
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto d-flex align-items-center gap-3">
-            {!isAdminPage && (
-              <NavLink
-                to="/playlist"
-                className="text-secondary text-uppercase fw-bold nav-link-custom"
-                style={{ textDecoration: "none" }}
-              >
-                Playlist
-              </NavLink>
-            )}
+            <input
+              type="text"
+              className="spotify-search-input"
+              placeholder="Buscar canciones..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
 
-            {!isAdminPage && (
-              <NavLink
-                to="/about-us"
-                className="text-secondary text-uppercase fw-bold nav-link-custom"
-                style={{ textDecoration: "none" }}
-              >
-                Nosotros
-              </NavLink>
-            )}
-
-            {isAdminPage && (
-              <NavLink
-                to="/"
-                className="text-secondary text-uppercase fw-bold nav-link-custom"
-                style={{ textDecoration: "none" }}
-              >
-                <i className="bx bx-home-alt me-1"></i>
-                Home
-              </NavLink>
-            )}
-
-            {!isAdminPage && (
+            {isSearching && (
               <div
-                className="search position-relative"
-                ref={searchRef}
-                style={{ maxWidth: "250px", width: "100%" }}
+                className="spinner-border spinner-border-sm text-light"
+                role="status"
+                style={{ width: "1rem", height: "1rem" }}
               >
-                <i className="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
-                {isSearching && (
-                  <div
-                    className="spinner-border spinner-border-sm position-absolute top-50 end-0 translate-middle-y me-3"
-                    style={{ width: "1rem", height: "1rem" }}
-                    role="status"
-                  >
-                    <span className="visually-hidden">Buscando...</span>
-                  </div>
-                )}
-                <Form.Control
-                  type="text"
-                  className="ps-5 border-dark text-white custom-search-input w-100"
-                  placeholder="Buscar canciones..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{
-                    backgroundColor: "#1a1a1a",
-                    borderColor: "#000000ff",
-                    color: "#fff",
-                  }}
-                />
-
-                {showDropdown && (
-                  <div
-                    className="search-dropdown position-absolute mt-2 rounded-3 shadow-lg"
-                    style={{
-                      backgroundColor: "#202026",
-                      width: "100%",
-                      minWidth: "300px",
-                      maxWidth: "400px",
-                      maxHeight: "500px",
-                      overflowY: "auto",
-                      zIndex: 1050,
-                      border: "1px solid #333",
-                      left: 0,
-                    }}
-                  >
-                    {isSearching ? (
-                      <div className="p-3 text-center text-secondary">
-                        <div
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                        >
-                          <span className="visually-hidden">Cargando...</span>
-                        </div>
-                        Buscando...
-                      </div>
-                    ) : searchResults.length > 0 ? (
-                      <>
-                        <div className="p-2 border-bottom border-secondary">
-                          <small className="text-white-50 ms-2">
-                            {searchResults.length} resultados
-                          </small>
-                        </div>
-                        {searchResults.map((track, index) => (
-                          <div
-                            key={index}
-                            className="search-result-item p-3 d-flex align-items-center gap-3"
-                            style={{
-                              cursor: "pointer",
-                              transition: "background-color 0.2s",
-                            }}
-                            onMouseEnter={(event) =>
-                              (event.currentTarget.style.backgroundColor =
-                                "#2a2a30")
-                            }
-                            onMouseLeave={(event) =>
-                              (event.currentTarget.style.backgroundColor =
-                                "transparent")
-                            }
-                            onClick={() => handlePlaySong(track)}
-                          >
-                            <img
-                              src={track.image}
-                              alt={track.title}
-                              width="50"
-                              height="50"
-                              className="rounded"
-                            />
-                            <div className="flex-grow-1">
-                              <div className="text-white fw-semibold">
-                                {track.title}
-                              </div>
-                              <div className="text-secondary small">
-                                {track.artist}
-                              </div>
-                            </div>
-                            {track.audio && (
-                              <i className="bx bx-play-circle fs-4 text-primary"></i>
-                            )}
-                          </div>
-                        ))}
-                      </>
-                    ) : (
-                      <div className="p-3 text-center text-secondary">
-                        No se encontraron resultados
-                      </div>
-                    )}
-                  </div>
-                )}
+                <span className="visually-hidden">Buscando...</span>
               </div>
             )}
+          </div>
 
-            <Dropdown align="end" drop="down" className="user-dropdown">
-              <Dropdown.Toggle
-                as="div"
-                id="dropdown-user"
-                className="d-flex align-items-center profile-toggle"
-                style={{ backgroundColor: "transparent", cursor: "pointer" }}
-              >
-                <div className="d-flex align-items-center">
-                  <div className="bg-secondary rounded-start p-1">
-                    <img
-                      src="assets/images/juan.png"
-                      className="rounded"
-                      width="35"
-                      height="35"
-                      alt="Profile"
-                      onError={(event) => {
-                        event.target.src =
-                          "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=35&h=35&fit=crop&crop=face";
+          {!isAdminPage && (
+            <button
+              className="spotify-nav-icon"
+              onClick={() => navigate("/playlist")}
+            >
+              <i className="bi-music-note-list"></i>
+            </button>
+          )}
+          {showDropdown && (
+            <div className="spotify-search-dropdown">
+              {searchResults.length > 0 ? (
+                <>
+                  {searchResults.map((track, index) => (
+                    <div
+                      key={index}
+                      className="spotify-track-item"
+                      onClick={() => {
+                        const songData = {
+                          title: track.name,
+                          artist:
+                            track.artists?.map((a) => a.name).join(", ") ||
+                            "Unknown",
+                          album: track.album?.name || "Unknown Album",
+                          cover: track.album.images[0]?.url,
+                          audio: track.preview_url,
+                          genre: "Music",
+                          name: track.name,
+                        };
+
+                        playSong(songData);
+                        setShowDropdown(false);
+                        setSearchQuery("");
                       }}
-                    />
-                  </div>
-                  <div className="rounded-end p-2 d-md-block">
-                    <h6 className="mb-0 text-white">
-                      {user?.username || "Usuario"}
-                    </h6>
-                  </div>
-                </div>
-              </Dropdown.Toggle>
+                    >
+                      <img
+                        src={
+                          track.album.images[2]?.url ||
+                          track.album.images[0]?.url
+                        }
+                        alt={track.name}
+                        width="50"
+                        height="50"
+                        className="rounded"
+                      />
 
-              <Dropdown.Menu
-                className="border-secondary user-dropdown-menu"
-                renderOnMount
-                style={{ backgroundColor: "#000", borderColor: "#000" }}
-              >
-                <Dropdown.Item
-                  onClick={handleLogout}
-                  className="text-white d-flex align-items-center dropdown-item-custom"
-                  style={{ backgroundColor: "#000" }}
-                >
-                  <i className="bx bx-log-out me-2"></i>
-                  <span>Cerrar Sesión</span>
-                </Dropdown.Item>
-                {user?.role === "admin" && !isAdminPage && (
-                  <Dropdown.Item
-                    onClick={() => navigate("/admin")}
-                    className="text-warning d-flex align-items-center dropdown-item-custom"
-                    style={{ backgroundColor: "#000" }}
-                  >
-                    <i className="bx bx-shield me-2"></i>
-                    <span>Panel Admin</span>
-                  </Dropdown.Item>
-                )}
-              </Dropdown.Menu>
-            </Dropdown>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+                      <div className="flex-grow-1">
+                        <div className="text-white fw-semibold">
+                          {track.name}
+                        </div>
+                        <div className="text-secondary small">
+                          {track.artists?.map((a) => a.name).join(", ")}
+                        </div>
+                      </div>
+
+                      {track.preview_url && (
+                        <i className="bx bx-play-circle fs-4 text-primary"></i>
+                      )}
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div className="p-3 text-center text-secondary">
+                  No se encontraron resultados
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </NavBar>
   );
 };
 
