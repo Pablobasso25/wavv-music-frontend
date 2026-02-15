@@ -201,8 +201,88 @@ const NavBar = () => {
             onClick={() => navigate("/premium")}
           >
             Explorar Premium
-          </button>  
+          </button>
         )}
+        <Dropdown
+          align="end"
+          show={showUserDropdown}
+          onToggle={(isOpen) => setShowUserDropdown(isOpen)}>
+          <Dropdown.Toggle
+            as="div"
+            className="spotify-profile"
+            onClick={() => setShowUserDropdown(!showUserDropdown)}
+          >
+            <div
+              className="spotify-profile-circle"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/profile");
+              }}
+              style={{ cursor: "pointer", overflow: "hidden" }}
+            >
+              <img
+                src={
+                  user?.avatar ||
+                  "https://previews.123rf.com/images/jemastock/jemastock2001/jemastock200126608/137694549-user-avatar-with-earphones-audio-device-vector-illustration-design.jpg"
+                }
+                alt="Avatar"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+              />
+            </div>
+
+            <span className="spotify-username">
+              {user?.username || "Usuario"}
+            </span>
+
+            <i className="bi bi-caret-down-fill spotify-caret"></i>
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu className="dropdown-menu">
+            {!isAdminPage && user?.role !== "admin" && (
+              <Dropdown.Item
+                onClick={() => {
+                  navigate("/profile");
+                  setShowUserDropdown(false);
+                }}
+                className="text-white d-flex align-items-center"
+              >
+                <i className="bi bi-crown me-2"></i>
+                Perfil
+              </Dropdown.Item>
+            )}
+
+            {!isAdminPage && user?.role === "admin" && (
+              <Dropdown.Item
+                onClick={() => {
+                  navigate("/admin");
+                  setShowUserDropdown(false);
+                }}
+                className="text-warning d-flex align-items-center"
+              >
+
+                Panel Admin
+              </Dropdown.Item>
+            )}
+
+            <Dropdown.Divider />
+
+            <Dropdown.Item
+              onClick={() => {
+                handleLogout();
+                setShowUserDropdown(false);
+              }}
+              className="text-white d-flex align-items-center"
+            >
+              <i className="bx bx-log-out me-2"></i>
+              Cerrar Sesión
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     </NavBar>
   );
