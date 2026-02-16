@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import "./SubscriptonScreen.css";
 import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
-/* import axios from "../../api/axios";  */
+import { createPreferenceRequest } from "../../api/payment";
 import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
+
+const PLAN_PRICES = {
+  PREMIUM: 6000,
+  FAMILIAR: 15000,
+};
 
 const SubscriptionScreen = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const handleBuy = async (planType, price) => {
+  /* const handleBuy = async (planType, price) => {
     setLoading(true);
     try {
-      const res = await axios.post("/payments/create-preference", {
-        title: `Plan ${planType} Wavv Music`,
-        price: price,
-        quantity: 1,
-      });
-      if (res.data.init_point) {
+      const res = await createPreferenceRequest({ planType, price });
+      if (res.data && res.data.init_point) {
         window.location.href = res.data.init_point;
       }
     } catch (error) {
@@ -31,6 +32,31 @@ const SubscriptionScreen = () => {
       });
     } finally {
       setLoading(false);
+    }
+  }; */
+  const handleBuy = async (planType, price) => {
+    try {
+      const res = await createPreferenceRequest({ planType, price });
+
+      // DEBUG: Vamos a ver qué llega realmente
+      console.log("Data cruda de Axios:", res);
+
+      // Intentamos todas las variantes posibles
+      const initPoint =
+        res.data?.init_point || res.data?.initPoint || res.init_point;
+
+      if (initPoint) {
+        console.log("¡Link encontrado! Redirigiendo...");
+        window.location.href = initPoint;
+      } else {
+        // Si sigue saliendo esto, es que 'res.data' está vacío
+        console.error("El objeto res.data está vacío:", res.data);
+        alert(
+          "Error: Revisa la terminal de Node, el link no llega al navegador.",
+        );
+      }
+    } catch (error) {
+      console.error("Error en la petición:", error);
     }
   };
   return (
@@ -127,7 +153,7 @@ const SubscriptionScreen = () => {
                 </ListGroup.Item>
               </ListGroup>
               <Button
-                onClick={() => handleBuy("Familiar", 750)}
+                onClick={() => handleBuy("Premium", PLAN_PRICES.PREMIUM)}
                 disabled={loading}
                 className="mt-auto w-100 py-2  btn-expand"
                 style={{
@@ -193,7 +219,7 @@ const SubscriptionScreen = () => {
                 </ListGroup.Item>
               </ListGroup>
               <Button
-                onClick={() => handleBuy("Familiar", 750)}
+                onClick={() => handleBuy("Familiar", PLAN_PRICES.FAMILIAR)}
                 disabled={loading}
                 className="mt-auto w-100 py-2  btn-expand"
                 style={{
