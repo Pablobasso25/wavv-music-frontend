@@ -4,7 +4,7 @@ import { Mail, Calendar, Edit2, User, Save, X, Lock, Camera, Eye, EyeOff } from 
 import { useAuth } from "../../context/AuthContext"; 
 
 function ProfileScreen() {
-  const { user, updateProfile, loading } = useAuth();
+  const { user, updateProfile, loading, refreshUser } = useAuth();
   const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +18,10 @@ function ProfileScreen() {
     avatar: "",
     password: ""
   });
+  useEffect(() => {
+    refreshUser();
+  }, []);
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -44,7 +48,7 @@ const handleFileChange = (e) => {
   }
 };
   const handleRemoveImage = () => {
-    setAvatarFile(null); // ✅ MODIFICADO: Limpiar el archivo
+    setAvatarFile(null);
     setFormData(prev => ({ ...prev, avatar: defaultAvatar }));
   };
   const handleChange = (e) => {

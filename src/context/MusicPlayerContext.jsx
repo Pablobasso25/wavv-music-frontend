@@ -46,12 +46,12 @@ export const MusicPlayerProvider = ({ children }) => {
   };
 
   const executeActionWithAd = (callback) => {
+    
     if (user?.subscription?.status === "premium") {
       callback();
       return;
-    }1
-
-    if (adsCounter >= 3) {
+    }
+     if (adsCounter >= 3) {
       if (audioRef.current) audioRef.current.pause();
       setIsPlaying(false);
       setIsAdPlaying(true);
@@ -68,7 +68,6 @@ export const MusicPlayerProvider = ({ children }) => {
     } else {
       setAdsCounter((prev) => prev + 1);
       callback();
-      1;1
     }
   };
 
