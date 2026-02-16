@@ -69,6 +69,17 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const refreshUser = async () => {
+    try {
+      const res = await verifyTokenRequest();
+      if (res.data) {
+        setUser(res.data);
+      }
+    } catch (error) {
+      console.error("Error al encontrar usuario:", error);
+    }
+  };
+
   useEffect(() => {
     async function checkLogin() {
       const cookies = Cookies.get();
@@ -104,6 +115,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         updateProfile,
+        refreshUser,
         user,
         isAuthenticated,
         errors,
