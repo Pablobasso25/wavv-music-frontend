@@ -34,3 +34,28 @@ const AdminScreen = () => {
     setSongs(storedSongs);
     setArtists(storedArtists);
   }, []);
+
+  return (
+    <Container className="my-5 pt-5">
+
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 mt-4">
+        <div className="mb-3 mb-md-0">
+          <h2 className="text-white fw-bold display-6 mb-1">
+            Panel de Control
+          </h2>
+          <p className="text-secondary m-0">
+            Gestión integral de usuarios y contenido
+          </p>
+        </div>
+
+        <div className="d-flex align-items-center gap-3">
+          {(currentTab === "songs" || currentTab === "artists") && (
+            <Button
+              variant="success"
+              className="rounded-pill px-4 fw-semibold d-flex align-items-center shadow"
+              onClick={() => setShowModal(true)}
+            >
+              <i className="bi bi-plus-lg me-2"></i>
+              {currentTab === "songs" ? "Nueva Canción" : "Nuevo Artista"}
+            </Button>
+          )}
