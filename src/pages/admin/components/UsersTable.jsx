@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Badge, Button } from "react-bootstrap";
+import Swal from "sweetalert2";
 
 const UsersTable = ({ users, setUsers }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,6 +35,20 @@ const UsersTable = ({ users, setUsers }) => {
           color: "#fff",
         });
       }
+    });
+  };
+
+  const toggleSuspendUser = (id) => {
+    const updatedUsers = users.map((u) => (u.id === id ? { ...u, isSuspended: !u.isSuspended } : u));
+    persistUsers(updatedUsers);
+    Swal.fire({
+      title: "Estado actualizado",
+      text: "El estado del usuario ha sido modificado.",
+      icon: "success",
+      background: "#1a1a1a",
+      color: "#fff",
+      timer: 1500,
+      showConfirmButton: false,
     });
   };
 
@@ -124,15 +139,19 @@ const UsersTable = ({ users, setUsers }) => {
                     </Button>
 
                     <Button
-                      variant="outline-secondary"
+                      variant={user.isSuspended ? "outline-success" : "outline-secondary"}
                       size="sm"
                       className="rounded-circle d-flex align-items-center justify-content-center"
                       style={{ width: "32px", height: "32px" }}
-                      title="Suspender"
-                      disabled
+                      onClick={() => toggleSuspendUser(user.id)}
+                      disabled={user.role === "admin"}
+                      title={user.isSuspended ? "Reactivar" : "Suspender"}
                       type="button"
                     >
-                      <i className="bi bi-slash-circle" style={{ fontSize: "0.9rem" }}></i>
+                      <i
+                        className={`bi ${user.isSuspended ? "bi-check-lg" : "bi-slash-circle"}`}
+                        style={{ fontSize: "0.9rem" }}
+                      ></i>
                     </Button>
 
                     <Button
