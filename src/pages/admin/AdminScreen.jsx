@@ -13,3 +13,24 @@ const AdminScreen = () => {
   const [songs, setSongs] = useState([]);
   const [artists, setArtists] = useState([]);
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    // Cargar datos del localStorage
+    let storedUsers = JSON.parse(localStorage.getItem("users"));
+    let storedSongs = JSON.parse(localStorage.getItem("songs"));
+    const storedArtists = JSON.parse(localStorage.getItem("artistas")) || [];
+
+    if (!storedUsers || storedUsers.length === 0) {
+      storedUsers = defaultUsers;
+      localStorage.setItem("users", JSON.stringify(storedUsers));
+    }
+
+    if (!storedSongs || storedSongs.length === 0) {
+      storedSongs = defaultSongs;
+      localStorage.setItem("songs", JSON.stringify(storedSongs));
+    }
+
+    setUsers(storedUsers);
+    setSongs(storedSongs);
+    setArtists(storedArtists);
+  }, []);
