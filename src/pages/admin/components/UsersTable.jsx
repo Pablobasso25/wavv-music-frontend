@@ -10,6 +10,33 @@ const UsersTable = ({ users, setUsers }) => {
     localStorage.setItem("users", JSON.stringify(nextUsers));
   };
 
+  const deleteUser = (id) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "No podrás revertir esto",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      background: "#1a1a1a",
+      color: "#fff",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const filteredUsers = users.filter((u) => u.id !== id);
+        persistUsers(filteredUsers);
+        Swal.fire({
+          title: "Eliminado",
+          text: "El usuario ha sido eliminado.",
+          icon: "success",
+          background: "#1a1a1a",
+          color: "#fff",
+        });
+      }
+    });
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = users.slice(indexOfFirstItem, indexOfLastItem);
@@ -113,8 +140,9 @@ const UsersTable = ({ users, setUsers }) => {
                       size="sm"
                       className="rounded-circle d-flex align-items-center justify-content-center"
                       style={{ width: "32px", height: "32px" }}
+                      onClick={() => deleteUser(user.id)}
+                      disabled={user.role === "admin"}
                       title="Eliminar"
-                      disabled
                       type="button"
                     >
                       <i className="bi bi-trash-fill" style={{ fontSize: "0.8rem" }}></i>
