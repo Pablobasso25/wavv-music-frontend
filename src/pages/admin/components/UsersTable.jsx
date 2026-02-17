@@ -39,7 +39,9 @@ const UsersTable = ({ users, setUsers }) => {
   };
 
   const toggleSuspendUser = (id) => {
-    const updatedUsers = users.map((u) => (u.id === id ? { ...u, isSuspended: !u.isSuspended } : u));
+    const updatedUsers = users.map((u) =>
+      u.id === id ? { ...u, isSuspended: !u.isSuspended } : u
+    );
     persistUsers(updatedUsers);
     Swal.fire({
       title: "Estado actualizado",
@@ -49,6 +51,64 @@ const UsersTable = ({ users, setUsers }) => {
       color: "#fff",
       timer: 1500,
       showConfirmButton: false,
+    });
+  };
+
+  const handleEditUser = (user) => {
+    Swal.fire({
+      title: "Editar Usuario",
+      html: `
+        <div class="text-start">
+          <label class="form-label text-white-50 small">Nombre de usuario</label>
+          <input id="swal-input1" class="swal2-input m-0 mb-3 w-100" placeholder="Nombre de usuario" value="${user.username}">
+          <label class="form-label text-white-50 small">Email</label>
+          <input id="swal-input2" class="swal2-input m-0 mb-3 w-100" placeholder="Email" value="${user.email}">
+          <label class="form-label text-white-50 small">Contraseña</label>
+          <input id="swal-input3" type="text" class="swal2-input m-0 mb-3 w-100" placeholder="Contraseña" value="${user.password}">
+          <label class="form-label text-white-50 small">Suscripción</label>
+          <select id="swal-input4" class="swal2-select m-0 w-100" style="display:flex">
+            <option value="free" ${!user.subscription || user.subscription.status === "free" ? "selected" : ""}>Free</option>
+            <option value="premium" ${user.subscription?.status === "premium" ? "selected" : ""}>Premium</option>
+          </select>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: "Guardar",
+      cancelButtonText: "Cancelar",
+      background: "#1a1a1a",
+      color: "#fff",
+      preConfirm: () => {
+        return [
+          document.getElementById("swal-input1").value,
+          document.getElementById("swal-input2").value,
+          document.getElementById("swal-input3").value,
+          document.getElementById("swal-input4").value,
+        ];
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const [newUsername, newEmail, newPassword, newSubscription] = result.value;
+        const updatedUsers = users.map((u) =>
+          u.id === user.id
+            ? {
+                ...u,
+                username: newUsername,
+                email: newEmail,
+                password: newPassword,
+                subscription: { ...u.subscription, status: newSubscription },
+              }
+            : u
+        );
+        persistUsers(updatedUsers);
+        Swal.fire({
+          title: "Actualizado",
+          text: "El usuario ha sido actualizado.",
+          icon: "success",
+          background: "#1a1a1a",
+          color: "#fff",
+        });
+      }
     });
   };
 
@@ -131,8 +191,9 @@ const UsersTable = ({ users, setUsers }) => {
                       size="sm"
                       className="rounded-circle d-flex align-items-center justify-content-center"
                       style={{ width: "32px", height: "32px" }}
+                      onClick={() => handleEditUser(user)}
+                      disabled={user.role === "admin"}
                       title="Editar"
-                      disabled
                       type="button"
                     >
                       <i className="bi bi-pencil-fill" style={{ fontSize: "0.8rem" }}></i>
