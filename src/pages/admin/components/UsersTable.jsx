@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Table, Badge, Button } from "react-bootstrap";
 
-const UsersTable = ({ users }) => {
+const UsersTable = ({ users, setUsers }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const persistUsers = (nextUsers) => {
+    setUsers(nextUsers);
+    localStorage.setItem("users", JSON.stringify(nextUsers));
+  };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -152,11 +157,3 @@ const UsersTable = ({ users }) => {
 };
 
 export default UsersTable;
-
-
-
-
-
-
-
-
