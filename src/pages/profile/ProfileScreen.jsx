@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Container, Row, Col, Card, Image, Button, Spinner } from 'react-bootstrap';
-import { Mail, Calendar, Edit2, User, Save, X, Lock, Camera, Eye, EyeOff } from "lucide-react";
-import { useAuth } from "../../context/AuthContext"; 
+import { Mail, Calendar, Edit2, User, Save, X, Lock, Camera, Eye, EyeOff, Check } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import Swal from 'sweetalert2';
+import { toast } from 'react-toastify'; 
 
 function ProfileScreen() {
   const { user, updateProfile, loading, refreshUser } = useAuth();
@@ -18,6 +20,14 @@ function ProfileScreen() {
     avatar: "",
     password: ""
   });
+
+  const passwordValidation = {
+    minLength: formData.password.length >= 8,
+    hasUpperCase: /[A-Z]/.test(formData.password),
+    hasLowerCase: /[a-z]/.test(formData.password),
+    hasNumber: /[0-9]/.test(formData.password),
+    hasSymbol: /[!@#$%^&*(),.?":{}|_/<>]/.test(formData.password)
+  };
   useEffect(() => {
     refreshUser();
   }, []);
@@ -56,24 +66,46 @@ const handleFileChange = (e) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   const handleSave = async () => {
-  try {
-    setIsSaving(true);
-    const form = new FormData();
-    form.append("username", formData.username);
-    form.append("bio", formData.bio);
-    if (avatarFile) { 
-      form.append("avatar", avatarFile);
+    try {
+      setIsSaving(true);
+      const form = new FormData();
+      form.append("username", formData.username);
+      form.append("bio", formData.bio);
+      if (formData.password) {
+        form.append("password", formData.password);
+      }
+      if (avatarFile) { 
+        form.append("avatar", avatarFile);
+      }
+      await updateProfile(form);
+      setIsEditing(false);
+      setFormData(prev => ({ ...prev, password: "" }));
+      toast.success("Perfil actualizado correctamente", {
+        theme: "dark",
+        position: "top-right"
+      });
+    } catch (error) {
+      console.error(error);
+      const errors = error.response?.data;
+      if (Array.isArray(errors)) {
+        Swal.fire({
+          icon: "error",
+          title: "Error de validación",
+          html: errors.map(err => `<p style="margin: 5px 0;">• ${err}</p>`).join(''),
+          background: "#1a1a1a",
+          color: "#f5f5f5",
+          confirmButtonColor: "#5773ff"
+        });
+      } else {
+        toast.error("Error al actualizar el perfil", {
+          theme: "dark",
+          position: "top-right"
+        });
+      }
+    } finally {
+      setIsSaving(false);
     }
-    await updateProfile(form);
-    setIsEditing(false);
-    alert("Perfil actualizado correctamente");
-  } catch (error) {
-    console.error(error);
-    alert("Error al actualizar el perfil");
-  } finally {
-    setIsSaving(false);
-  }
-};
+  };
 ;
   const handleCancel = () => {
     setAvatarFile(null); 
@@ -239,32 +271,53 @@ const handleFileChange = (e) => {
                     </div>
                     <div className="flex-fill">
                       <small className="text-white">Contraseña:</small>
-                      <div className="d-flex align-items-center justify-content-between mt-1">
-                        <div className="flex-grow-1 position-relative">
-                          {isEditing ? (
-                            <input 
-                              type={showPassword ? "text" : "password"} 
-                              name="password" 
-                              placeholder="Nueva contraseña (dejar en blanco para no cambiar)"
-                              value={formData.password} 
-                              onChange={handleChange} 
-                              className="form-control form-control-sm text-light pe-5" 
-                              style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #667eea" }} 
-                            />
-                          ) : (
-                            <p className="text-white fw-medium mb-0">
-                              {showPassword ? "TuPassword123" : "••••••••"}
-                            </p>
-                          )}
+                      <div className="mt-1">
+                        <div className="d-flex align-items-center justify-content-between mb-2">
+                          <div className="flex-grow-1 position-relative">
+                            {isEditing ? (
+                              <input 
+                                type={showPassword ? "text" : "password"} 
+                                name="password" 
+                                placeholder="Nueva contraseña (opcional)"
+                                value={formData.password} 
+                                onChange={handleChange} 
+                                className="form-control form-control-sm text-light pe-5" 
+                                style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #667eea" }} 
+                              />
+                            ) : (
+                              <p className="text-white fw-medium mb-0">
+                                {showPassword ? "TuPassword123" : "••••••••"}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="ms-2 border-0 bg-transparent d-flex align-items-center"
+                            style={{ color: "#0dcaf0", transition: "opacity 0.2s" }}
+                          >
+                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="ms-2 border-0 bg-transparent d-flex align-items-center"
-                          style={{ color: "#0dcaf0", transition: "opacity 0.2s" }}
-                        >
-                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                        </button>
+                        {isEditing && formData.password && (
+                          <div className="mt-2 p-2 rounded" style={{ background: "rgba(0,0,0,0.2)", fontSize: "0.75rem" }}>
+                            <div className="d-flex align-items-center mb-1" style={{ color: passwordValidation.minLength ? "#2ecc71" : "#e74c3c" }}>
+                              {passwordValidation.minLength ? "✅" : "❌"} Mínimo 8 caracteres
+                            </div>
+                            <div className="d-flex align-items-center mb-1" style={{ color: passwordValidation.hasUpperCase ? "#2ecc71" : "#e74c3c" }}>
+                              {passwordValidation.hasUpperCase ? "✅" : "❌"} Al menos 1 mayúscula
+                            </div>
+                            <div className="d-flex align-items-center mb-1" style={{ color: passwordValidation.hasLowerCase ? "#2ecc71" : "#e74c3c" }}>
+                              {passwordValidation.hasLowerCase ? "✅" : "❌"} Al menos 1 minúscula
+                            </div>
+                            <div className="d-flex align-items-center mb-1" style={{ color: passwordValidation.hasNumber ? "#2ecc71" : "#e74c3c" }}>
+                              {passwordValidation.hasNumber ? "✅" : "❌"} Al menos 1 número
+                            </div>
+                            <div className="d-flex align-items-center" style={{ color: passwordValidation.hasSymbol ? "#2ecc71" : "#e74c3c" }}>
+                              {passwordValidation.hasSymbol ? "✅" : "❌"} Al menos 1 símbolo (!@#$%^&*)
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

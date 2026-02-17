@@ -15,15 +15,12 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { registerRequest } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
-import { sendWelcomeEmail } from "../../services/emailService.js";
 import "./RegisterScreen.css";
 
 const RegisterScreen = () => {
   const [send, setSend] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
-  const [emailEnviado, setEmailEnviado] = useState(false);
   const { signup, errors: registerErrors } = useAuth();
   const {
     register,
@@ -82,18 +79,13 @@ const RegisterScreen = () => {
     return { texto: "Segura", variant: "success" };
   };
   const infoForce = informationForce();
-  const showSuccessAlert = (emailEnviado = true) => {
-    const mensaje = emailEnviado
-      ? "¡Te hemos enviado un email de bienvenida! Entrando a Wavv Music..."
-      : "⚠️ Registro exitoso. ¡Ya puedes empezar a escuchar música!";
+  const showSuccessAlert = () => {
     Swal.fire({
       title: "✔️ ¡Bienvenido!",
       html: `
         <div style="text-align: center;">
           <p style="margin-bottom: 10px; font-size: 16px;">Tu cuenta ha sido creada con éxito en <strong>Wavv Music</strong>.</p>
-          <p style="margin-bottom: 0; font-size: 14px; color: ${
-            emailEnviado ? "#b0b0b0" : "#ffc107"
-          };">${mensaje}</p>
+          <p style="margin-bottom: 0; font-size: 14px; color: #b0b0b0;">¡Te hemos enviado un email de bienvenida! Entrando a Wavv Music...</p>
         </div>
       `,
       icon: "success",
@@ -124,12 +116,7 @@ const RegisterScreen = () => {
     setSend(true);
     try {
       await signup(data);
-      try {
-        await sendWelcomeEmail(data.username, data.email);
-      } catch (error) {
-        console.error("Error al enviar email:", error);
-      }
-      showSuccessAlert(true);
+      showSuccessAlert();
     } catch (error) {
       const serverErrors = error.response?.data;
       let errorMessage = "Error de conexión con el servidor";
