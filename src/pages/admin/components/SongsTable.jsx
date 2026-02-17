@@ -86,6 +86,27 @@ const SongsTable = ({ songs, setSongs }) => {
           </tbody>
         </Table>
       </div>
+      {totalPages > 0 && (
+        <div className="d-flex justify-content-center align-items-center gap-2 p-3 border-top border-secondary">
+          <button
+            className="btn btn-dark btn-sm border-secondary text-white"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            type="button"
+          >
+            <i className="bi bi-chevron-left" style={{ pointerEvents: "none" }}></i>
+          </button>
+          <span className="text-white mx-2 small">{currentPage} de {totalPages}</span>
+          <button
+            className="btn btn-dark btn-sm border-secondary text-white"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            type="button"
+          >
+            <i className="bi bi-chevron-right" style={{ pointerEvents: "none" }}></i>
+          </button>
+        </div>
+      )}
     </>
   );
 };
