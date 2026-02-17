@@ -7,3 +7,9 @@ import ArtistsTable from "./components/ArtistsTable";
 import SearchModal from "./components/SearchModal";
 
 const AdminScreen = () => {
+
+  const [currentTab, setCurrentTab] = useState("users");
+  const [users, setUsers] = useState([]);
+  const [songs, setSongs] = useState([]);
+  const [artists, setArtists] = useState([]);
+  const [showModal, setShowModal] = useState(false);
