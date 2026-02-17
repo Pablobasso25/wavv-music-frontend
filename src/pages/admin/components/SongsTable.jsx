@@ -6,14 +6,38 @@ const SongsTable = ({ songs, setSongs }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  const deleteSong = (id) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Se eliminará de la lista global",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      background: "#1a1a1a",
+      color: "#fff",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const filteredSongs = songs.filter((s) => s._id !== id);
+        setSongs(filteredSongs);
+        localStorage.setItem("songs", JSON.stringify(filteredSongs));
+        Swal.fire({
+          title: "Eliminado",
+          text: "La canción ha sido eliminada.",
+          icon: "success",
+          background: "#1a1a1a",
+          color: "#fff",
+        });
+      }
+    });
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentSongs = songs.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(songs.length / itemsPerPage);
-
-  const deleteSong = (id) => {
-    console.log("Función de eliminar pendiente para el ID:", id);
-  };
 
   return (
     <>
