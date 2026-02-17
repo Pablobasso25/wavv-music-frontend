@@ -15,7 +15,6 @@ const AdminScreen = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    // Cargar datos del localStorage
     let storedUsers = JSON.parse(localStorage.getItem("users"));
     let storedSongs = JSON.parse(localStorage.getItem("songs"));
     const storedArtists = JSON.parse(localStorage.getItem("artistas")) || [];
