@@ -59,3 +59,78 @@ const AdminScreen = () => {
               {currentTab === "songs" ? "Nueva Canción" : "Nuevo Artista"}
             </Button>
           )}
+
+          <Nav
+            variant="pills"
+            activeKey={currentTab}
+            onSelect={(selectedKey) => setCurrentTab(selectedKey)}
+            className="bg-dark border border-secondary rounded-pill p-1"
+          >
+            <Nav.Item>
+              <Nav.Link
+                eventKey="users"
+                className={`rounded-pill px-4 fw-semibold d-flex align-items-center ${
+                  currentTab === "users"
+                    ? "bg-primary text-white shadow"
+                    : "text-secondary hover-text-white"
+                }`}
+                style={{ transition: "all 0.3s" }}
+              >
+                <i className="bi bi-people-fill me-2"></i>
+                Usuarios
+              </Nav.Link>
+            </Nav.Item>
+
+            <Nav.Item>
+              <Nav.Link
+                eventKey="songs"
+                className={`rounded-pill px-4 fw-semibold d-flex align-items-center ${
+                  currentTab === "songs"
+                    ? "bg-primary text-white shadow"
+                    : "text-secondary hover-text-white"
+                }`}
+                style={{ transition: "all 0.3s" }}
+              >
+                <i className="bi bi-music-note-beamed me-2"></i>
+                Canciones
+              </Nav.Link>
+            </Nav.Item>
+
+            <Nav.Item>
+              <Nav.Link
+                eventKey="artists"
+                className={`rounded-pill px-4 fw-semibold d-flex align-items-center ${
+                  currentTab === "artists"
+                    ? "bg-primary text-white shadow"
+                    : "text-secondary hover-text-white"
+                }`}
+                style={{ transition: "all 0.3s" }}
+              >
+                <i className="bi bi-mic-fill me-2"></i>
+                Artistas
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
+        </div>
+      </div>
+
+      <Card
+        className="border-0 shadow-lg overflow-hidden"
+        style={{ backgroundColor: "#202026", borderRadius: "1rem" }}
+      >
+        <Card.Body className="p-0">
+
+          {currentTab === "users" && (
+            <UsersTable users={users} setUsers={setUsers} />
+          )}
+
+          {currentTab === "songs" && (
+            <SongsTable songs={songs} setSongs={setSongs} />
+          )}
+
+          {currentTab === "artists" && (
+            <ArtistsTable artists={artists} setArtists={setArtists} />
+          )}
+
+        </Card.Body>
+      </Card>
