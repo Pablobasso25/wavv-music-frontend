@@ -134,3 +134,18 @@ const AdminScreen = () => {
 
         </Card.Body>
       </Card>
+
+      <SearchModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        currentTab={currentTab}
+        songs={songs}
+        setSongs={setSongs}
+        artists={artists}
+        setArtists={setArtists}
+      />
+    </Container>
+  );
+};
+
+export default AdminScreen;
