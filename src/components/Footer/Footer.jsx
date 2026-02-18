@@ -92,9 +92,9 @@ const Footer = () => {
                 className="social-expand-btn"
               >
                 <span className="icon">
-                  <i className="bi bi-facebook"></i>
+                  <i className="bi bi-linkedin"></i>
                 </span>
-                <span className="text">Facebook</span>
+                <span className="text">Linkedin</span>
               </a>
 
               <a
@@ -123,7 +123,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* COLUMNA 4 */}
           <div className="col-12 col-md-6 col-lg-3 footer-column">
             <h4>LEGAL</h4>
             <ul>
