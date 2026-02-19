@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Spinner } from "react-bootstrap";
-import LogoWelcome from "../../assets/images/logo1.png";
+import React from "react"
+import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
 
-const WelcomeScreen = () => {
+export function WelcomeScreen() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -12,17 +12,29 @@ const WelcomeScreen = () => {
           clearInterval(interval);
           return 100;
         }
-        return prev + 3.33;
+        return prev + 1;
       });
-    }, 100);
+    }, 35);
 
     return () => clearInterval(interval);
   }, []);
 
+  // Generate irregular waveform pattern
+  const generateIrregularHeight = (index, isActive) => {
+    if (!isActive) return 10;
+    
+    // Create irregular pattern with multiple sine waves
+    const wave1 = Math.sin(index * 0.3) * 30;
+    const wave2 = Math.sin(index * 0.15) * 20;
+    const wave3 = Math.cos(index * 0.5) * 15;
+    const randomness = Math.sin(index * 1.2) * 10;
+    
+    return 40 + wave1 + wave2 + wave3 + randomness;
+  };
+
   return (
-    <Container
-      fluid
-      className="vh-100 d-flex align-items-center justify-content-center"
+    <div
+      className="w-full h-full relative overflow-hidden bg-gradient-to-br from-[#0f0a2e] via-[#1a1447] to-[#0a0520] flex items-center justify-center"
       style={{
         backgroundColor: "#000",
         background: "linear-gradient(135deg, #000000 0%, #1a1a1a 100%)",
