@@ -118,33 +118,65 @@ export function WelcomeScreen() {
             />
               </svg>
           </div>
-          <div className="mb-4">
-            <h3 className="text-secondary mb-3">Sintonizando...</h3>
-            <Spinner
-              animation="grow"
-              variant="primary"
-              style={{ width: "3rem", height: "3rem" }}
-            />
           </div>
-          <div style={{ width: "300px", margin: "0 auto" }}>
-            <div
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="w-96"
+          style={{ width: "24rem" }}
+        >
+          <div className="h-32 flex items-center justify-center gap-1" style={{ height: "8rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.25rem" }}>
+            {[...Array(60)].map((_, i) => {
+              const isActive = i < (progress / 100) * 60;
+              const height = generateIrregularHeight(i, isActive);
+              const animationHeight1 = height + Math.sin(i * 0.5) * 8;
+              const animationHeight2 = height - Math.cos(i * 0.3) * 6;
+              
+              return (
+                <motion.div
+                  key={i}
+                  className="w-1 rounded-full transition-all duration-300"
+                  animate={
+                    isActive
+                      ? {
+                          height: [`${height}%`, `${animationHeight1}%`, `${animationHeight2}%`, `${height}%`],
+                        }
+                      : {}
+                  }
+                  transition={{
+                    duration: 1.2 + (i % 3) * 0.2,
+                    repeat: Infinity,
+                    delay: i * 0.01,
+                    ease: "easeInOut",
+                  }}
               style={{
-                width: `${progress}%`,
-                height: "4px",
-                backgroundColor: "#0d6efd",
-                borderRadius: "2px",
-                transition: "width 0.1s ease",
+                    height: isActive ? `${height}%` : '10%',
+                    background: isActive 
+                      ? `linear-gradient(to top, #00d4ff, #7b5cff, #ff00ea)`
+                      : '#2a2057',
+                    width: "0.25rem",
+                    borderRadius: "9999px",
               }}
             />
+              );
+            })}
           </div>
 
-          <p className="text-white-50 mt-3">
-            Cargando tu experiencia musical...
-          </p>
-        </Col>
-      </Row>
-    </Container>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-center mt-8 text-[#7b5cff] text-sm font-light tracking-widest"
+          >
+            {progress}%
+          </motion.div>
+        </motion.div>
+      </div>
+    </div>
   );
-};
+}
 
 export default WelcomeScreen;
