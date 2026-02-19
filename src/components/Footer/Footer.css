@@ -162,3 +162,32 @@ body {
     gap: 15px;
   }
 }
+@media (max-width: 576px) {
+  .footer-container {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
+  .footer-column {
+    width: 100% !important;
+    margin-bottom: 30px;
+  }
+
+  .footer-column h4 {
+    text-align: center !important;
+    margin-bottom: 12px;
+  }
+
+  .footer-column ul li {
+    text-align: center !important;
+    margin-bottom: 15px;
+  }
+
+  .footer-social-col {
+    align-items: center !important;
+  }
+
+  .footer-socials-expand {
+    justify-content: center !important;
+  }
+}
