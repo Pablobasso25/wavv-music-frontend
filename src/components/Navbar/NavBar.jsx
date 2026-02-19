@@ -70,13 +70,11 @@ const NavBar = () => {
       "¿Estás seguro que deseas cerrar sesión?",
       "Cerrar Sesión",
     );
-
     if (result.isConfirmed) {
       logout();
       navigate("/login");
     }
   };
-
   const isAdminPage = location.pathname === "/admin";
   useEffect(() => {
     if (searchQuery.length === 0) {
@@ -86,14 +84,12 @@ const NavBar = () => {
       lastSearchRef.current = "";
       return;
     }
-
     if (searchQuery.length < 3) {
       setSearchResults([]);
       setShowDropdown(false);
       return;
     }
     if (lastSearchRef.current === searchQuery) return;
-
     const timer = setTimeout(async () => {
       lastSearchRef.current = searchQuery;
       setIsSearching(true);
@@ -113,10 +109,8 @@ const NavBar = () => {
         setIsSearching(false);
       }
     }, 400);
-
     return () => clearTimeout(timer);
   }, [searchQuery]);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -209,20 +203,28 @@ const NavBar = () => {
                       <img
                         src={track.artworkUrl100}
                         alt={track.trackName}
+                        width="50"
+                        height="50"
+                        className="rounded"
                       />
-
-                      <div className="flex-grow-1">
+                      <div className="flex-grow-1 ms-2">
                         <div className="text-white fw-semibold">
-                          {track.name}
+                          {track.trackName}
                         </div>
                         <div className="text-secondary small">
-                          {track.artists?.map((a) => a.name).join(", ")}
+                          {track.artistName}
                         </div>
                       </div>
-
-                      {track.preview_url && (
-                        <i className="bx bx-play-circle fs-4 text-primary"></i>
-                      )}
+                      <button
+                        className="btn btn-link text-secondary p-0 ms-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddSong(track);
+                        }}
+                        title="Agregar a playlist"
+                      >
+                        <i className="bi bi-plus-circle fs-5"></i>
+                      </button>
                     </div>
                   ))}
                 </>
@@ -235,24 +237,22 @@ const NavBar = () => {
           )}
         </div>
       )}
-      <div className="spotify-navbar-rigth">
+      <div className="spotify-navbar-right">
         {!isAdminPage && (
           <button
-            className="btn-premium"
-            onClick={() => navigate("/premium")}
+            className="btn-premium d-none d-xl-block"
+            onClick={() => navigate("/subscription")}
           >
+            <i className="bi bi-gem me-2"></i>
             Explorar Premium
           </button>
         )}
         <Dropdown
           align="end"
           show={showUserDropdown}
-          onToggle={(isOpen) => setShowUserDropdown(isOpen)}>
-          <Dropdown.Toggle
-            as="div"
-            className="spotify-profile"
-            onClick={() => setShowUserDropdown(!showUserDropdown)}
-          >
+          onToggle={(isOpen) => setShowUserDropdown(isOpen)}
+        >
+          <Dropdown.Toggle as={CustomToggle}>
             <div
               className="spotify-profile-circle"
               onClick={(e) => {
@@ -284,6 +284,18 @@ const NavBar = () => {
           </Dropdown.Toggle>
 
           <Dropdown.Menu className="dropdown-menu">
+            {!isAdminPage && (
+              <Dropdown.Item
+                onClick={() => {
+                  navigate("/subscription");
+                  setShowUserDropdown(false);
+                }}
+                className="d-xl-none text-white d-flex align-items-center"
+              >
+                <i className="bi bi-gem me-2"></i>
+                Explorar Premium
+              </Dropdown.Item>
+            )}
             {!isAdminPage && user?.role !== "admin" && (
               <Dropdown.Item
                 onClick={() => {
@@ -325,7 +337,7 @@ const NavBar = () => {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-    </NavBar>
+    </nav>
   );
 };
 
