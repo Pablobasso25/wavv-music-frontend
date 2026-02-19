@@ -19,11 +19,9 @@ export function WelcomeScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  // Generate irregular waveform pattern
   const generateIrregularHeight = (index, isActive) => {
     if (!isActive) return 10;
-    
-    // Create irregular pattern with multiple sine waves
+
     const wave1 = Math.sin(index * 0.3) * 30;
     const wave2 = Math.sin(index * 0.15) * 20;
     const wave3 = Math.cos(index * 0.5) * 15;
@@ -45,13 +43,9 @@ export function WelcomeScreen() {
         background: "#000000",
       }}
     >
-      {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#1e0a3c]/30 to-transparent" style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(to top, rgba(30, 10, 60, 0.3), transparent)" }} />
       <div className="absolute inset-0 bg-gradient-to-t from-[#1e0a3c]/30 to-transparent" style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent)" }} />
-
-      {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center gap-16" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4rem", position: "relative", zIndex: 10 }}>
-        {/* Logo with Progressive Reveal */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -73,8 +67,6 @@ export function WelcomeScreen() {
               >
                 wav
               </span>
-              
-              {/* Waveform SVG integrated into logo */}
               <svg 
                 width="200" 
                 height="120" 
