@@ -24,14 +24,14 @@ const ArtistsTable = ({ artists, setArtists }) => {
         try {
           await deleteAlbumRequest(id);
           const filteredArtists = artists.filter((a) => a._id !== id);
-        setArtists(filteredArtists);
-        Swal.fire({
-          title: "Eliminado",
-          text: "El artista ha sido eliminado.",
-          icon: "success",
-          background: "#1a1a1a",
-          color: "#fff",
-        });
+          setArtists(filteredArtists);
+          Swal.fire({
+            title: "Eliminado",
+            text: "El artista ha sido eliminado.",
+            icon: "success",
+            background: "#1a1a1a",
+            color: "#fff",
+          });
         } catch (error) {
           Swal.fire({
             title: "Error",

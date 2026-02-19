@@ -56,30 +56,30 @@ const SearchModal = ({
     }
 
     try {
-    const newSong = {
-      title: track.trackName,
-      artist: track.artistName,
+      const newSong = {
+        title: track.trackName,
+        artist: track.artistName,
         image: track.artworkUrl100?.replace("100x100", "600x600"),
         youtubeUrl: track.previewUrl,
-      duration: track.trackTimeMillis
-        ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
-            Math.floor((track.trackTimeMillis % 60000) / 1000),
-          ).padStart(2, "0")}`
-        : "--:--",
-    };
+        duration: track.trackTimeMillis
+          ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
+              Math.floor((track.trackTimeMillis % 60000) / 1000),
+            ).padStart(2, "0")}`
+          : "--:--",
+      };
 
       const res = await createSongRequest(newSong);
       setSongs([...songs, res.data]);
 
-    Swal.fire({
-      title: "¡Agregada!",
-      text: `${track.trackName} se agregó correctamente.`,
-      icon: "success",
-      background: "#1a1a1a",
-      color: "#fff",
-      timer: 1500,
-      showConfirmButton: false,
-    });
+      Swal.fire({
+        title: "¡Agregada!",
+        text: `${track.trackName} se agregó correctamente.`,
+        icon: "success",
+        background: "#1a1a1a",
+        color: "#fff",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (error) {
       Swal.fire({
         title: "Error",
@@ -126,20 +126,20 @@ const SearchModal = ({
           preview_url: track.previewUrl,
           cover: track.artworkUrl100?.replace("100x100", "600x600"),
         })),
-    };
+      };
 
       const res = await createAlbumRequest(newAlbum);
       setArtists([...artists, res.data]);
 
-    Swal.fire({
-      title: "¡Agregado!",
+      Swal.fire({
+        title: "¡Agregado!",
         text: `${album.collectionName} se agregó correctamente.`,
-      icon: "success",
-      background: "#1a1a1a",
-      color: "#fff",
-      timer: 1500,
-      showConfirmButton: false,
-    });
+        icon: "success",
+        background: "#1a1a1a",
+        color: "#fff",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (error) {
       Swal.fire({
         title: "Error",
