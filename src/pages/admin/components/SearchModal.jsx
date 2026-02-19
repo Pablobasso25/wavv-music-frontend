@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { Modal, Form, InputGroup, Button, Image } from "react-bootstrap";
 import Swal from "sweetalert2";
 
-const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setArtists }) => {
+const SearchModal = ({
+  show,
+  onHide,
+  currentTab,
+  songs,
+  setSongs,
+  artists,
+  setArtists,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -32,7 +40,7 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
 
   const addSongFromSearch = (track) => {
     const exists = songs.some(
-      (s) => s.title === track.trackName && s.artist === track.artistName
+      (s) => s.title === track.trackName && s.artist === track.artistName,
     );
 
     if (exists) {
@@ -56,7 +64,7 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
       audio: track.previewUrl,
       duration: track.trackTimeMillis
         ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
-            Math.floor((track.trackTimeMillis % 60000) / 1000)
+            Math.floor((track.trackTimeMillis % 60000) / 1000),
           ).padStart(2, "0")}`
         : "--:--",
       plays: "0",
@@ -125,7 +133,11 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
       centered
       contentClassName="bg-dark text-white border-secondary"
     >
-      <Modal.Header closeButton closeVariant="white" className="border-secondary">
+      <Modal.Header
+        closeButton
+        closeVariant="white"
+        className="border-secondary"
+      >
         <Modal.Title>
           {currentTab === "artists" ? "Buscar Artista" : "Buscar Canción"}
         </Modal.Title>
@@ -146,7 +158,10 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
           </InputGroup>
         </Form>
 
-        <div className="search-results" style={{ maxHeight: "400px", overflowY: "auto" }}>
+        <div
+          className="search-results"
+          style={{ maxHeight: "400px", overflowY: "auto" }}
+        >
           {searchResults.length > 0 ? (
             searchResults.map((track) => (
               <div
@@ -155,13 +170,22 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
                 style={{ borderBottom: "1px solid #333" }}
               >
                 <div className="d-flex align-items-center gap-3">
-                  <Image src={track.artworkUrl100} rounded width={50} height={50} />
+                  <Image
+                    src={track.artworkUrl100}
+                    rounded
+                    width={50}
+                    height={50}
+                  />
                   <div>
                     <div className="fw-bold">
-                      {currentTab === "artists" ? track.artistName : track.trackName}
+                      {currentTab === "artists"
+                        ? track.artistName
+                        : track.trackName}
                     </div>
                     <div className="text-white-50 small">
-                      {currentTab === "artists" ? track.collectionName : track.artistName}
+                      {currentTab === "artists"
+                        ? track.collectionName
+                        : track.artistName}
                     </div>
                   </div>
                 </div>
@@ -193,8 +217,8 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
               {isSearching
                 ? "Buscando..."
                 : searchQuery
-                ? "No se encontraron resultados"
-                : "Escribe algo para buscar"}
+                  ? "No se encontraron resultados"
+                  : "Escribe algo para buscar"}
             </div>
           )}
         </div>
