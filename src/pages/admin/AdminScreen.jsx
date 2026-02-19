@@ -30,7 +30,7 @@ const AdminScreen = () => {
         setArtists(res.data);
       }
     } catch (error) {
-      console.error("Error cargando datos:", error);
+      console.error(`Error cargando ${currentTab}:`, error);
     }
   };
 
