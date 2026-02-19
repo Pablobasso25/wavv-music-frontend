@@ -1,26 +1,70 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Navbar, Nav, Container, Form, Dropdown, Badge } from "react-bootstrap";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Dropdown } from "react-bootstrap";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useSongs } from "../../context/SongContext"; 
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
-import Logo from "../assets/images/logo.png"
+import { toast } from "react-toastify";
+import Logo from "../../assets/images/logo.png";
 import { showConfirm } from "../../helpers/alerts";
+import "./NavBar.css";
 
+const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+  <div
+    ref={ref}
+    className="spotify-profile"
+    onClick={(e) => {
+      e.preventDefault();
+      onClick(e);
+    }}
+  >
+    {children}
+  </div>
+));
 const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { playSong } = useMusicPlayer();
-  const { searchExternalSongs } = useSongs();
-
+  const { addSongToPlaylist, getUserPlaylist } = useSongs();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const searchRef = useRef(null);
   const lastSearchRef = useRef("");
-
+  const [placeholder, setPlaceholder] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(150);
+  useEffect(() => {
+    const phrases = [
+      "Buscar canciones...",
+      "Buscar artistas...",
+      "Buscar álbumes...",
+    ];
+    const i = loopNum % phrases.length;
+    const fullText = phrases[i];
+    const handleType = () => {
+      setPlaceholder(
+        isDeleting
+          ? fullText.substring(0, placeholder.length - 1)
+          : fullText.substring(0, placeholder.length + 1),
+      );
+      setTypingSpeed(isDeleting ? 50 : 100);
+      if (!isDeleting && placeholder === fullText) {
+        setTypingSpeed(2000);
+        setIsDeleting(true);
+      } else if (isDeleting && placeholder === "") {
+        setIsDeleting(false);
+        setLoopNum(loopNum + 1);
+        setTypingSpeed(500);
+      }
+    };
+    const timer = setTimeout(handleType, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [placeholder, isDeleting, loopNum, typingSpeed]);
   const handleLogout = async () => {
     const result = await showConfirm(
       "¿Estás seguro que deseas cerrar sesión?",
@@ -54,8 +98,13 @@ const NavBar = () => {
       lastSearchRef.current = searchQuery;
       setIsSearching(true);
       try {
-        const results = await searchExternalSongs(searchQuery);
-        setSearchResults(results || []);
+        const response = await fetch(
+          `https://itunes.apple.com/search?term=${encodeURIComponent(
+            searchQuery,
+          )}&media=music&limit=5`,
+        );
+        const data = await response.json();
+        setSearchResults(data.results || []);
         setShowDropdown(true);
       } catch (error) {
         setSearchResults([]);
@@ -80,24 +129,38 @@ const NavBar = () => {
 
   const handlePlaySong = (track) => {
     const songData = {
-      title: track.title,
-      artist: track.artist,
-      album: track.album,
-      cover: track.image,
-      audio: track.audio,
-      name: track.title,
+      _id: track.trackId,
+      id: track.trackId,
+      title: track.trackName,
+      artist: track.artistName,
+      album: track.collectionName,
+      cover: track.artworkUrl100?.replace("100x100", "600x600"),
+      image: track.artworkUrl100?.replace("100x100", "600x600"),
+      audio: track.previewUrl,
+      name: track.trackName,
     };
     playSong(songData);
     setShowDropdown(false);
     setSearchQuery("");
   };
-
+  const handleAddSong = async (track) => {
+    const res = await addSongToPlaylist(track.trackId);
+    if (res.success) {
+      toast.success("Canción agregada a tu playlist");
+      getUserPlaylist();
+    } else {
+      toast.error("No se pudo agregar la canción");
+    }
+  };
   return (
-    <NavBar className="spotify-navbar fixed-top">
+    <nav className="spotify-navbar fixed-top">
       <div className="spotify-navbar-left">
-        <img src={Logo}
-          alt="Wavv Music Logo"
-          height="50"
+        <img
+          src={Logo}
+          alt="Logo"
+          className="spotify-logo text-white fw-bold m-0"
+          style={{ cursor: "pointer", width: "120px" }}
+          onClick={() => navigate("/")}
         />
       </div>
 
@@ -109,7 +172,7 @@ const NavBar = () => {
             <input
               type="text"
               className="spotify-search-input"
-              placeholder="Buscar canciones..."
+              placeholder={placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -137,37 +200,15 @@ const NavBar = () => {
             <div className="spotify-search-dropdown">
               {searchResults.length > 0 ? (
                 <>
-                  {searchResults.map((track, index) => (
+                  {searchResults.map((track) => (
                     <div
-                      key={index}
+                      key={track.trackId}
                       className="spotify-track-item"
-                      onClick={() => {
-                        const songData = {
-                          title: track.name,
-                          artist:
-                            track.artists?.map((a) => a.name).join(", ") ||
-                            "Unknown",
-                          album: track.album?.name || "Unknown Album",
-                          cover: track.album.images[0]?.url,
-                          audio: track.preview_url,
-                          genre: "Music",
-                          name: track.name,
-                        };
-
-                        playSong(songData);
-                        setShowDropdown(false);
-                        setSearchQuery("");
-                      }}
+                      onClick={() => handlePlaySong(track)}
                     >
                       <img
-                        src={
-                          track.album.images[2]?.url ||
-                          track.album.images[0]?.url
-                        }
-                        alt={track.name}
-                        width="50"
-                        height="50"
-                        className="rounded"
+                        src={track.artworkUrl100}
+                        alt={track.trackName}
                       />
 
                       <div className="flex-grow-1">
