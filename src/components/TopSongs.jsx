@@ -34,18 +34,25 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
 
   const handleAddToPlaylist = async (e, track) => {
     e.stopPropagation();
-    const trackId = track._id || track.id;
+    const trackId = track._id || track.id || track.trackId;
 
-    if (!trackId) {
-      playUISound("error");
-      toast.error("Error: No se pudo identificar la canción.", {
-        position: "bottom-right",
-        theme: "dark",
-      });
-      return;
-    }
+    const songData = track._id 
+      ? { songId: trackId }
+      : {
+          externalSong: {
+            title: track.name,
+            artist: album.artists?.[0]?.name || album.artistName || "Artista",
+            image: track.cover || album.image,
+            youtubeUrl: track.preview_url || track.audio,
+            duration: track.duration_ms
+              ? `${Math.floor(track.duration_ms / 60000)}:${String(
+                  Math.floor((track.duration_ms % 60000) / 1000)
+                ).padStart(2, "0")}`
+              : "--:--",
+          },
+        };
 
-    const result = await addSongToPlaylist(trackId);
+    const result = await addSongToPlaylist(songData);
 
     if (result.success) {
       playUISound("success");
@@ -111,10 +118,14 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     }
   };
 
-  const isInPlaylist = (trackId) => {
+  const isInPlaylist = (track) => {
     if (!userPlaylist || userPlaylist.length === 0) return false;
+    const trackId = track._id || track.id || track.trackId;
     return userPlaylist.some(
-      (song) => song._id === trackId || song.id === trackId,
+      (song) => 
+        song._id === trackId || 
+        song.id === trackId ||
+        (song.title === track.name && song.artist === (album.artists?.[0]?.name || album.artistName))
     );
   };
 
@@ -150,8 +161,8 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
         <div className="items">
           {album.tracks.map((track, index) => {
             const isCurrentTrack = currentSong?.title === track.name;
-            const trackId = track._id || track.id;
-            const added = isInPlaylist(trackId);
+            const trackId = track._id || track.id || track.trackId;
+            const added = isInPlaylist(track);
 
             return (
               <div

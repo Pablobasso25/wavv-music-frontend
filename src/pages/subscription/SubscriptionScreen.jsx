@@ -3,6 +3,7 @@ import "./SubscriptonScreen.css";
 import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
 import { createPreferenceRequest } from "../../api/payment";
 import { useAuth } from "../../context/AuthContext";
+import { isPremiumUser } from "../../helpers/userPermissions";
 import Swal from "sweetalert2";
 
 const PLAN_PRICES = {
@@ -14,46 +15,17 @@ const SubscriptionScreen = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  /* const handleBuy = async (planType, price) => {
-    setLoading(true);
-    try {
-      const res = await createPreferenceRequest({ planType, price });
-      if (res.data && res.data.init_point) {
-        window.location.href = res.data.init_point;
-      }
-    } catch (error) {
-      console.error("Error al iniciar el pago", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo conectar con Mercado Pago. Intenta más tarde.",
-        background: "#111",
-        color: "#fff",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }; */
+  const hasPremiumAccess = isPremiumUser(user);
+
   const handleBuy = async (planType, price) => {
     try {
       const res = await createPreferenceRequest({ planType, price });
 
-      // DEBUG: Vamos a ver qué llega realmente
-      console.log("Data cruda de Axios:", res);
-
-      // Intentamos todas las variantes posibles
       const initPoint =
         res.data?.init_point || res.data?.initPoint || res.init_point;
 
       if (initPoint) {
-        console.log("¡Link encontrado! Redirigiendo...");
         window.location.href = initPoint;
-      } else {
-        // Si sigue saliendo esto, es que 'res.data' está vacío
-        console.error("El objeto res.data está vacío:", res.data);
-        alert(
-          "Error: Revisa la terminal de Node, el link no llega al navegador.",
-        );
       }
     } catch (error) {
       console.error("Error en la petición:", error);
@@ -96,7 +68,7 @@ const SubscriptionScreen = () => {
                 disabled
                 className="mt-auto w-100 py-2 btn-expand"
                 style={{
-                  backgroundColor: "#6c757d",
+                  backgroundColor: hasPremiumAccess ? "#6c757d" : "#6c757d",
                   color: "#000000",
                   border: "none",
                   cursor: "not-allowed",
@@ -106,7 +78,7 @@ const SubscriptionScreen = () => {
                   <i className="bx bx-lock"></i>
                 </span>
 
-                <span className="btn-text">Tu plan actual</span>
+                <span className="btn-text">{hasPremiumAccess ? "Plan básico" : "Tu plan actual"}</span>
               </Button>
             </Card.Body>
           </Card>
@@ -154,20 +126,21 @@ const SubscriptionScreen = () => {
               </ListGroup>
               <Button
                 onClick={() => handleBuy("Premium", PLAN_PRICES.PREMIUM)}
-                disabled={loading}
+                disabled={loading || hasPremiumAccess}
                 className="mt-auto w-100 py-2  btn-expand"
                 style={{
-                  backgroundColor: "#198754",
+                  backgroundColor: hasPremiumAccess ? "#6c757d" : "#198754",
                   color: "#000000",
                   border: "none",
+                  cursor: hasPremiumAccess ? "not-allowed" : "pointer",
                 }}
               >
                 <span className="btn-icon">
-                  <i className="bx bx-cart"></i>
+                  <i className={hasPremiumAccess ? "bx bx-check" : "bx bx-cart"}></i>
                 </span>
 
                 <span className="btn-text">
-                  {loading ? "Procesando..." : "Suscribirme ahora"}
+                  {hasPremiumAccess ? "Tu plan actual" : (loading ? "Procesando..." : "Suscribirme ahora")}
                 </span>
               </Button>
             </Card.Body>
@@ -220,20 +193,21 @@ const SubscriptionScreen = () => {
               </ListGroup>
               <Button
                 onClick={() => handleBuy("Familiar", PLAN_PRICES.FAMILIAR)}
-                disabled={loading}
+                disabled={loading || hasPremiumAccess}
                 className="mt-auto w-100 py-2  btn-expand"
                 style={{
-                  backgroundColor: "#0dcaf0",
+                  backgroundColor: hasPremiumAccess ? "#6c757d" : "#0dcaf0",
                   color: "#000000",
                   border: "none",
+                  cursor: hasPremiumAccess ? "not-allowed" : "pointer",
                 }}
               >
                 <span className="btn-icon">
-                  <i className="bx bx-cart"></i>
+                  <i className={hasPremiumAccess ? "bx bx-check" : "bx bx-cart"}></i>
                 </span>
 
                 <span className="btn-text">
-                  {loading ? "Procesando..." : "Suscribirme ahora"}
+                  {hasPremiumAccess ? "Acceso completo" : (loading ? "Procesando..." : "Suscribirme ahora")}
                 </span>
               </Button>
             </Card.Body>

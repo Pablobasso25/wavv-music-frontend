@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useSongs } from "../../context/SongContext";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { toast } from "react-toastify";
-import Logo from "../../assets/images/logo.png";
+import Logo from "../../assets/images/logo2.svg";
 import { showConfirm } from "../../helpers/alerts";
 import "./NavBar.css";
 
@@ -211,7 +211,7 @@ const NavBar = () => {
                         </div>
                       </div>
                       <button
-                        className="btn btn-link text-secondary p-0 ms-2"
+                        className="btn btn-link text-primary p-0 ms-2"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleAddSong(track);
@@ -233,7 +233,7 @@ const NavBar = () => {
         </div>
       )}
       <div className="spotify-navbar-right">
-        {!isAdminPage && (
+        {!isAdminPage && user?.role !== "admin" && (
           <button
             className="btn-premium d-none d-xl-block"
             onClick={() => navigate("/subscription")}
@@ -252,9 +252,11 @@ const NavBar = () => {
               className="spotify-profile-circle"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate("/profile");
+                if (user?.role !== "admin") {
+                  navigate("/profile");
+                }
               }}
-              style={{ cursor: "pointer", overflow: "hidden" }}
+              style={{ cursor: user?.role === "admin" ? "default" : "pointer", overflow: "hidden" }}
             >
               <img
                 src={
@@ -276,7 +278,7 @@ const NavBar = () => {
             <i className="bi bi-caret-down-fill spotify-caret"></i>
           </Dropdown.Toggle>
           <Dropdown.Menu className="dropdown-menu">
-            {!isAdminPage && (
+            {!isAdminPage && user?.role !== "admin" && (
               <Dropdown.Item
                 onClick={() => {
                   navigate("/subscription");

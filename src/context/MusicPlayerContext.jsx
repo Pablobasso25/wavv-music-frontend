@@ -6,6 +6,7 @@ import errorSound from "../assets/sounds/error.mp3";
 import warningSound from "../assets/sounds/warning.mp3";
 import publicidad from "../assets/images/publicidad.png";
 import { showPremiumAlert2 } from "../helpers/alerts";
+import { isPremiumUser } from "../helpers/userPermissions";
 
 const MusicPlayerContext = createContext();
 
@@ -40,18 +41,16 @@ export const MusicPlayerProvider = ({ children }) => {
 
     const audio = new Audio(soundPath);
     audio.volume = 0.3;
-    audio
-      .play()
-      .catch((e) => console.log("Audio play bloqueado o interrumpido"));
+    audio.play().catch(() => {});
   };
 
   const executeActionWithAd = (callback) => {
-    
-    if (user?.subscription?.status === "premium") {
+    if (isPremiumUser(user)) {
       callback();
       return;
     }
-     if (adsCounter >= 3) {
+
+    if (adsCounter >= 3) {
       if (audioRef.current) audioRef.current.pause();
       setIsPlaying(false);
       setIsAdPlaying(true);
