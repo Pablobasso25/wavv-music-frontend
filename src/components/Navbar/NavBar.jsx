@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { useSongs } from "../../context/SongContext"; 
+import { useSongs } from "../../context/SongContext";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { toast } from "react-toastify";
 import Logo from "../../assets/images/logo.png";
@@ -120,7 +120,6 @@ const NavBar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
   const handlePlaySong = (track) => {
     const songData = {
       _id: track.trackId,
@@ -157,12 +156,10 @@ const NavBar = () => {
           onClick={() => navigate("/")}
         />
       </div>
-
       {!isAdminPage && (
         <div className="spotify-navbar-center" ref={searchRef}>
           <div className="spotify-search">
             <i className="bi bi-search spotify-search-icon"></i>
-
             <input
               type="text"
               className="spotify-search-input"
@@ -170,7 +167,6 @@ const NavBar = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-
             {isSearching && (
               <div
                 className="spinner-border spinner-border-sm text-light"
@@ -181,7 +177,6 @@ const NavBar = () => {
               </div>
             )}
           </div>
-
           {!isAdminPage && (
             <button
               className="spotify-nav-icon"
@@ -275,14 +270,11 @@ const NavBar = () => {
                 }}
               />
             </div>
-
             <span className="spotify-username">
               {user?.username || "Usuario"}
             </span>
-
             <i className="bi bi-caret-down-fill spotify-caret"></i>
           </Dropdown.Toggle>
-
           <Dropdown.Menu className="dropdown-menu">
             {!isAdminPage && (
               <Dropdown.Item
@@ -308,7 +300,6 @@ const NavBar = () => {
                 Perfil
               </Dropdown.Item>
             )}
-
             {!isAdminPage && user?.role === "admin" && (
               <Dropdown.Item
                 onClick={() => {
@@ -317,13 +308,10 @@ const NavBar = () => {
                 }}
                 className="text-warning d-flex align-items-center"
               >
-
                 Panel Admin
               </Dropdown.Item>
             )}
-
             <Dropdown.Divider />
-
             <Dropdown.Item
               onClick={() => {
                 handleLogout();

@@ -9,7 +9,6 @@
   z-index: 9999;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
-
 .spotify-navbar-left {
   display: flex;
   align-items: center;
@@ -39,7 +38,6 @@
   text-decoration: none;
   transition: 0.2s ease-in-out;
 }
-
 .spotify-nav-icon:hover {
   background-color: #242424;
   color: #ffffff;
@@ -48,15 +46,12 @@
 .spotify-nav-icon:active {
   transform: scale(0.95);
 }
-
-
 .spotify-navbar-center {
   flex: 1;
   display: flex;
   justify-content: center;
   position: relative;
 }
-
 .spotify-search {
   width: 100%;
   max-width: 520px;
@@ -69,20 +64,16 @@
   border: 1px solid transparent;
   transition: 0.2s ease-in-out;
 }
-
 .spotify-search:hover {
   background-color: #252525;
 }
-
 .spotify-search:focus-within {
   border: 1px solid #fff;
 }
-
 .spotify-search-icon {
   font-size: 18px;
   color: #b3b3b3;
 }
-
 .spotify-search-input {
   flex: 1;
   border: none !important;
@@ -93,12 +84,9 @@
   font-weight: 500;
   box-shadow: none !important;
 }
-
 .spotify-search-input::placeholder {
   color: #b3b3b3 !important;
 }
-
-
 .spotify-search-dropdown {
   position: absolute;
   top: 60px;
@@ -111,7 +99,6 @@
   max-height: 450px;
   z-index: 9999;
 }
-
 .spotify-track-item {
   padding: 12px;
   display: flex;
@@ -120,31 +107,24 @@
   cursor: pointer;
   transition: 0.2s ease-in-out;
 }
-
 .spotify-track-item:hover {
   background-color: #2a2a30;
 }
-
 .spotify-search-dropdown::-webkit-scrollbar {
   width: 8px;
 }
-
 .spotify-search-dropdown::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
 }
-
 .spotify-search-dropdown::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.4);
 }
-
-
 .spotify-navbar-right {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
 .spotify-profile {
   display: flex;
   align-items: center;
@@ -153,14 +133,11 @@
   background-color: #1f1f1f;
   padding: 6px 14px;
   border-radius: 25px;
-  margin-right: 35px;
   transition: 0.2s ease-in-out;
 }
-
 .spotify-profile:hover {
   background-color: #242424;
 }
-
 .spotify-profile-circle {
   width: 34px;
   height: 34px;
@@ -170,19 +147,15 @@
   justify-content: center;
   align-items: center;
 }
-
 .spotify-username {
   font-size: 14px;
   font-weight: 700;
   color: white;
 }
-
 .spotify-caret {
   font-size: 12px;
   color: white;
 }
-
-
 .dropdown-menu {
   margin-top: 10px !important;
   border-radius: 10px !important;
@@ -191,7 +164,6 @@
   background-color: #111 !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
-
 .dropdown-menu .dropdown-item {
   border-radius: 8px;
   padding: 10px 12px;
@@ -199,16 +171,13 @@
   font-weight: 500;
   transition: 0.2s ease-in-out;
 }
-
 .dropdown-menu .dropdown-item:hover {
   background-color: #222 !important;
   color: white !important;
 }
-
 .dropdown-menu .dropdown-divider {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
-
 .btn-premium {
   background-color: #5773ff;
   color: #ffffff;
@@ -225,16 +194,13 @@
   display: flex;
   align-items: center;
 }
-
 .btn-premium:hover {
   transform: scale(1.05);
   background-color: #4760e0;
 }
-
 .btn-premium:active {
   transform: scale(0.98);
 }
-
 @media (max-width: 992px) {
   .spotify-navbar-center {
     display: none;
