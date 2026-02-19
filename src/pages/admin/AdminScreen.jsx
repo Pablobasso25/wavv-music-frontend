@@ -7,7 +7,6 @@ import ArtistsTable from "./components/ArtistsTable";
 import SearchModal from "./components/SearchModal";
 
 const AdminScreen = () => {
-
   const [currentTab, setCurrentTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [songs, setSongs] = useState([]);
@@ -29,7 +28,7 @@ const AdminScreen = () => {
       } else if (currentTab === "artists") {
         const res = await getAlbumsRequest();
         setArtists(res.data);
-    }
+      }
     } catch (error) {
       console.error("Error cargando datos:", error);
     }
@@ -118,7 +117,6 @@ const AdminScreen = () => {
         style={{ backgroundColor: "#202026", borderRadius: "1rem" }}
       >
         <Card.Body className="p-0">
-
           {currentTab === "users" && (
             <UsersTable users={users} setUsers={setUsers} />
           )}
@@ -130,7 +128,6 @@ const AdminScreen = () => {
           {currentTab === "artists" && (
             <ArtistsTable artists={artists} setArtists={setArtists} />
           )}
-
         </Card.Body>
       </Card>
 
