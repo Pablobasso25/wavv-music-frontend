@@ -11,7 +11,7 @@ export function WelcomeScreen() {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
-        }
+        } 
         return prev + 1;
       });
     }, 35);
@@ -63,7 +63,7 @@ export function WelcomeScreen() {
             <div className="flex items-center">
               <span 
                 className="text-8xl font-bold tracking-tight"
-              style={{
+                style={{
                   color: 'transparent',
                   WebkitTextStroke: '2px #3d5a7e',
                   textShadow: '0 0 20px rgba(61, 90, 126, 0.5)',
@@ -115,9 +115,9 @@ export function WelcomeScreen() {
                   animate={{ pathLength: progress / 100 }}
                   transition={{ duration: 0.1 }}
                   style={{ filter: 'blur(4px)' }}
-            />
+                />
               </svg>
-          </div>
+            </div>
           </div>
         </motion.div>
 
@@ -152,15 +152,15 @@ export function WelcomeScreen() {
                     delay: i * 0.01,
                     ease: "easeInOut",
                   }}
-              style={{
+                  style={{
                     height: isActive ? `${height}%` : '10%',
                     background: isActive 
                       ? `linear-gradient(to top, #00d4ff, #7b5cff, #ff00ea)`
                       : '#2a2057',
                     width: "0.25rem",
                     borderRadius: "9999px",
-              }}
-            />
+                  }}
+                />
               );
             })}
           </div>
