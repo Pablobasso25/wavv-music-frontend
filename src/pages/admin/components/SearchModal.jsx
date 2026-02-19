@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Form, InputGroup, Button, Image } from "react-bootstrap";
+import { createSongRequest, createAlbumRequest } from "../../../api/songs";
 import Swal from "sweetalert2";
 
 const SearchModal = ({
@@ -38,7 +39,7 @@ const SearchModal = ({
     }
   };
 
-  const addSongFromSearch = (track) => {
+  const addSongFromSearch = async (track) => {
     const exists = songs.some(
       (s) => s.title === track.trackName && s.artist === track.artistName,
     );
@@ -54,25 +55,21 @@ const SearchModal = ({
       return;
     }
 
+    try {
     const newSong = {
-      _id: Date.now(),
       title: track.trackName,
-      name: track.trackName,
       artist: track.artistName,
-      album: track.collectionName || "Single",
-      cover: track.artworkUrl100?.replace("100x100", "600x600"),
-      audio: track.previewUrl,
+        image: track.artworkUrl100?.replace("100x100", "600x600"),
+        youtubeUrl: track.previewUrl,
       duration: track.trackTimeMillis
         ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
             Math.floor((track.trackTimeMillis % 60000) / 1000),
           ).padStart(2, "0")}`
         : "--:--",
-      plays: "0",
     };
 
-    const updatedSongs = [...songs, newSong];
-    setSongs(updatedSongs);
-    localStorage.setItem("songs", JSON.stringify(updatedSongs));
+      const res = await createSongRequest(newSong);
+      setSongs([...songs, res.data]);
 
     Swal.fire({
       title: "¡Agregada!",
@@ -83,15 +80,26 @@ const SearchModal = ({
       timer: 1500,
       showConfirmButton: false,
     });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo agregar la canción",
+        icon: "error",
+        background: "#1a1a1a",
+        color: "#fff",
+      });
+    }
   };
 
-  const addArtistFromSearch = (item) => {
-    const exists = artists.some((a) => a.name === item.artistName);
+  const addArtistFromSearch = async (album) => {
+    const exists = artists.some(
+      (a) => a.album?.collectionId === album.collectionId,
+    );
 
     if (exists) {
       Swal.fire({
         title: "Ya existe",
-        text: "Este artista ya está en tu lista",
+        text: "Este álbum ya está en tu lista",
         icon: "info",
         background: "#1a1a1a",
         color: "#fff",
@@ -99,30 +107,48 @@ const SearchModal = ({
       return;
     }
 
-    const newArtist = {
-      id: Date.now(),
-      name: item.artistName,
-      image: item.artworkUrl100?.replace("100x100", "600x600"),
-      album: {
-        name: item.collectionName,
-        image: item.artworkUrl100?.replace("100x100", "600x600"),
-        artist: item.artistName,
-      },
+    try {
+      const response = await fetch(
+        `https://itunes.apple.com/lookup?id=${album.collectionId}&entity=song`,
+      );
+      const data = await response.json();
+      const tracks = data.results.slice(1);
+
+      const newAlbum = {
+        collectionId: album.collectionId,
+        name: album.collectionName,
+        artistName: album.artistName,
+        image: album.artworkUrl100?.replace("100x100", "600x600"),
+        tracks: tracks.map((track) => ({
+          trackId: track.trackId,
+          name: track.trackName,
+          duration_ms: track.trackTimeMillis,
+          preview_url: track.previewUrl,
+          cover: track.artworkUrl100?.replace("100x100", "600x600"),
+        })),
     };
 
-    const updatedArtists = [...artists, newArtist];
-    setArtists(updatedArtists);
-    localStorage.setItem("artistas", JSON.stringify(updatedArtists));
+      const res = await createAlbumRequest(newAlbum);
+      setArtists([...artists, res.data]);
 
     Swal.fire({
       title: "¡Agregado!",
-      text: `${item.artistName} se agregó correctamente.`,
+        text: `${album.collectionName} se agregó correctamente.`,
       icon: "success",
       background: "#1a1a1a",
       color: "#fff",
       timer: 1500,
       showConfirmButton: false,
     });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo agregar el álbum",
+        icon: "error",
+        background: "#1a1a1a",
+        color: "#fff",
+      });
+    }
   };
 
   return (
@@ -179,13 +205,11 @@ const SearchModal = ({
                   <div>
                     <div className="fw-bold">
                       {currentTab === "artists"
-                        ? track.artistName
+                        ? track.collectionName
                         : track.trackName}
                     </div>
                     <div className="text-white-50 small">
-                      {currentTab === "artists"
-                        ? track.collectionName
-                        : track.artistName}
+                      {track.artistName}
                     </div>
                   </div>
                 </div>
