@@ -1,14 +1,86 @@
 import React, { useState } from "react";
 import { Table, Badge, Button } from "react-bootstrap";
+import {
+  deactivateUserRequest,
+  activateUserRequest,
+  deleteUserRequest,
+  updateUserRequest,
+} from "../../../api/songs";
 import Swal from "sweetalert2";
 
 const UsersTable = ({ users, setUsers }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const persistUsers = (nextUsers) => {
-    setUsers(nextUsers);
-    localStorage.setItem("users", JSON.stringify(nextUsers));
+  const handleEditUser = async (user) => {
+    const result = await Swal.fire({
+      title: "Editar Usuario",
+      html: `
+        <div class="text-start">
+          <label class="form-label text-white-50 small">Nombre de usuario</label>
+          <input id="swal-username" class="swal2-input m-0 mb-3 w-100" value="${user.username}">
+          <label class="form-label text-white-50 small">Email</label>
+          <input id="swal-email" class="swal2-input m-0 mb-3 w-100" value="${user.email}">
+          <label class="form-label text-white-50 small">Rol</label>
+          <input class="swal2-input m-0 mb-3 w-100" value="${user.role.toUpperCase()}" disabled style="background:#2a2a2a; cursor:not-allowed">
+          <label class="form-label text-white-50 small">Plan</label>
+          <select id="swal-plan" class="swal2-select m-0 w-100" style="display:flex">
+            <option value="free" ${user.subscription?.status === "free" ? "selected" : ""}>Free</option>
+            <option value="premium" ${user.subscription?.status === "premium" ? "selected" : ""}>Premium</option>
+          </select>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: "Guardar",
+      cancelButtonText: "Cancelar",
+      background: "#1a1a1a",
+      color: "#fff",
+      preConfirm: () => {
+        return {
+          username: document.getElementById("swal-username").value,
+          email: document.getElementById("swal-email").value,
+          subscriptionStatus: document.getElementById("swal-plan").value,
+        };
+      },
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await updateUserRequest(user._id, result.value);
+        const updatedUsers = users.map((u) =>
+          u._id === user._id
+            ? {
+                ...u,
+                username: result.value.username,
+                email: result.value.email,
+                subscription: {
+                  ...u.subscription,
+                  status: result.value.subscriptionStatus,
+                },
+              }
+            : u,
+        );
+        setUsers(updatedUsers);
+        Swal.fire({
+          title: "Actualizado",
+          text: "Usuario actualizado correctamente",
+          icon: "success",
+          background: "#1a1a1a",
+          color: "#fff",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo actualizar el usuario",
+          icon: "error",
+          background: "#1a1a1a",
+          color: "#fff",
+        });
+      }
+    }
   };
 
   const deleteUser = (id) => {
@@ -27,80 +99,6 @@ const UsersTable = ({ users, setUsers }) => {
       if (result.isConfirmed) {
         const filteredUsers = users.filter((u) => u.id !== id);
         persistUsers(filteredUsers);
-        Swal.fire({
-          title: "Eliminado",
-          text: "El usuario ha sido eliminado.",
-          icon: "success",
-          background: "#1a1a1a",
-          color: "#fff",
-        });
-      }
-    });
-  };
-
-  const toggleSuspendUser = (id) => {
-    const updatedUsers = users.map((u) =>
-      u.id === id ? { ...u, isSuspended: !u.isSuspended } : u
-    );
-    persistUsers(updatedUsers);
-    Swal.fire({
-      title: "Estado actualizado",
-      text: "El estado del usuario ha sido modificado.",
-      icon: "success",
-      background: "#1a1a1a",
-      color: "#fff",
-      timer: 1500,
-      showConfirmButton: false,
-    });
-  };
-
-  const handleEditUser = (user) => {
-    Swal.fire({
-      title: "Editar Usuario",
-      html: `
-        <div class="text-start">
-          <label class="form-label text-white-50 small">Nombre de usuario</label>
-          <input id="swal-input1" class="swal2-input m-0 mb-3 w-100" placeholder="Nombre de usuario" value="${user.username}">
-          <label class="form-label text-white-50 small">Email</label>
-          <input id="swal-input2" class="swal2-input m-0 mb-3 w-100" placeholder="Email" value="${user.email}">
-          <label class="form-label text-white-50 small">Contraseña</label>
-          <input id="swal-input3" type="text" class="swal2-input m-0 mb-3 w-100" placeholder="Contraseña" value="${user.password}">
-          <label class="form-label text-white-50 small">Suscripción</label>
-          <select id="swal-input4" class="swal2-select m-0 w-100" style="display:flex">
-            <option value="free" ${!user.subscription || user.subscription.status === "free" ? "selected" : ""}>Free</option>
-            <option value="premium" ${user.subscription?.status === "premium" ? "selected" : ""}>Premium</option>
-          </select>
-        </div>
-      `,
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: "Guardar",
-      cancelButtonText: "Cancelar",
-      background: "#1a1a1a",
-      color: "#fff",
-      preConfirm: () => {
-        return [
-          document.getElementById("swal-input1").value,
-          document.getElementById("swal-input2").value,
-          document.getElementById("swal-input3").value,
-          document.getElementById("swal-input4").value,
-        ];
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const [newUsername, newEmail, newPassword, newSubscription] = result.value;
-        const updatedUsers = users.map((u) =>
-          u.id === user.id
-            ? {
-                ...u,
-                username: newUsername,
-                email: newEmail,
-                password: newPassword,
-                subscription: { ...u.subscription, status: newSubscription },
-              }
-            : u
-        );
-        persistUsers(updatedUsers);
         Swal.fire({
           title: "Actualizado",
           text: "El usuario ha sido actualizado.",
