@@ -168,13 +168,13 @@ const UsersTable = ({ users, setUsers }) => {
             u._id === id ? { ...u, isActive: false } : u,
           );
           setUsers(updatedUsers);
-        Swal.fire({
+          Swal.fire({
             title: "Dado de baja",
             text: "El usuario ha sido dado de baja.",
-          icon: "success",
-          background: "#1a1a1a",
-          color: "#fff",
-        });
+            icon: "success",
+            background: "#1a1a1a",
+            color: "#fff",
+          });
         } catch (error) {
           Swal.fire({
             title: "Error",
@@ -313,21 +313,21 @@ const UsersTable = ({ users, setUsers }) => {
                         ></i>
                       </Button>
                     ) : (
-                    <Button
+                      <Button
                         variant="outline-warning"
-                      size="sm"
-                      className="rounded-circle d-flex align-items-center justify-content-center"
-                      style={{ width: "32px", height: "32px" }}
+                        size="sm"
+                        className="rounded-circle d-flex align-items-center justify-content-center"
+                        style={{ width: "32px", height: "32px" }}
                         onClick={() => deleteUser(user._id)}
-                      disabled={user.role === "admin"}
+                        disabled={user.role === "admin"}
                         title="Dar de baja"
-                      type="button"
-                    >
-                      <i
+                        type="button"
+                      >
+                        <i
                           className="bi bi-slash-circle"
-                        style={{ fontSize: "0.9rem" }}
-                      ></i>
-                    </Button>
+                          style={{ fontSize: "0.9rem" }}
+                        ></i>
+                      </Button>
                     )}
 
                     <Button
