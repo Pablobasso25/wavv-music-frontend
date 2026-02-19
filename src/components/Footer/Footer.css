@@ -10,9 +10,33 @@ body {
 
 .footer-full {
   width: 100%;
-  background: #1f2428;
-  padding: 60px 0 30px 0;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+  padding: 20px 0 20px 0;
   color: rgb(70, 77, 114);
+  border-top: 1px solid rgba(87, 115, 255, 0.1);
+}
+
+.footer-brand {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.footer-logo {
+  width: 140px;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 10px rgba(136, 105, 186, 0.858));
+  transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+  transform: scale(0.85);
+}
+
+.footer-slogan {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  font-style: italic;
+  margin: 0;
 }
 
 .footer-container {
@@ -44,13 +68,29 @@ body {
   color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
   font-size: 17px;
-  transition: 0.3s ease;
+  transition: all 0.3s ease;
   display: inline-block;
+  position: relative;
+}
+
+.footer-column ul li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(90deg, #5773ff, #ff2e2e);
+  transition: width 0.3s ease;
 }
 
 .footer-column ul li a:hover {
-  color: rgb(136, 68, 155);
+  color: #5773ff;
   transform: translateX(5px);
+}
+
+.footer-column ul li a:hover::after {
+  width: 100%;
 }
 
 .footer-social-col {
@@ -77,18 +117,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-
   width: 55px;
   height: 55px;
   overflow: hidden;
-
   border-radius: 50px;
   text-decoration: none;
-  background: #3a2a55;
-
+  background: linear-gradient(135deg, #5773ff, #3a2a55);
   transition: all 0.4s ease;
-
   flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(87, 115, 255, 0.2);
 }
 
 .social-expand-btn .icon {
@@ -118,12 +155,39 @@ body {
 
 .social-expand-btn:hover {
   width: 180px;
-  background: #5b3b88;
+  background: linear-gradient(135deg, #6b85ff, #5b3b88);
+  box-shadow: 0 6px 20px rgba(87, 115, 255, 0.4);
+  transform: translateY(-2px);
 }
 
 .social-expand-btn:hover .text {
   opacity: 1;
 }
+
+.footer-line {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(87, 115, 255, 0.3), transparent);
+  margin: 40px 0 20px 0;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.footer-copyright {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.footer-team {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  margin: 0;
+}
+
 @media (max-width: 992px) {
   .footer-row {
     display: flex;
