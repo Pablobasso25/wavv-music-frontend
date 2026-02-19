@@ -1,8 +1,17 @@
 import React, { useState } from "react";
 import { Modal, Form, InputGroup, Button, Image } from "react-bootstrap";
+import { createSongRequest, createAlbumRequest } from "../../../api/songs";
 import Swal from "sweetalert2";
 
-const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setArtists }) => {
+const SearchModal = ({
+  show,
+  onHide,
+  currentTab,
+  songs,
+  setSongs,
+  artists,
+  setArtists,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -30,9 +39,9 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
     }
   };
 
-  const addSongFromSearch = (track) => {
+  const addSongFromSearch = async (track) => {
     const exists = songs.some(
-      (s) => s.title === track.trackName && s.artist === track.artistName
+      (s) => s.title === track.trackName && s.artist === track.artistName,
     );
 
     if (exists) {
@@ -46,44 +55,51 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
       return;
     }
 
-    const newSong = {
-      _id: Date.now(),
-      title: track.trackName,
-      name: track.trackName,
-      artist: track.artistName,
-      album: track.collectionName || "Single",
-      cover: track.artworkUrl100?.replace("100x100", "600x600"),
-      audio: track.previewUrl,
-      duration: track.trackTimeMillis
-        ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
-            Math.floor((track.trackTimeMillis % 60000) / 1000)
-          ).padStart(2, "0")}`
-        : "--:--",
-      plays: "0",
-    };
+    try {
+      const newSong = {
+        title: track.trackName,
+        artist: track.artistName,
+        image: track.artworkUrl100?.replace("100x100", "600x600"),
+        youtubeUrl: track.previewUrl,
+        duration: track.trackTimeMillis
+          ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
+              Math.floor((track.trackTimeMillis % 60000) / 1000),
+            ).padStart(2, "0")}`
+          : "--:--",
+      };
 
-    const updatedSongs = [...songs, newSong];
-    setSongs(updatedSongs);
-    localStorage.setItem("songs", JSON.stringify(updatedSongs));
+      const res = await createSongRequest(newSong);
+      setSongs([...songs, res.data]);
 
-    Swal.fire({
-      title: "¡Agregada!",
-      text: `${track.trackName} se agregó correctamente.`,
-      icon: "success",
-      background: "#1a1a1a",
-      color: "#fff",
-      timer: 1500,
-      showConfirmButton: false,
-    });
+      Swal.fire({
+        title: "¡Agregada!",
+        text: `${track.trackName} se agregó correctamente.`,
+        icon: "success",
+        background: "#1a1a1a",
+        color: "#fff",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo agregar la canción",
+        icon: "error",
+        background: "#1a1a1a",
+        color: "#fff",
+      });
+    }
   };
 
-  const addArtistFromSearch = (item) => {
-    const exists = artists.some((a) => a.name === item.artistName);
+  const addArtistFromSearch = async (album) => {
+    const exists = artists.some(
+      (a) => a.album?.collectionId === album.collectionId,
+    );
 
     if (exists) {
       Swal.fire({
         title: "Ya existe",
-        text: "Este artista ya está en tu lista",
+        text: "Este álbum ya está en tu lista",
         icon: "info",
         background: "#1a1a1a",
         color: "#fff",
@@ -91,30 +107,48 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
       return;
     }
 
-    const newArtist = {
-      id: Date.now(),
-      name: item.artistName,
-      image: item.artworkUrl100?.replace("100x100", "600x600"),
-      album: {
-        name: item.collectionName,
-        image: item.artworkUrl100?.replace("100x100", "600x600"),
-        artist: item.artistName,
-      },
-    };
+    try {
+      const response = await fetch(
+        `https://itunes.apple.com/lookup?id=${album.collectionId}&entity=song`,
+      );
+      const data = await response.json();
+      const tracks = data.results.slice(1);
 
-    const updatedArtists = [...artists, newArtist];
-    setArtists(updatedArtists);
-    localStorage.setItem("artistas", JSON.stringify(updatedArtists));
+      const newAlbum = {
+        collectionId: album.collectionId,
+        name: album.collectionName,
+        artistName: album.artistName,
+        image: album.artworkUrl100?.replace("100x100", "600x600"),
+        tracks: tracks.map((track) => ({
+          trackId: track.trackId,
+          name: track.trackName,
+          duration_ms: track.trackTimeMillis,
+          preview_url: track.previewUrl,
+          cover: track.artworkUrl100?.replace("100x100", "600x600"),
+        })),
+      };
 
-    Swal.fire({
-      title: "¡Agregado!",
-      text: `${item.artistName} se agregó correctamente.`,
-      icon: "success",
-      background: "#1a1a1a",
-      color: "#fff",
-      timer: 1500,
-      showConfirmButton: false,
-    });
+      const res = await createAlbumRequest(newAlbum);
+      setArtists([...artists, res.data]);
+
+      Swal.fire({
+        title: "¡Agregado!",
+        text: `${album.collectionName} se agregó correctamente.`,
+        icon: "success",
+        background: "#1a1a1a",
+        color: "#fff",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo agregar el álbum",
+        icon: "error",
+        background: "#1a1a1a",
+        color: "#fff",
+      });
+    }
   };
 
   return (
@@ -125,7 +159,11 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
       centered
       contentClassName="bg-dark text-white border-secondary"
     >
-      <Modal.Header closeButton closeVariant="white" className="border-secondary">
+      <Modal.Header
+        closeButton
+        closeVariant="white"
+        className="border-secondary"
+      >
         <Modal.Title>
           {currentTab === "artists" ? "Buscar Artista" : "Buscar Canción"}
         </Modal.Title>
@@ -146,7 +184,10 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
           </InputGroup>
         </Form>
 
-        <div className="search-results" style={{ maxHeight: "400px", overflowY: "auto" }}>
+        <div
+          className="search-results"
+          style={{ maxHeight: "400px", overflowY: "auto" }}
+        >
           {searchResults.length > 0 ? (
             searchResults.map((track) => (
               <div
@@ -155,13 +196,20 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
                 style={{ borderBottom: "1px solid #333" }}
               >
                 <div className="d-flex align-items-center gap-3">
-                  <Image src={track.artworkUrl100} rounded width={50} height={50} />
+                  <Image
+                    src={track.artworkUrl100}
+                    rounded
+                    width={50}
+                    height={50}
+                  />
                   <div>
                     <div className="fw-bold">
-                      {currentTab === "artists" ? track.artistName : track.trackName}
+                      {currentTab === "artists"
+                        ? track.collectionName
+                        : track.trackName}
                     </div>
                     <div className="text-white-50 small">
-                      {currentTab === "artists" ? track.collectionName : track.artistName}
+                      {track.artistName}
                     </div>
                   </div>
                 </div>
@@ -193,8 +241,8 @@ const SearchModal = ({ show, onHide, currentTab, songs, setSongs, artists, setAr
               {isSearching
                 ? "Buscando..."
                 : searchQuery
-                ? "No se encontraron resultados"
-                : "Escribe algo para buscar"}
+                  ? "No se encontraron resultados"
+                  : "Escribe algo para buscar"}
             </div>
           )}
         </div>
