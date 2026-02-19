@@ -61,7 +61,10 @@ const MusicPlayer = () => {
   useEffect(() => {
     if (currentSong && userPlaylist) {
       const isSaved = userPlaylist.some(
-        (s) => s._id === currentSong._id || s.id === currentSong._id,
+        (s) => 
+          s._id === currentSong._id || 
+          s.id === currentSong._id ||
+          (s.title === currentSong.title && s.artist === currentSong.artist)
       );
       setIsLiked(isSaved);
     } else {
@@ -89,15 +92,27 @@ const MusicPlayer = () => {
         }
         return;
       } else {
-        const res = await addSongToPlaylist(trackId);
+        const songData = trackId && trackId.length === 24
+          ? { songId: trackId }
+          : {
+              externalSong: {
+                title: currentSong.title,
+                artist: currentSong.artist,
+                image: currentSong.cover || currentSong.image,
+                youtubeUrl: currentSong.audio,
+                duration: currentSong.duration || "--:--",
+              },
+            };
+
+        const res = await addSongToPlaylist(songData);
 
         if (res.success) {
-          setIsLiked(true);
+          setIsLiked(true);1
           playUISound("success");
           toast.success("Agregada a tu playlist", {
             theme: "dark",
             autoClose: 1500,
-            position: "bottom-right",
+            position: "top-right",
           });
           getUserPlaylist();
         } else if (res.status === 403 && res.code === "PREMIUM_REQUIRED") {
