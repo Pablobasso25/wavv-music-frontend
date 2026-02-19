@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button, Nav, Card } from "react-bootstrap";
-import { defaultSongs, defaultUsers } from "../../data/dataDefault";
+import { getSongsRequest, getAlbumsRequest, getUsersRequest } from "../../api/songs";
 import UsersTable from "./components/UsersTable";
 import SongsTable from "./components/SongsTable";
 import ArtistsTable from "./components/ArtistsTable";
@@ -15,29 +15,29 @@ const AdminScreen = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    let storedUsers = JSON.parse(localStorage.getItem("users"));
-    let storedSongs = JSON.parse(localStorage.getItem("songs"));
-    const storedArtists = JSON.parse(localStorage.getItem("artistas")) || [];
+    loadData();
+  }, [currentTab]);
 
-    if (!storedUsers || storedUsers.length === 0) {
-      storedUsers = defaultUsers;
-      localStorage.setItem("users", JSON.stringify(storedUsers));
+  const loadData = async () => {
+    try {
+      if (currentTab === "songs") {
+        const res = await getSongsRequest();
+        setSongs(res.data);
+      } else if (currentTab === "users") {
+        const res = await getUsersRequest();
+        setUsers(res.data);
+      } else if (currentTab === "artists") {
+        const res = await getAlbumsRequest();
+        setArtists(res.data);
     }
-
-    if (!storedSongs || storedSongs.length === 0) {
-      storedSongs = defaultSongs;
-      localStorage.setItem("songs", JSON.stringify(storedSongs));
+    } catch (error) {
+      console.error("Error cargando datos:", error);
     }
-
-    setUsers(storedUsers);
-    setSongs(storedSongs);
-    setArtists(storedArtists);
-  }, []);
+  };
 
   return (
-    <Container className="my-5 pt-5">
-
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 mt-4">
+    <Container className="pt-5 mt-3">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
         <div className="mb-3 mb-md-0">
           <h2 className="text-white fw-bold display-6 mb-1">
             Panel de Control
