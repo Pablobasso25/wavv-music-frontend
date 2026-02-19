@@ -9,7 +9,6 @@ import {
   Minimize2,
   FileText,
   Heart,
-  Activity,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
@@ -50,7 +49,7 @@ const MusicPlayer = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(20);
+  const [volume, setVolume] = useState(50);
   const [isLiked, setIsLiked] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -62,7 +61,10 @@ const MusicPlayer = () => {
   useEffect(() => {
     if (currentSong && userPlaylist) {
       const isSaved = userPlaylist.some(
-        (s) => s._id === currentSong._id || s.id === currentSong._id,
+        (s) => 
+          s._id === currentSong._id || 
+          s.id === currentSong._id ||
+          (s.title === currentSong.title && s.artist === currentSong.artist)
       );
       setIsLiked(isSaved);
     } else {
@@ -90,15 +92,27 @@ const MusicPlayer = () => {
         }
         return;
       } else {
-        const res = await addSongToPlaylist(trackId);
+        const songData = trackId && trackId.length === 24
+          ? { songId: trackId }
+          : {
+              externalSong: {
+                title: currentSong.title,
+                artist: currentSong.artist,
+                image: currentSong.cover || currentSong.image,
+                youtubeUrl: currentSong.audio,
+                duration: currentSong.duration || "--:--",
+              },
+            };
+
+        const res = await addSongToPlaylist(songData);
 
         if (res.success) {
-          setIsLiked(true);
+          setIsLiked(true);1
           playUISound("success");
           toast.success("Agregada a tu playlist", {
             theme: "dark",
             autoClose: 1500,
-            position: "bottom-right",
+            position: "top-right",
           });
           getUserPlaylist();
         } else if (res.status === 403 && res.code === "PREMIUM_REQUIRED") {
@@ -240,27 +254,9 @@ const MusicPlayer = () => {
               alt="Artwork"
             />
           </div>
-          <div className="mobile-info" style={{ overflow: "hidden" }}>
-            <p
-              className="song-title"
-              style={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {currentSong?.title}
-            </p>
-            <p
-              className="song-artist"
-              style={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {currentSong?.artist}
-            </p>
+          <div className="mobile-info">
+            <p className="song-title">{currentSong?.title}</p>
+            <p className="song-artist">{currentSong?.artist}</p>
           </div>
           <div className="mobile-controls">
             <button
@@ -329,38 +325,8 @@ const MusicPlayer = () => {
       }}
       onMouseDown={isFloating ? handleMouseDown : undefined}
     >
-      <style>
-        {`
-          @keyframes pulse-animation {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-          }
-        `}
-      </style>
       <div className="player-header">
-        <Activity
-          size={16}
-          style={{
-            marginRight: "8px",
-            animation: isPlaying
-              ? "pulse-animation 1.5s infinite ease-in-out"
-              : "none",
-            color: isPlaying ? "#5773ff" : "inherit",
-          }}
-        />
-        <span
-          className="now-playing"
-          style={{
-            flex: 1,
-            textAlign: "center",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {currentSong?.artist || "Now Playing"}
-        </span>
+        <span className="now-playing">Now Playing</span>
         {isFloating && (
           <div className="header-actions">
             <button onClick={() => setMinimized(!minimized)}>
@@ -381,62 +347,20 @@ const MusicPlayer = () => {
               alt="cover"
             />
             {!isMusicPage && (
-              <div
-                className="song-meta"
-                style={{
-                  overflow: "hidden",
-                  width: "100%",
-                  textAlign: "center",
-                  padding: "0 10px",
-                }}
-              >
-                <h4
-                  className="title"
-                  title={currentSong?.title}
-                  style={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
+              <div className="song-meta">
+                <h4 className="title">
                   {currentSong?.title || "Seleccione canción"}
                 </h4>
-                <p
-                  className="artist"
-                  style={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {currentSong?.artist || "--"}
-                </p>
+                <p className="artist">{currentSong?.artist || "--"}</p>
               </div>
             )}
           </div>
           {isMusicPage && (
-            <div className="fixed-song-info" style={{ overflow: "hidden" }}>
-              <h4
-                className="title"
-                title={currentSong?.title}
-                style={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
+            <div className="fixed-song-info">
+              <h4 className="title">
                 {currentSong?.title || "Seleccione canción"}
               </h4>
-              <p
-                className="artist"
-                style={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {currentSong?.artist || "--"}
-              </p>
+              <p className="artist">{currentSong?.artist || "--"}</p>
             </div>
           )}
           <div className="player-progress">
