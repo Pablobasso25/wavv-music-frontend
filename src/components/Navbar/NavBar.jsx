@@ -1,38 +1,80 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Navbar, Nav, Container, Form, Dropdown, Badge } from "react-bootstrap";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Dropdown } from "react-bootstrap";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { useSongs } from "../../context/SongContext"; 
+import { useSongs } from "../../context/SongContext";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
-import Logo from "../assets/images/logo.png"
+import { toast } from "react-toastify";
+import Logo from "../../assets/images/logo.png";
 import { showConfirm } from "../../helpers/alerts";
+import "./NavBar.css";
 
+const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+  <div
+    ref={ref}
+    className="spotify-profile"
+    onClick={(e) => {
+      e.preventDefault();
+      onClick(e);
+    }}
+  >
+    {children}
+  </div>
+));
 const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { playSong } = useMusicPlayer();
-  const { searchExternalSongs } = useSongs();
-
+  const { addSongToPlaylist, getUserPlaylist } = useSongs();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const searchRef = useRef(null);
   const lastSearchRef = useRef("");
-
+  const [placeholder, setPlaceholder] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(150);
+  useEffect(() => {
+    const phrases = [
+      "Buscar canciones...",
+      "Buscar artistas...",
+      "Buscar álbumes...",
+    ];
+    const i = loopNum % phrases.length;
+    const fullText = phrases[i];
+    const handleType = () => {
+      setPlaceholder(
+        isDeleting
+          ? fullText.substring(0, placeholder.length - 1)
+          : fullText.substring(0, placeholder.length + 1),
+      );
+      setTypingSpeed(isDeleting ? 50 : 100);
+      if (!isDeleting && placeholder === fullText) {
+        setTypingSpeed(2000);
+        setIsDeleting(true);
+      } else if (isDeleting && placeholder === "") {
+        setIsDeleting(false);
+        setLoopNum(loopNum + 1);
+        setTypingSpeed(500);
+      }
+    };
+    const timer = setTimeout(handleType, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [placeholder, isDeleting, loopNum, typingSpeed]);
   const handleLogout = async () => {
     const result = await showConfirm(
       "¿Estás seguro que deseas cerrar sesión?",
       "Cerrar Sesión",
     );
-
     if (result.isConfirmed) {
       logout();
       navigate("/login");
     }
   };
-
   const isAdminPage = location.pathname === "/admin";
   useEffect(() => {
     if (searchQuery.length === 0) {
@@ -42,20 +84,23 @@ const NavBar = () => {
       lastSearchRef.current = "";
       return;
     }
-
     if (searchQuery.length < 3) {
       setSearchResults([]);
       setShowDropdown(false);
       return;
     }
     if (lastSearchRef.current === searchQuery) return;
-
     const timer = setTimeout(async () => {
       lastSearchRef.current = searchQuery;
       setIsSearching(true);
       try {
-        const results = await searchExternalSongs(searchQuery);
-        setSearchResults(results || []);
+        const response = await fetch(
+          `https://itunes.apple.com/search?term=${encodeURIComponent(
+            searchQuery,
+          )}&media=music&limit=5`,
+        );
+        const data = await response.json();
+        setSearchResults(data.results || []);
         setShowDropdown(true);
       } catch (error) {
         setSearchResults([]);
@@ -64,10 +109,8 @@ const NavBar = () => {
         setIsSearching(false);
       }
     }, 400);
-
     return () => clearTimeout(timer);
   }, [searchQuery]);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -77,43 +120,53 @@ const NavBar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
   const handlePlaySong = (track) => {
     const songData = {
-      title: track.title,
-      artist: track.artist,
-      album: track.album,
-      cover: track.image,
-      audio: track.audio,
-      name: track.title,
+      _id: track.trackId,
+      id: track.trackId,
+      title: track.trackName,
+      artist: track.artistName,
+      album: track.collectionName,
+      cover: track.artworkUrl100?.replace("100x100", "600x600"),
+      image: track.artworkUrl100?.replace("100x100", "600x600"),
+      audio: track.previewUrl,
+      name: track.trackName,
     };
     playSong(songData);
     setShowDropdown(false);
     setSearchQuery("");
   };
-
+  const handleAddSong = async (track) => {
+    const res = await addSongToPlaylist(track.trackId);
+    if (res.success) {
+      toast.success("Canción agregada a tu playlist");
+      getUserPlaylist();
+    } else {
+      toast.error("No se pudo agregar la canción");
+    }
+  };
   return (
-    <NavBar className="spotify-navbar fixed-top">
+    <nav className="spotify-navbar fixed-top">
       <div className="spotify-navbar-left">
-        <img src={Logo}
-          alt="Wavv Music Logo"
-          height="50"
+        <img
+          src={Logo}
+          alt="Logo"
+          className="spotify-logo text-white fw-bold m-0"
+          style={{ cursor: "pointer", width: "120px" }}
+          onClick={() => navigate("/")}
         />
       </div>
-
       {!isAdminPage && (
         <div className="spotify-navbar-center" ref={searchRef}>
           <div className="spotify-search">
             <i className="bi bi-search spotify-search-icon"></i>
-
             <input
               type="text"
               className="spotify-search-input"
-              placeholder="Buscar canciones..."
+              placeholder={placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-
             {isSearching && (
               <div
                 className="spinner-border spinner-border-sm text-light"
@@ -124,7 +177,6 @@ const NavBar = () => {
               </div>
             )}
           </div>
-
           {!isAdminPage && (
             <button
               className="spotify-nav-icon"
@@ -137,51 +189,37 @@ const NavBar = () => {
             <div className="spotify-search-dropdown">
               {searchResults.length > 0 ? (
                 <>
-                  {searchResults.map((track, index) => (
+                  {searchResults.map((track) => (
                     <div
-                      key={index}
+                      key={track.trackId}
                       className="spotify-track-item"
-                      onClick={() => {
-                        const songData = {
-                          title: track.name,
-                          artist:
-                            track.artists?.map((a) => a.name).join(", ") ||
-                            "Unknown",
-                          album: track.album?.name || "Unknown Album",
-                          cover: track.album.images[0]?.url,
-                          audio: track.preview_url,
-                          genre: "Music",
-                          name: track.name,
-                        };
-
-                        playSong(songData);
-                        setShowDropdown(false);
-                        setSearchQuery("");
-                      }}
+                      onClick={() => handlePlaySong(track)}
                     >
                       <img
-                        src={
-                          track.album.images[2]?.url ||
-                          track.album.images[0]?.url
-                        }
-                        alt={track.name}
+                        src={track.artworkUrl100}
+                        alt={track.trackName}
                         width="50"
                         height="50"
                         className="rounded"
                       />
-
-                      <div className="flex-grow-1">
+                      <div className="flex-grow-1 ms-2">
                         <div className="text-white fw-semibold">
-                          {track.name}
+                          {track.trackName}
                         </div>
                         <div className="text-secondary small">
-                          {track.artists?.map((a) => a.name).join(", ")}
+                          {track.artistName}
                         </div>
                       </div>
-
-                      {track.preview_url && (
-                        <i className="bx bx-play-circle fs-4 text-primary"></i>
-                      )}
+                      <button
+                        className="btn btn-link text-secondary p-0 ms-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddSong(track);
+                        }}
+                        title="Agregar a playlist"
+                      >
+                        <i className="bi bi-plus-circle fs-5"></i>
+                      </button>
                     </div>
                   ))}
                 </>
@@ -194,24 +232,22 @@ const NavBar = () => {
           )}
         </div>
       )}
-      <div className="spotify-navbar-rigth">
+      <div className="spotify-navbar-right">
         {!isAdminPage && (
           <button
-            className="btn-premium"
-            onClick={() => navigate("/premium")}
+            className="btn-premium d-none d-xl-block"
+            onClick={() => navigate("/subscription")}
           >
+            <i className="bi bi-gem me-2"></i>
             Explorar Premium
           </button>
         )}
         <Dropdown
           align="end"
           show={showUserDropdown}
-          onToggle={(isOpen) => setShowUserDropdown(isOpen)}>
-          <Dropdown.Toggle
-            as="div"
-            className="spotify-profile"
-            onClick={() => setShowUserDropdown(!showUserDropdown)}
-          >
+          onToggle={(isOpen) => setShowUserDropdown(isOpen)}
+        >
+          <Dropdown.Toggle as={CustomToggle}>
             <div
               className="spotify-profile-circle"
               onClick={(e) => {
@@ -234,15 +270,24 @@ const NavBar = () => {
                 }}
               />
             </div>
-
             <span className="spotify-username">
               {user?.username || "Usuario"}
             </span>
-
             <i className="bi bi-caret-down-fill spotify-caret"></i>
           </Dropdown.Toggle>
-
           <Dropdown.Menu className="dropdown-menu">
+            {!isAdminPage && (
+              <Dropdown.Item
+                onClick={() => {
+                  navigate("/subscription");
+                  setShowUserDropdown(false);
+                }}
+                className="d-xl-none text-white d-flex align-items-center"
+              >
+                <i className="bi bi-gem me-2"></i>
+                Explorar Premium
+              </Dropdown.Item>
+            )}
             {!isAdminPage && user?.role !== "admin" && (
               <Dropdown.Item
                 onClick={() => {
@@ -255,7 +300,6 @@ const NavBar = () => {
                 Perfil
               </Dropdown.Item>
             )}
-
             {!isAdminPage && user?.role === "admin" && (
               <Dropdown.Item
                 onClick={() => {
@@ -264,13 +308,10 @@ const NavBar = () => {
                 }}
                 className="text-warning d-flex align-items-center"
               >
-
                 Panel Admin
               </Dropdown.Item>
             )}
-
             <Dropdown.Divider />
-
             <Dropdown.Item
               onClick={() => {
                 handleLogout();
@@ -284,7 +325,7 @@ const NavBar = () => {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-    </NavBar>
+    </nav>
   );
 };
 
