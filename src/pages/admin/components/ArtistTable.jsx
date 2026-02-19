@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Table, Image, Button } from "react-bootstrap";
+import { deleteAlbumRequest } from "../../../api/songs";
 import Swal from "sweetalert2";
 
 const ArtistsTable = ({ artists, setArtists }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const deleteArtist = (id) => {
+  const deleteArtist = async (id) => {
     Swal.fire({
       title: "¿Estás seguro?",
       text: "Se eliminará el artista de la lista",
@@ -18,11 +19,12 @@ const ArtistsTable = ({ artists, setArtists }) => {
       cancelButtonText: "Cancelar",
       background: "#1a1a1a",
       color: "#fff",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        const filteredArtists = artists.filter((a) => a.id !== id);
+        try {
+          await deleteAlbumRequest(id);
+          const filteredArtists = artists.filter((a) => a._id !== id);
         setArtists(filteredArtists);
-        localStorage.setItem("artistas", JSON.stringify(filteredArtists));
         Swal.fire({
           title: "Eliminado",
           text: "El artista ha sido eliminado.",
@@ -30,6 +32,15 @@ const ArtistsTable = ({ artists, setArtists }) => {
           background: "#1a1a1a",
           color: "#fff",
         });
+        } catch (error) {
+          Swal.fire({
+            title: "Error",
+            text: "No se pudo eliminar el artista",
+            icon: "error",
+            background: "#1a1a1a",
+            color: "#fff",
+          });
+        }
       }
     });
   };
@@ -64,15 +75,15 @@ const ArtistsTable = ({ artists, setArtists }) => {
                     style={{ objectFit: "cover" }}
                   />
                 </td>
-                <td className="fw-bold text-white">{artist.name}</td>
-                <td className="text-white-50">{artist.album?.name || "-"}</td>
+                <td className="fw-bold text-white">{artist.name || artist.artistName}</td>
+                <td className="text-white-50">{artist.album?.name || artist.name || "-"}</td>
                 <td className="text-end pe-4">
                   <Button
                     variant="outline-danger"
                     size="sm"
                     className="rounded-circle d-flex align-items-center justify-content-center ms-auto"
                     style={{ width: "32px", height: "32px" }}
-                    onClick={() => deleteArtist(artist.id)}
+                    onClick={() => deleteArtist(artist._id || artist.id)}
                   >
                     <i className="bi bi-trash-fill" style={{ fontSize: "0.8rem" }}></i>
                   </Button>
