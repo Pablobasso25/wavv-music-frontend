@@ -83,10 +83,10 @@ const UsersTable = ({ users, setUsers }) => {
     }
   };
 
-  const deleteUser = (id) => {
+  const permanentDeleteUser = async (id) => {
     Swal.fire({
       title: "¿Estás seguro?",
-      text: "No podrás revertir esto",
+      text: "Esta acción eliminará permanentemente al usuario",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -95,17 +95,95 @@ const UsersTable = ({ users, setUsers }) => {
       cancelButtonText: "Cancelar",
       background: "#1a1a1a",
       color: "#fff",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        const filteredUsers = users.filter((u) => u.id !== id);
-        persistUsers(filteredUsers);
+        try {
+          await deleteUserRequest(id);
+          const filteredUsers = users.filter((u) => u._id !== id);
+          setUsers(filteredUsers);
+          Swal.fire({
+            title: "Eliminado",
+            text: "Usuario eliminado permanentemente",
+            icon: "success",
+            background: "#1a1a1a",
+            color: "#fff",
+          });
+        } catch (error) {
+          Swal.fire({
+            title: "Error",
+            text: "No se pudo eliminar el usuario",
+            icon: "error",
+            background: "#1a1a1a",
+            color: "#fff",
+          });
+        }
+      }
+    });
+  };
+
+  const activateUser = async (id) => {
+    try {
+      await activateUserRequest(id);
+      const updatedUsers = users.map((u) =>
+        u._id === id ? { ...u, isActive: true } : u,
+      );
+      setUsers(updatedUsers);
+      Swal.fire({
+        title: "Activado",
+        text: "El usuario ha sido dado de alta.",
+        icon: "success",
+        background: "#1a1a1a",
+        color: "#fff",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo dar de alta al usuario",
+        icon: "error",
+        background: "#1a1a1a",
+        color: "#fff",
+      });
+    }
+  };
+
+  const deleteUser = async (id) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "El usuario será dado de baja",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, dar de baja",
+      cancelButtonText: "Cancelar",
+      background: "#1a1a1a",
+      color: "#fff",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deactivateUserRequest(id);
+          const updatedUsers = users.map((u) =>
+            u._id === id ? { ...u, isActive: false } : u,
+          );
+          setUsers(updatedUsers);
         Swal.fire({
-          title: "Actualizado",
-          text: "El usuario ha sido actualizado.",
+            title: "Dado de baja",
+            text: "El usuario ha sido dado de baja.",
           icon: "success",
           background: "#1a1a1a",
           color: "#fff",
         });
+        } catch (error) {
+          Swal.fire({
+            title: "Error",
+            text: "No se pudo dar de baja al usuario",
+            icon: "error",
+            background: "#1a1a1a",
+            color: "#fff",
+          });
+        }
       }
     });
   };
