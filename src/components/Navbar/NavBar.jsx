@@ -256,7 +256,10 @@ const NavBar = () => {
                   navigate("/profile");
                 }
               }}
-              style={{ cursor: user?.role === "admin" ? "default" : "pointer", overflow: "hidden" }}
+              style={{
+                cursor: user?.role === "admin" ? "default" : "pointer",
+                overflow: "hidden",
+              }}
             >
               <img
                 src={
