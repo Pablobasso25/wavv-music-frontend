@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import {
   Container,
   Row,
@@ -13,21 +14,14 @@ import {
   Badge,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
-
-const EMAILJS_CONFIG = {
-  SERVICE_ID: "service_46a3s63",
-  TEMPLATE_ID: "template_v81kajd",
-  PUBLIC_KEY: "W0WIYNiPDb9B0Jhf3",
-};
-emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+import { useAuth } from "../../context/AuthContext";
+import "./RegisterScreen.css";
 
 const RegisterScreen = () => {
   const [send, setSend] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
-  const [emailEnviado, setEmailEnviado] = useState(false);
-
+  const { signup, errors: registerErrors } = useAuth();
   const {
     register,
     handleSubmit,
@@ -42,14 +36,11 @@ const RegisterScreen = () => {
       confirmarPassword: "",
     },
   });
-
   const navigate = useNavigate();
   const password = watch("password");
   const username = watch("username");
-
   const validatePassword = (password) => {
     if (!password) return { force: 0, validations: {} };
-
     const validations = {
       longitud: password.length >= 8,
       mayuscula: /[A-Z]/.test(password),
@@ -61,12 +52,10 @@ const RegisterScreen = () => {
       diferenteAlUsername: password !== username,
       noCaracteresPeligrosos: !/[<>]/.test(password),
       noPalabrasComunes: !/(password|123456|admin|12345678|123456789)/i.test(
-        password
+        password,
       ),
     };
-
     let force = 0;
-
     force += Math.min(password.length * 4, 32);
     if (validations.longitud) force += 10;
     if (validations.mayuscula) force += 10;
@@ -75,59 +64,47 @@ const RegisterScreen = () => {
     if (validations.simbolo) force += 18;
     if (validations.noEspacios) force += 5;
     if (validations.diferenteAlUsername) force += 5;
-
     return {
       force: Math.min(force, 100),
       validations,
     };
   };
-
   const { force: forcePassword, validations } = validatePassword(password);
-
   const informationForce = () => {
     if (forcePassword === 0)
       return { texto: "No ingresado", variant: "secondary" };
     if (forcePassword < 50) return { texto: "Débil", variant: "danger" };
     if (forcePassword < 80) return { texto: "Regular", variant: "warning" };
     if (forcePassword < 99) return { texto: "Buena", variant: "info" };
-    return { texto: "Muy Fuerte", variant: "success" };
+    return { texto: "Segura", variant: "success" };
   };
-
   const infoForce = informationForce();
-
-  const showSuccessAlert = (emailEnviado = true) => {
-    const mensaje = emailEnviado
-      ? "¡Te hemos enviado un email de confirmación! Redirigiendo al login..."
-      : "⚠️ Registro exitoso, pero no se pudo enviar el email. Redirigiendo al login...";
-
+  const showSuccessAlert = () => {
     Swal.fire({
-      title: "✔️¡Registro Exitoso!",
+      title: "✔️ ¡Bienvenido!",
       html: `
         <div style="text-align: center;">
-          <p style="margin-bottom: 10px; font-size: 16px;">¡Bienvenido a <strong>Wavv Music</strong>!</p>
-          <p style="margin-bottom: 0; font-size: 14px; color: ${
-            emailEnviado ? "#b0b0b0" : "#ffc107"
-          };">${mensaje}</p>
+          <p style="margin-bottom: 10px; font-size: 16px;">Tu cuenta ha sido creada con éxito en <strong>Wavv Music</strong>.</p>
+          <p style="margin-bottom: 0; font-size: 14px; color: #b0b0b0;">¡Te hemos enviado un email de bienvenida! Entrando a Wavv Music...</p>
         </div>
       `,
       icon: "success",
       background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
       color: "#ffffff",
       iconColor: "#6f42c1",
-      confirmButtonText: "¡Empezar!",
+      confirmButtonText: "¡Empezar a escuchar!",
       confirmButtonColor: "#6f42c1",
-      timer: 4000,
+      timer: 3000,
       timerProgressBar: true,
     }).then(() => {
-      navigate("/login");
+      navigate("/");
     });
   };
-
   const onSubmit = async (data) => {
     if (forcePassword < 99) {
       Swal.fire({
         title: "🔒 Contraseña insuficiente",
-        text: "La contraseña debe ser MUY FUERTE para registrarse",
+        text: "La contraseña debe cumplir con todos los requisitos de seguridad",
         icon: "warning",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
@@ -136,80 +113,31 @@ const RegisterScreen = () => {
       });
       return;
     }
-
     setSend(true);
-    setErrorEmail("");
-
     try {
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const exists = users.some((user) => user.email === data.email);
-
-      if (exists) {
-        Swal.fire({
-          title: "❌ Error",
-          text: "Ya existe un usuario con ese email",
-          icon: "error",
-          background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-          color: "#ffffff",
-          confirmButtonText: "Entendido",
-          confirmButtonColor: "#dc3545",
-        });
-        setSend(false);
-        return;
-      }
-
-      const newUser = {
-        id: Date.now(),
-        username: data.username,
-        email: data.email,
-        password: data.password,
-        role: "usuario",
-        favorites: [],
-        playlists: [],
-        createdAt: new Date().toISOString(),
-        verificado: false,
-      };
-
-      localStorage.setItem("users", JSON.stringify([...users, newUser]));
-
-      let emailFueEnviado = false;
-      try {
-        const templateParams = {
-          to_name: data.username,
-          to_email: data.email,
-          email: data.email,
-          from_name: "Harmony Stream",
-          fecha: new Date().toISOString().split("T")[0],
-        };
-
-        await emailjs.send(
-          EMAILJS_CONFIG.SERVICE_ID,
-          EMAILJS_CONFIG.TEMPLATE_ID,
-          templateParams,
-          EMAILJS_CONFIG.PUBLIC_KEY
-        );
-
-        emailFueEnviado = true;
-      } catch (emailError) {
-        emailFueEnviado = false;
-      }
-
-      showSuccessAlert(emailFueEnviado);
+      await signup(data);
+      showSuccessAlert();
     } catch (error) {
+      const serverErrors = error.response?.data;
+      let errorMessage = "Error de conexión con el servidor";
+      if (Array.isArray(serverErrors)) {
+        errorMessage = serverErrors[0];
+      } else if (typeof serverErrors === "string") {
+        errorMessage = serverErrors;
+      } else if (serverErrors?.message) {
+        errorMessage = serverErrors.message;
+      }
       Swal.fire({
-        title: "❌ Error",
-        text: "Hubo un problema con el registro. Intenta nuevamente.",
+        title: " Error de registro",
+        text: errorMessage,
         icon: "error",
         background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
         color: "#ffffff",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#dc3545",
       });
     } finally {
       setSend(false);
     }
   };
-
   return (
     <Container className="d-flex align-items-center justify-content-center vh-100 mt-2">
       <Row className="w-100 justify-content-center">
@@ -217,10 +145,6 @@ const RegisterScreen = () => {
           <Card className="bg-dark text-white border-secondary shadow">
             <Card.Header className="border-secondary">
               <h4 className="text-center mb-0">Registro en WavvMusic</h4>
-              <small className="text-center d-block text-warning mt-1">
-                🔒 Contraseña debe ser <strong>MUY FUERTE</strong> para
-                registrarse
-              </small>
             </Card.Header>
             <Card.Body className="p-4">
               {errorEmail && (
@@ -233,7 +157,7 @@ const RegisterScreen = () => {
                   <Form.Label>Nombre de usuario *</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Tu nombre de usuario"
+                    placeholder="Usuario"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.username}
                     maxLength={30}
@@ -257,12 +181,11 @@ const RegisterScreen = () => {
                     {errors.username && errors.username.message}
                   </Form.Control.Feedback>
                 </Form.Group>
-
                 <Form.Group className="mb-3">
                   <Form.Label>Email *</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="ejemplo@gmail.com"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.email}
                     maxLength={50}
@@ -286,7 +209,7 @@ const RegisterScreen = () => {
                   <Form.Label>Contraseña *</Form.Label>
                   <Form.Control
                     type="password"
-                    placeholder="Crea una contraseña MUY FUERTE (8-20 caracteres)"
+                    placeholder="Contraseña  (8-20 caracteres)"
                     className="bg-dark text-white border-secondary"
                     isInvalid={errors.password && forcePassword < 99}
                     maxLength={20}
@@ -302,14 +225,17 @@ const RegisterScreen = () => {
                         message:
                           "La contraseña no puede tener más de 20 caracteres",
                       },
-                      onChange: (e) => {
-                        e.target.value = e.target.value.replace(/[<>\s]/g, "");
+                      onChange: (event) => {
+                        event.target.value = event.target.value.replace(
+                          /[<>\s]/g,
+                          "",
+                        );
                       },
                       validate: {
                         fuerza: () =>
                           forcePassword >= 99 ||
                           (forcePassword > 0 &&
-                            "La contraseña debe ser MUY FUERTE"),
+                            "La contraseña debe ser SEGURA"),
                         noEspacios: (value) =>
                           !/\s/.test(value) ||
                           "La contraseña no puede contener espacios",
@@ -334,7 +260,6 @@ const RegisterScreen = () => {
                       forcePassword < 99 &&
                       errors.password.message}
                   </Form.Control.Feedback>
-
                   {password && (
                     <div className="text-end mt-1">
                       <small
@@ -346,7 +271,6 @@ const RegisterScreen = () => {
                       </small>
                     </div>
                   )}
-
                   {password && (
                     <div className="mt-2">
                       <div className="d-flex justify-content-between align-items-center mb-1">
@@ -360,9 +284,8 @@ const RegisterScreen = () => {
                         variant={infoForce.variant}
                         className="mb-2"
                       />
-
                       {Object.keys(validations).some(
-                        (key) => !validations[key]
+                        (key) => !validations[key],
                       ) &&
                         forcePassword < 99 && (
                           <div
@@ -422,7 +345,6 @@ const RegisterScreen = () => {
                             </div>
                           </div>
                         )}
-
                       {forcePassword >= 99 && (
                         <div className="border border-success rounded p-2 text-center">
                           <small className="text-success ">
@@ -433,7 +355,6 @@ const RegisterScreen = () => {
                     </div>
                   )}
                 </Form.Group>
-
                 <Form.Group className="mb-4">
                   <Form.Label>Confirmar contraseña *</Form.Label>
                   <Form.Control
@@ -444,8 +365,11 @@ const RegisterScreen = () => {
                     maxLength={20}
                     {...register("confirmarPassword", {
                       required: "Confirma tu contraseña",
-                      onChange: (e) => {
-                        e.target.value = e.target.value.replace(/[<>\s]/g, "");
+                      onChange: (event) => {
+                        event.target.value = event.target.value.replace(
+                          /[<>\s]/g,
+                          "",
+                        );
                       },
                       validate: (value) =>
                         value === password || "Las contraseñas no coinciden",
@@ -468,12 +392,18 @@ const RegisterScreen = () => {
                       Registrando...
                     </>
                   ) : forcePassword < 99 ? (
-                    "🔒 Contraseña debe ser MUY FUERTE"
+                    "🔒 Contraseña debe ser SEGURA"
                   ) : (
                     "Registrarse"
                   )}
                 </Button>
               </Form>
+              <p className="text-secondary mt-3 text-center">
+                ¿Ya tienes cuenta?{" "}
+                <Link to="/login" className="text-primary text-decoration-none">
+                  Ingresar
+                </Link>
+              </p>
             </Card.Body>
           </Card>
         </Col>

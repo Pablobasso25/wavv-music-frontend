@@ -1,4 +1,5 @@
 import React, { StrictMode } from "react";
+import { BrowserRouter as Router } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -7,15 +8,15 @@ import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import App from "./App.jsx";
 import { ToastContainer } from "react-toastify";
-
-import { TokenProvider } from "./context/useToken.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { MusicPlayerProvider } from "./context/MusicPlayerContext.jsx";
+import { SongProvider } from "./context/SongContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <Router>
     <AuthProvider>
-      <TokenProvider>
+      <SongProvider>
         <MusicPlayerProvider>
           <App />
           <ToastContainer
@@ -31,7 +32,8 @@ createRoot(document.getElementById("root")).render(
             theme="dark"
           />
         </MusicPlayerProvider>
-      </TokenProvider>
+      </SongProvider>
     </AuthProvider>
-  </StrictMode>
+    </Router>
+  </StrictMode>,
 );

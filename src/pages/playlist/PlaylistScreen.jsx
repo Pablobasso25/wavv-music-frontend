@@ -1,110 +1,110 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import ArtistasSidebar from "../../components/ArtistasSidebar";
-import MusicPlayer from "../../components/MusicPlayer";
+import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
 import TopSongs from "../../components/TopSongs";
+import { useSongs } from "../../context/SongContext";
+import { getAlbumsRequest } from "../../api/songs";
 
 const PlaylistScreen = () => {
-  const [playlistAlbum, setPlaylistAlbum] = useState(null);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
+  const [artists, setArtists] = useState([]);
+  const { userPlaylist, getUserPlaylist } = useSongs();
   const location = useLocation();
 
   useEffect(() => {
-    const loadPlaylist = () => {
-      const storedPlaylist =
-        JSON.parse(localStorage.getItem("userPlaylist")) || [];
-
-      const playlistAsAlbum = {
-        id: "user-playlist",
-        name: "Mi Playlist",
-        image:
-          "https://via.placeholder.com/300x300/8b5cf6/ffffff?text=My+Playlist",
-        release_date: new Date().toLocaleDateString(),
-        total_tracks: storedPlaylist.length,
-        artists: [{ name: "Tus Canciones Favoritas", id: "user" }],
-        tracks: storedPlaylist.map((song) => ({
-          name: song.name,
-          preview_url: song.audio,
-          duration_ms: song.duration_ms || 0,
-          album: song.album,
-          artist: song.artist,
-          cover: song.cover,
-        })),
-      };
-
-      setPlaylistAlbum(playlistAsAlbum);
-    };
-
-    loadPlaylist();
-
-    window.addEventListener("storage", loadPlaylist);
-    window.addEventListener("playlistUpdated", loadPlaylist);
-    return () => {
-      window.removeEventListener("storage", loadPlaylist);
-      window.removeEventListener("playlistUpdated", loadPlaylist);
-    };
+    getUserPlaylist();
+    loadArtists();
   }, []);
 
-  useEffect(() => {
-    setSelectedAlbum(null);
-  }, [location]);
-
-  const handleAlbumSelect = (album) => {
-    setSelectedAlbum(album);
+  const loadArtists = async () => {
+    try {
+      const res = await getAlbumsRequest();
+      const formattedArtists = res.data.map((album) => ({
+        id: album._id,
+        name: album.artistName,
+        image: album.image,
+        album: {
+          name: album.name,
+          image: album.image,
+          artists: [{ name: album.artistName }],
+          tracks: album.tracks.map((track) => ({
+            id: track.trackId,
+            name: track.name,
+            duration_ms: track.duration_ms,
+            preview_url: track.preview_url,
+            cover: track.cover,
+          })),
+        },
+      }));
+      setArtists(formattedArtists);
+    } catch (error) {
+      console.error("Error cargando artistas:", error);
+    }
   };
 
-  const handleBackToPlaylist = () => {
-    setSelectedAlbum(null);
+  const playlistAlbum = {
+    id: "user-playlist",
+    name: "Mi Playlist",
+    image: "https://via.placeholder.com/300/8b5cf6/ffffff?text=My+Playlist",
+    tracks: (userPlaylist || []).map((song) => {
+      let durationMs = song.duration_ms || song.duration;
+      if (typeof durationMs === "string" && durationMs.includes(":")) {
+        const [min, sec] = durationMs.split(":").map(Number);
+        durationMs = (min * 60 + sec) * 1000;
+      }
+      return {
+        _id: song._id,
+        id: song._id,
+        name: song.title,
+        preview_url: song.youtubeUrl,
+        audio: song.youtubeUrl,
+        cover: song.image,
+        artist: song.artist,
+        duration_ms: durationMs,
+      };
+    }),
   };
 
   const displayAlbum = selectedAlbum || playlistAlbum;
-  const isShowingPlaylist = !selectedAlbum;
 
   return (
-    <div className="home-layout">
-      <ArtistasSidebar onAlbumSelect={handleAlbumSelect} />
-
-      <div className="home-content">
-        <div>
-          {isShowingPlaylist ? (
-            <>
-              <h2 className="m-4">Mi Playlist</h2>
-              <p className="text-secondary ms-4">
-                {playlistAlbum?.total_tracks || 0} canciones guardadas
-              </p>
-            </>
-          ) : (
-            <>
-              <div className="d-flex align-items-center m-4">
-                <i
-                  className="bx bx-arrow-back fs-4 text-white me-3"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleBackToPlaylist}
-                  title="Volver a Mi Playlist"
-                ></i>
-                <h2 className="text-white mb-0">
-                  {selectedAlbum?.name || "Álbum"}
-                </h2>
-              </div>
-              <p className="text-secondary ms-4">
-                {selectedAlbum?.artists?.[0]?.name || "Artista"} •{" "}
-                {selectedAlbum?.total_tracks || 0} canciones
-              </p>
-            </>
-          )}
-          {displayAlbum ? (
-            <TopSongs album={displayAlbum} isPlaylist={isShowingPlaylist} />
-          ) : (
-            <div className="text-white text-center py-5">
-              <i className="bx bx-music fs-1 text-secondary mb-3"></i>
-              <p className="text-secondary">Tu playlist está vacía</p>
+    <div className="bg-black min-vh-100 text-white">
+      <div className="d-flex">
+        <ArtistasSidebar onAlbumSelect={setSelectedAlbum} artistas={artists} />
+        <div className="flex-grow-1 p-4" style={{ marginBottom: "100px" }}>
+          {selectedAlbum ? (
+            <div className="px-2 px-lg-3 mb-3">
+              <button
+                className="btn d-flex align-items-center gap-2"
+                onClick={() => setSelectedAlbum(null)}
+                style={{
+                  backgroundColor: "#8b5cf6",
+                  border: "none",
+                  color: "white",
+                  padding: "10px 20px",
+                  borderRadius: "25px",
+                  fontSize: "1rem",
+                  fontWeight: "500",
+                  transition: "all 0.3s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.backgroundColor = "#7c3aed")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.backgroundColor = "#8b5cf6")
+                }
+              >
+                <i className="bi bi-arrow-left"></i>
+                <span>Volver a Mi Playlist</span>
+              </button>
             </div>
+          ) : (
+            <h2 className="mb-3 px-2 px-lg-3">Mi Playlist</h2>
           )}
+          <TopSongs album={displayAlbum} isPlaylist={!selectedAlbum} />
         </div>
-      </div>
-
-      <div className="home-player">
         <MusicPlayer />
       </div>
     </div>

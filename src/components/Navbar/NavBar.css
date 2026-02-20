@@ -1,0 +1,208 @@
+.spotify-navbar {
+  height: 80px;
+  width: 100%;
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 18px;
+  z-index: 9999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.spotify-navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.spotify-logo {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
+}
+.spotify-logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 8px rgba(136, 105, 186, 0.858)) brightness(1.1);
+}
+.spotify-logo:active {
+  transform: scale(0.85);
+}
+.spotify-nav-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #1f1f1f;
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b3b3b3;
+  font-size: 20px;
+  text-decoration: none;
+  transition: 0.2s ease-in-out;
+}
+.spotify-nav-icon:hover {
+  background-color: #242424;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+.spotify-nav-icon:active {
+  transform: scale(0.95);
+}
+.spotify-navbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.spotify-search {
+  width: 100%;
+  max-width: 520px;
+  background-color: #1d1d1d;
+  border-radius: 30px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid transparent;
+  transition: 0.2s ease-in-out;
+}
+.spotify-search:hover {
+  background-color: #252525;
+}
+.spotify-search:focus-within {
+  border: 1px solid #fff;
+}
+.spotify-search-icon {
+  font-size: 18px;
+  color: #b3b3b3;
+}
+.spotify-search-input {
+  flex: 1;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  color: white !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  box-shadow: none !important;
+}
+.spotify-search-input::placeholder {
+  color: #b3b3b3 !important;
+}
+.spotify-search-dropdown {
+  position: absolute;
+  top: 60px;
+  width: 100%;
+  max-width: 520px;
+  background-color: #202026;
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow-y: auto;
+  max-height: 450px;
+  z-index: 9999;
+}
+.spotify-track-item {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+.spotify-track-item:hover {
+  background-color: #2a2a30;
+}
+.spotify-search-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+.spotify-search-dropdown::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+.spotify-search-dropdown::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+.spotify-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.spotify-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  background-color: #1f1f1f;
+  padding: 6px 14px;
+  border-radius: 25px;
+  transition: 0.2s ease-in-out;
+}
+.spotify-profile:hover {
+  background-color: #242424;
+}
+.spotify-profile-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.spotify-username {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+}
+.spotify-caret {
+  font-size: 12px;
+  color: white;
+}
+.dropdown-menu {
+  margin-top: 10px !important;
+  border-radius: 10px !important;
+  padding: 10px !important;
+  min-width: 220px;
+  background-color: #111 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+.dropdown-menu .dropdown-item {
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s ease-in-out;
+}
+.dropdown-menu .dropdown-item:hover {
+  background-color: #222 !important;
+  color: white !important;
+}
+.dropdown-menu .dropdown-divider {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.btn-premium {
+  background-color: #5773ff;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13.5px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 24px;
+  height: 46px;
+  cursor: pointer;
+  transition: 0.15s ease-in-out;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+.btn-premium:hover {
+  transform: scale(1.05);
+  background-color: #4760e0;
+}
+.btn-premium:active {
+  transform: scale(0.98);
+}
+@media (max-width: 992px) {
+  .spotify-navbar-center {
+    display: none;
+  }
+}

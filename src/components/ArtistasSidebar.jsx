@@ -1,51 +1,25 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useRef } from "react";
 import { defaultAlbum } from "../data/dataDefault";
 
-const ArtistasSidebar = ({ onAlbumSelect }) => {
-  const [artistas, setArtistas] = useState([]);
+const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
   const contentRef = useRef(null);
 
-  useEffect(() => {
-    const loadArtists = () => {
-      const stored = JSON.parse(localStorage.getItem("artistas")) || [];
-
-      const defaultArtist = {
-        id: "default-artist",
-        name: "Rion Clarke",
-        image: defaultAlbum.image,
-        album: defaultAlbum,
-      };
-      setArtistas([defaultArtist, ...stored]);
-    };
-
-    loadArtists();
-
-    window.addEventListener("storage", loadArtists);
-    return () => window.removeEventListener("storage", loadArtists);
-  }, []);
-
-  useEffect(() => {
-    const content = contentRef.current;
-    if (!content) return;
-
-    const handleWheel = (e) => {
-      e.preventDefault();
-      content.scrollTop += e.deltaY;
-    };
-
-    content.addEventListener("wheel", handleWheel, { passive: false });
-    return () => content.removeEventListener("wheel", handleWheel);
-  }, []);
-
-  const handleClick = (album) => {
-    localStorage.setItem("selectedAlbum", JSON.stringify(album));
-    onAlbumSelect(album);
-  };
+  const displayList =
+    artistas.length > 0
+      ? artistas
+      : [
+          {
+            id: "default-artist",
+            name: "Rion Clarke",
+            image: defaultAlbum.image,
+            album: defaultAlbum,
+          },
+        ];
 
   return (
     <div
       className="artistas-sidebar p-3"
+      ref={contentRef}
       style={{ width: "240px", height: "100vh", overflowY: "auto" }}
     >
       <div className="d-flex flex-column">
@@ -56,9 +30,9 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
           TOP ARTISTAS
         </h6>
 
-        {artistas.map((artista) => (
+        {displayList.map((artista, index) => (
           <div
-            key={artista.id}
+            key={artista.id || index}
             className="artista-item d-flex flex-column align-items-center p-3 border-0 rounded mb-3"
             style={{
               cursor: "pointer",
@@ -67,17 +41,17 @@ const ArtistasSidebar = ({ onAlbumSelect }) => {
               backgroundColor: "#1a1a1a",
               border: "1px solid #333",
             }}
-            onClick={() => handleClick(artista.album)}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow =
+            onClick={() => onAlbumSelect(artista.album)}
+            onMouseEnter={(event) => {
+              event.currentTarget.style.transform = "translateY(-2px)";
+              event.currentTarget.style.boxShadow =
                 "0 4px 15px rgba(255,255,255,0.1)";
-              e.currentTarget.style.backgroundColor = "#2a2a2a";
+              event.currentTarget.style.backgroundColor = "#2a2a2a";
             }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "none";
-              e.currentTarget.style.backgroundColor = "#1a1a1a";
+            onMouseLeave={(event) => {
+              event.currentTarget.style.transform = "translateY(0)";
+              event.currentTarget.style.boxShadow = "none";
+              event.currentTarget.style.backgroundColor = "#1a1a1a";
             }}
           >
             <div

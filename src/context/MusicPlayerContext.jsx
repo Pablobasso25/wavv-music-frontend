@@ -1,49 +1,96 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useRef,
-  useEffect,
-} from "react";
-import { toastError } from "../helpers/alerts";
+import React, { createContext, useContext, useState, useRef } from "react";
+import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
+import successSound from "../assets/sounds/success.mp3";
+import errorSound from "../assets/sounds/error.mp3";
+import warningSound from "../assets/sounds/warning.mp3";
+import publicidad from "../assets/images/publicidad.png";
+import { showPremiumAlert2 } from "../helpers/alerts";
+import { isPremiumUser } from "../helpers/userPermissions";
 
 const MusicPlayerContext = createContext();
 
 export const MusicPlayerProvider = ({ children }) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
-  const audioRef = useRef(null);
+  const [queue, setQueue] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const audioRef = useRef(new Audio());
+  const [adsCounter, setAdsCounter] = useState(0);
+  const [isAdPlaying, setIsAdPlaying] = useState(false);
 
-  useEffect(() => {
-    if (shouldAutoPlay && currentSong && audioRef.current) {
-      audioRef.current.load();
+  const playUISound = (type) => {
+    if (isPlaying) return;
 
-      audioRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch((error) => {
-          console.error("Error al reproducir:", error);
-          toastError("No se pudo reproducir la canción. Intentá nuevamente.");
-          setIsPlaying(false);
-        });
-
-      setShouldAutoPlay(false);
+    let soundPath;
+    switch (type) {
+      case "success":
+        soundPath = successSound;
+        break;
+      case "error":
+        soundPath = errorSound;
+        break;
+      case "warning":
+        soundPath = warningSound;
+        break;
+      default:
+        return;
     }
-  }, [shouldAutoPlay]);
 
-  const playSong = (song) => {
+    const audio = new Audio(soundPath);
+    audio.volume = 0.3;
+    audio.play().catch(() => {});
+  };
+
+  const executeActionWithAd = (callback) => {
+    if (isPremiumUser(user)) {
+      callback();
+      return;
+    }
+
+    if (adsCounter >= 3) {
+      if (audioRef.current) audioRef.current.pause();
+      setIsPlaying(false);
+      setIsAdPlaying(true);
+      playUISound("warning");
+      showPremiumAlert2(publicidad).then((result) => {
+        setIsAdPlaying(false);
+        if (result.isConfirmed) {
+          navigate("/subscription");
+        } else {
+          setAdsCounter(0);
+          callback();
+        }
+      });
+    } else {
+      setAdsCounter((prev) => prev + 1);
+      callback();
+    }
+  };
+
+  const playSong = (song, songList = []) => {
+    if (songList.length > 0) {
+      setQueue(songList);
+      const index = songList.findIndex(
+        (s) => s._id === song._id || s.title === song.title,
+      );
+      setCurrentIndex(index !== -1 ? index : 0);
+    } else {
+      if (queue.length === 0) {
+        setQueue([song]);
+        setCurrentIndex(0);
+      }
+    }
     setCurrentSong(song);
-    setProgress(0);
-    setCurrentTime(0);
-    setShouldAutoPlay(true);
+    audioRef.current.src = song.audio || song.youtubeUrl || song.preview_url;
+    audioRef.current.play().catch((e) => console.log("Error play:", e));
+    setIsPlaying(true);
   };
 
   const togglePlay = () => {
-    if (audioRef.current) {
+    if (audioRef.current.src) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
@@ -53,21 +100,35 @@ export const MusicPlayerProvider = ({ children }) => {
     }
   };
 
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      const current = audioRef.current.currentTime;
-      const total = audioRef.current.duration;
-      setCurrentTime(current);
-      setDuration(total);
-      setProgress((current / total) * 100);
+  const nextTrack = () => {
+    if (queue.length > 0) {
+      let nextIdx = currentIndex + 1;
+      if (nextIdx >= queue.length) nextIdx = 0;
+      setCurrentIndex(nextIdx);
+      const nextSong = queue[nextIdx];
+      if (nextSong) {
+        setCurrentSong(nextSong);
+        audioRef.current.src =
+          nextSong.audio || nextSong.youtubeUrl || nextSong.preview_url;
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
     }
   };
 
-  const handleSeek = (value) => {
-    if (audioRef.current) {
-      const seekTime = (value / 100) * audioRef.current.duration;
-      audioRef.current.currentTime = seekTime;
-      setProgress(value);
+  const prevTrack = () => {
+    if (queue.length > 0) {
+      let prevIdx = currentIndex - 1;
+      if (prevIdx < 0) prevIdx = queue.length - 1;
+      setCurrentIndex(prevIdx);
+      const prevSong = queue[prevIdx];
+      if (prevSong) {
+        setCurrentSong(prevSong);
+        audioRef.current.src =
+          prevSong.audio || prevSong.youtubeUrl || prevSong.preview_url;
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
     }
   };
 
@@ -76,14 +137,16 @@ export const MusicPlayerProvider = ({ children }) => {
       value={{
         currentSong,
         isPlaying,
-        progress,
-        currentTime,
-        duration,
-        audioRef,
         playSong,
         togglePlay,
-        handleTimeUpdate,
-        handleSeek,
+        nextTrack,
+        prevTrack,
+        audioRef,
+        queue,
+        executeActionWithAd,
+        isAdPlaying,
+        setIsPlaying,
+        playUISound,
       }}
     >
       {children}
