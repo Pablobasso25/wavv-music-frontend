@@ -46,7 +46,7 @@ export const sendRetentionEmail = async (username, email) => {
     dynamic_issue: "Te vamos a extrañar",
     body_message:
       "Tu cuenta ha vuelto al plan Free. Recordá que siempre podés volver a Premium para disfrutar de música sin interrupciones. ¡Tenemos una oferta especial esperándote!",
-    data: new Date().toLocaleDateString,
+    data: new Date().toLocaleDateString(),
   };
   return sendNotification(data);
 };
@@ -58,6 +58,7 @@ const sendNotification = async (data) => {
     dynamic_issue: data.dynamic_issue,
     body_message: data.body_message,
     from_name: "Wavv Music",
+    date: data.data,
   };
   return await emailjs.send(SERVICE_ID, TEMPLATE_GENERICO, params);
 };
