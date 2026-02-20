@@ -9,58 +9,21 @@ const PLAN_PRICES = {
   PREMIUM: 6000,
   FAMILIAR: 15000,
 };
-
 const SubscriptionScreen = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-
   const isPremium = user?.role?.toLowerCase() === "premium";
   const isFamiliar = user?.role?.toLowerCase() === "familiar";
   const isFree = !isPremium && !isFamiliar;
-
-  /* const handleBuy = async (planType, price) => {
-    setLoading(true);
-    try {
-      const res = await createPreferenceRequest({ planType, price });
-      if (res.data && res.data.init_point) {
-        window.location.href = res.data.init_point;
-      }
-    } catch (error) {
-      console.error("Error al iniciar el pago", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo conectar con Mercado Pago. Intenta más tarde.",
-        background: "#111",
-        color: "#fff",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }; */
   const handleBuy = async (planType, price) => {
     try {
-      const res = await createPreferenceRequest({ planType, price });
-
-      // DEBUG: Vamos a ver qué llega realmente
-      console.log("Data cruda de Axios:", res);
-
-      // Intentamos todas las variantes posibles
+      const res = await createPreferenceRequest({ planType, price });   
       const initPoint =
         res.data?.init_point || res.data?.initPoint || res.init_point;
-
       if (initPoint) {
-        console.log("¡Link encontrado! Redirigiendo...");
         window.location.href = initPoint;
-      } else {
-        // Si sigue saliendo esto, es que 'res.data' está vacío
-        console.error("El objeto res.data está vacío:", res.data);
-        alert(
-          "Error: Revisa la terminal de Node, el link no llega al navegador.",
-        );
-      }
+      } 
     } catch (error) {
-      console.error("Error en la petición:", error);
     }
   };
   return (
@@ -109,7 +72,6 @@ const SubscriptionScreen = () => {
                 <span className="btn-icon">
                   <i className="bx bx-lock"></i>
                 </span>
-
                 <span className="btn-text">
                   {isFree ? "Tu plan actual" : "Plan Gratuito"}
                 </span>
@@ -172,7 +134,6 @@ const SubscriptionScreen = () => {
                 <span className="btn-icon">
                   <i className={`bx ${isPremium ? "bx-lock" : "bx-cart"}`}></i>
                 </span>
-
                 <span className="btn-text">
                   {isPremium
                     ? "Tu plan actual"
@@ -243,7 +204,6 @@ const SubscriptionScreen = () => {
                 <span className="btn-icon">
                   <i className={`bx ${isFamiliar ? "bx-lock" : "bx-cart"}`}></i>
                 </span>
-
                 <span className="btn-text">
                   {isFamiliar
                     ? "Tu plan actual"
