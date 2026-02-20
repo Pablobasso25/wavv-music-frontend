@@ -11,7 +11,18 @@ const TrendingSong = ({ song }) => {
   if (!song) return null;
 
   const handleAddToPlaylist = async () => {
-    const songData = { songId: song._id };
+    const songData = song._id 
+      ? { songId: song._id }
+      : {
+          externalSong: {
+            title: song.title,
+            artist: song.artist,
+            image: song.image,
+            youtubeUrl: song.youtubeUrl,
+            duration: song.duration || "--:--",
+          },
+        };
+
     const result = await addSongToPlaylist(songData);
     if (result.success) {
       toast.success("Canción agregada a tu playlist");

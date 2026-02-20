@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 import RegisterScreen from "./pages/register/RegisterScreen";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import HomeScreen from "./pages/home/HomeScreen";
-import NavBar from "./components/navbar/NavBar.jsx";
+import NavBar from "./components/Navbar/NavBar";
 import WelcomeScreen from "./pages/welcome/WelcomeScreen";
 import PlaylistScreen from "./pages/playlist/PlaylistScreen";
 import LoginScreen from "./pages/login/LoginScreen";
 import AdminScreen from "./pages/admin/AdminScreen";
-import Footer from "./components/footer/Footer.jsx";
+import Footer from "./components/Footer/Footer";
 import Error404Screen from "./pages/error404/Error404Screen";
 import AboutUs from "./pages/aboutUs/AboutUsScreen";
 import ProfileScreen from "./pages/profile/ProfileScreen.jsx";
