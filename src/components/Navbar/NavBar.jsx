@@ -137,10 +137,26 @@ const NavBar = () => {
     setSearchQuery("");
   };
   const handleAddSong = async (track) => {
-    const res = await addSongToPlaylist(track.trackId);
+    const songData = {
+      externalSong: {
+        title: track.trackName,
+        artist: track.artistName,
+        image: track.artworkUrl100?.replace("100x100", "600x600"),
+        youtubeUrl: track.previewUrl,
+        duration: track.trackTimeMillis
+          ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
+              Math.floor((track.trackTimeMillis % 60000) / 1000)
+            ).padStart(2, "0")}`
+          : "--:--",
+      },
+    };
+
+    const res = await addSongToPlaylist(songData);
     if (res.success) {
       toast.success("Canción agregada a tu playlist");
       getUserPlaylist();
+    } else if (res.code === "SONG_ALREADY_IN_PLAYLIST") {
+      toast.info("Esta canción ya está en tu playlist");
     } else {
       toast.error("No se pudo agregar la canción");
     }
