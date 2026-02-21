@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Logo from "../../assets/images/logo.svg";
-import "../index.css";
+import Logo from "../../assets/images/logo2.svg";
+import "../Footer/Footer.css";
 
 const Footer = () => {
   const navigate = useNavigate();
