@@ -34,7 +34,7 @@ const Footer = () => {
                   <Link to="/playlist">Mi Playlist</Link>
                 </li>
                 <li>
-                  <Link to="/perfil">Perfil</Link>
+                  <Link to="/profile">Perfil</Link>
                 </li>
               </ul>
             </div>
