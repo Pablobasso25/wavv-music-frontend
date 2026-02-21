@@ -1,11 +1,17 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Logo from "../../assets/images/logo2.svg";
 import "./Footer.css";
 
 const Footer = () => {
+  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
+
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false)
 
   return (
     <footer className="footer-full">
@@ -24,10 +30,10 @@ const Footer = () => {
                 <Link to="/about-us">Nosotros</Link>
               </li>
               <li>
-                <Link to="/login">Iniciar sesión</Link>
+                  <Link to="/playlist">Mi Playlist</Link>
               </li>
               <li>
-                <Link to="/register">Registrarme</Link>
+                  <Link to="/perfil">Perfil</Link>
               </li>
             </ul>
           </div>
@@ -78,13 +84,37 @@ const Footer = () => {
             <h4>LEGAL</h4>
             <ul>
               <li>
-                <Link to="/privacy-policy">Política de privacidad</Link>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowPrivacyModal(true);
+                    }}
+                  >
+                    Política de privacidad
+                  </a>
+              </li>
+
+              <li>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowSecurityModal(true);
+                    }}
+                  >
+                    Seguridad y centro de privacidad
+                  </a>
               </li>
               <li>
-                <Link to="/security">Seguridad y privacidad</Link>
-              </li>
-              <li>
-                <Link to="/terms">Términos y condiciones</Link>
+                  <a href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowTermsModal(true);
+                    }}
+                  >
+                    Términos y condiciones
+                  </a>
               </li>
             </ul>
           </div>
