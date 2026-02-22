@@ -35,7 +35,6 @@ function ResetPassword() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ VALIDACIÓN EN TIEMPO REAL
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
@@ -60,7 +59,6 @@ function ResetPassword() {
     setMessage("");
     setError("");
 
-    // ✅ VALIDACIÓN FINAL
     if (!password) {
       return setError("La contraseña es obligatoria");
     }
@@ -117,7 +115,6 @@ function ResetPassword() {
   maxLength={20}
 />
 
-                  {/* ✅ ERROR DE INPUT */}
                   {errors.password && (
                     <small className="text-danger">
                       {errors.password}

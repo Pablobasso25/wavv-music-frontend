@@ -11,7 +11,6 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-// ✅ Validación completa
 const validateEmail = (email) => {
   const trimmed = email.trim();
 
@@ -36,7 +35,6 @@ function ForgotPassword() {
 
     const cleanEmail = email.trim();
 
-    // ✅ VALIDACIÓN FRONTEND COMPLETA
     if (!cleanEmail) {
       return setError("El email es obligatorio");
     }
@@ -54,7 +52,7 @@ function ForgotPassword() {
     try {
       const res = await forgotPasswordRequest(cleanEmail);
       setMessage(res.data.message);
-      setEmail(""); // limpia input después de enviar
+      setEmail(""); 
     } catch (error) {
       setError(
         error.response?.data?.message || "Error al enviar la solicitud"
