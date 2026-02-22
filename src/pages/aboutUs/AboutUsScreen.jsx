@@ -1,13 +1,13 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
+import "../aboutUs/AboutUs.css"
 import TeamMember from "./TeamMember";
 
-import logo from "../../assets/images/logo1.png";
-import RominaImg from "../../assets/images/romina.jpg";
-import AlvaroImg from "../../assets/images/alvaro.jpg";
+import logo from "../../assets/images/logo2.svg";
+import TomiImg from "../../assets/images/tomi.png"
+import LuhanaImg from "../../assets/images/luhana.png"
 import JuanImg from "../../assets/images/juan.jpg";
 import PabloImg from "../../assets/images/pablo.jpeg";
-import PatricioImg from "../../assets/images/patricio.jpg";
 
 const colors = {
   bgPrimary: "#111111",
@@ -52,20 +52,23 @@ const AboutUs = () => {
             name="Pablo"
             img={PabloImg}
             text="Organizado, responsable y siempre dispuesto a dar una mano al equipo."
+            github="https://github.com/Pablobasso25"
             colors={colors}
           />
 
           <TeamMember
-            name="Alvaro"
-            img={AlvaroImg}
+            name="Tomas"
+            img={TomiImg}
             text="Proactivo, resolutivo y con una visión clara para mejorar cada proyecto."
+            github="https://github.com/tomasgomez18"
             colors={colors}
           />
 
           <TeamMember
-            name="Romina"
-            img={RominaImg}
+            name="Luhana"
+            img={LuhanaImg}
             text="Enfocada, detallista y con una energía que contagia al equipo."
+            github="https://github.com/JLuhanaJakubowicz"
             colors={colors}
           />
 
@@ -73,15 +76,10 @@ const AboutUs = () => {
             name="Juan"
             img={JuanImg}
             text="Creativo, curioso y con una energía que impulsa al grupo."
+            github="https://github.com/JuanFerreyra18"
             colors={colors}
           />
 
-          <TeamMember
-            name="Patricio"
-            img={PatricioImg}
-            text="Analítico, tranquilo y enfocado en encontrar soluciones eficientes."
-            colors={colors}
-          />
         </Row>
       </Container>
     </div>
