@@ -31,7 +31,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const handleAddToPlaylist = async (e, track) => {
     e.stopPropagation();
     const trackId = track._id || track.id || track.trackId;
-    const songData = track._id 
+    const songData = track._id
       ? { songId: trackId }
       : {
           externalSong: {
@@ -111,8 +111,8 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     if (!userPlaylist || userPlaylist.length === 0) return false;
     const trackId = track._id || track.id || track.trackId;
     return userPlaylist.some(
-      (song) => 
-        song._id === trackId || 
+      (song) =>
+        song._id === trackId ||
         song.id === trackId ||
         (song.title === track.name &&
           song.artist === (album.artists?.[0]?.name || album.artistName)),

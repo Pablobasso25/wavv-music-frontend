@@ -312,66 +312,66 @@ const MusicPlayer = ({ isStatic = false }) => {
           `}
         </style>
         <div className="mobile-player" style={blockedStyle}>
-        <input
-          className="mobile-progress"
-          type="range"
-          min="0"
-          max="100"
-          value={duration ? (currentTime / duration) * 100 : 0}
-          onChange={handleProgressChange}
-          style={{
-            background: `linear-gradient(90deg, #5773FF ${
-              duration ? (currentTime / duration) * 100 : 0
-            }%, rgba(255,255,255,0.12) ${
-              duration ? (currentTime / duration) * 100 : 0
-            }%)`,
-          }}
-        />
-        <div className="mobile-content">
-          <div className="mobile-artwork">
+          <input
+            className="mobile-progress"
+            type="range"
+            min="0"
+            max="100"
+            value={duration ? (currentTime / duration) * 100 : 0}
+            onChange={handleProgressChange}
+            style={{
+              background: `linear-gradient(90deg, #5773FF ${
+                duration ? (currentTime / duration) * 100 : 0
+              }%, rgba(255,255,255,0.12) ${
+                duration ? (currentTime / duration) * 100 : 0
+              }%)`,
+            }}
+          />
+          <div className="mobile-content">
+            <div className="mobile-artwork">
               <img src={songImage} alt="Artwork" />
-          </div>
-          <div className="mobile-info" style={{ overflow: "hidden" }}>
-            <p
-              className="song-title"
-              style={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {currentSong?.title}
-            </p>
-            <p
-              className="song-artist"
-              style={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {currentSong?.artist}
-            </p>
-          </div>
-          <div className="mobile-controls">
-            <button
-              className="control-btn"
-              onClick={() => executeActionWithAd(prevTrack)}
-            >
-              <SkipBack size={16} />
-            </button>
-            <button className="play-btn mobile-play-btn" onClick={togglePlay}>
-              {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-            </button>
-            <button
-              className="control-btn"
-              onClick={() => executeActionWithAd(nextTrack)}
-            >
-              <SkipForward size={16} />
-            </button>
+            </div>
+            <div className="mobile-info" style={{ overflow: "hidden" }}>
+              <p
+                className="song-title"
+                style={{
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {currentSong?.title}
+              </p>
+              <p
+                className="song-artist"
+                style={{
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {currentSong?.artist}
+              </p>
+            </div>
+            <div className="mobile-controls">
+              <button
+                className="control-btn"
+                onClick={() => executeActionWithAd(prevTrack)}
+              >
+                <SkipBack size={16} />
+              </button>
+              <button className="play-btn mobile-play-btn" onClick={togglePlay}>
+                {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+              </button>
+              <button
+                className="control-btn"
+                onClick={() => executeActionWithAd(nextTrack)}
+              >
+                <SkipForward size={16} />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
       </>
     );
   }
@@ -425,7 +425,7 @@ const MusicPlayer = ({ isStatic = false }) => {
                   zIndex: 1000,
                   borderLeft: "1px solid rgba(255,255,255,0.1)",
                 }
-            : {}),
+              : {}),
         ...blockedStyle,
       }}
       onMouseDown={isFloating ? handleMouseDown : undefined}
