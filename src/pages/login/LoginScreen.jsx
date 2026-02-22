@@ -107,6 +107,15 @@ const LoginScreen = ({ show, handleClose }) => {
             Regístrate aquí
           </Link>
         </p>
+        <p className="login-register-text">
+          <Link
+            to="/forgot-password"
+            className="login-register-link"
+            onClick={handleClose}
+          >
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </p>
       </Modal.Body>
     </Modal>
   );
