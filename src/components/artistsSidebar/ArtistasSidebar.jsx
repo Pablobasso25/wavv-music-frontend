@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { defaultAlbum } from "../data/dataDefault";
+import { defaultAlbum } from "../../data/dataDefault";
 
 const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
   const contentRef = useRef(null);

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Col } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import ArtistasSidebar from "../../components/ArtistasSidebar";
+import ArtistasSidebar from "../../components/artistsSidebar/ArtistasSidebar";
 import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
-import TopSongs from "../../components/TopSongs";
+import TopSongs from "../../components/topSongs/TopSongs";
 import { useSongs } from "../../context/SongContext";
 import { getAlbumsRequest } from "../../api/songs";
 
@@ -69,21 +69,27 @@ const PlaylistScreen = () => {
 
   const displayAlbum = selectedAlbum || playlistAlbum;
 
-return (
+  return (
     <div className="bg-black min-vh-100 text-white w-100">
       <div className="d-flex flex-column flex-lg-row w-100">
         {/* Sidebar - Oculto en mobile */}
         <div className="d-none d-lg-block flex-shrink-0">
-          <ArtistasSidebar onAlbumSelect={setSelectedAlbum} artistas={artists} />
+          <ArtistasSidebar
+            onAlbumSelect={setSelectedAlbum}
+            artistas={artists}
+          />
         </div>
-        <div className="flex-grow-1 d-flex justify-content-center" style={{ marginBottom: "100px" }}>
-          <div 
-            className="w-100 px-2 px-md-4" 
-            style={{ 
+        <div
+          className="flex-grow-1 d-flex justify-content-center"
+          style={{ marginBottom: "100px" }}
+        >
+          <div
+            className="w-100 px-2 px-md-4"
+            style={{
               maxWidth: "1200px",
               display: "flex",
               flexDirection: "column",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <div className="w-100 text-center text-md-start">

@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { Container, Col } from "react-bootstrap";
-import { useMusicPlayer } from "../context/MusicPlayerContext";
-import { useSongs } from "../context/SongContext";
+import { useMusicPlayer } from "../../context/MusicPlayerContext";
+import { useSongs } from "../../context/SongContext";
 import { useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
 import Swal from "sweetalert2";
-import { showPremiumAlert } from "../helpers/alerts";
-import publicidad2 from "../assets/images/publicidad2.png";
+import { showPremiumAlert } from "../../helpers/alerts";
+import publicidad2 from "../../assets/images/publicidad2.png";
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const {
@@ -45,7 +45,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
             youtubeUrl: track.preview_url || track.audio,
             duration: track.duration_ms
               ? `${Math.floor(track.duration_ms / 60000)}:${String(
-                  Math.floor((track.duration_ms % 60000) / 1000)
+                  Math.floor((track.duration_ms % 60000) / 1000),
                 ).padStart(2, "0")}`
               : "--:--",
           },
@@ -111,7 +111,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
         song._id === trackId ||
         song.id === trackId ||
         (song.title === track.name &&
-          song.artist === (album.artists?.[0]?.name || album.artistName))
+          song.artist === (album.artists?.[0]?.name || album.artistName)),
     );
   };
 
@@ -176,10 +176,13 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                     const songToPlay = {
                       title: track.name,
                       artist:
-                        album.artists?.[0]?.name || album.artistName || "Artista",
+                        album.artists?.[0]?.name ||
+                        album.artistName ||
+                        "Artista",
                       album: album.name,
                       cover: track.cover || album.image,
-                      audio: track.preview_url || track.audio || track.youtubeUrl,
+                      audio:
+                        track.preview_url || track.audio || track.youtubeUrl,
                       name: track.name,
                       _id: trackId,
                     };
@@ -250,7 +253,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                   >
                     {track.duration_ms
                       ? `${Math.floor(track.duration_ms / 60000)}:${String(
-                          Math.floor((track.duration_ms % 60000) / 1000)
+                          Math.floor((track.duration_ms % 60000) / 1000),
                         ).padStart(2, "0")}`
                       : ""}
                   </span>

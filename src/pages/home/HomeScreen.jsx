@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../../components/Navbar/NavBar";
 import Footer from "../../components/Footer/Footer";
-import ArtistasSidebar from "../../components/ArtistasSidebar";
+import ArtistasSidebar from "../../components/artistsSidebar/ArtistasSidebar";
 import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
-import TrendingSong from "../../components/TrendingSong";
-import TopSongs from "../../components/TopSongs";
+import TrendingSong from "../../components/trendingSong/TrendingSong";
+import TopSongs from "../../components/topSongs/TopSongs";
 import LoginScreen from "../login/LoginScreen";
 import RegisterScreen from "../register/RegisterScreen";
 import { useSongs } from "../../context/SongContext";
@@ -20,7 +20,7 @@ const HomeScreen = () => {
   const { songs, getSongs } = useSongs();
 
   const { isAuthenticated } = useAuth();
-  
+
   useEffect(() => {
     const loadingTimer = setTimeout(() => {
       setIsLoading(false);
@@ -108,29 +108,35 @@ const HomeScreen = () => {
 
       <div
         style={{
-          filter: (showLoginModal || showRegisterModal) && !isAuthenticated ? "blur(8px)" : "none",
-          pointerEvents: (showLoginModal || showRegisterModal) && !isAuthenticated ? "none" : "auto",
+          filter:
+            (showLoginModal || showRegisterModal) && !isAuthenticated
+              ? "blur(8px)"
+              : "none",
+          pointerEvents:
+            (showLoginModal || showRegisterModal) && !isAuthenticated
+              ? "none"
+              : "auto",
         }}
       >
         <NavBar />
         <div className="home-layout">
-      <ArtistasSidebar
-        artistas={artists}
-        onAlbumSelect={setSelectedAlbum}
-      />
-      <div
-        className="home-content"
-        style={{ minWidth: 0, overflow: "hidden", width: "100%" }}
-      >
-        {songs.length > 0 && <TrendingSong songs={songs} />}
-        <TopSongs album={selectedAlbum} fromHome={true} />
+          <ArtistasSidebar
+            artistas={artists}
+            onAlbumSelect={setSelectedAlbum}
+          />
+          <div
+            className="home-content"
+            style={{ minWidth: 0, overflow: "hidden", width: "100%" }}
+          >
+            {songs.length > 0 && <TrendingSong songs={songs} />}
+            <TopSongs album={selectedAlbum} fromHome={true} />
+          </div>
+          <div className="home-player" style={{ width: "100%" }}>
+            <MusicPlayer />
+          </div>
+        </div>
+        <Footer />
       </div>
-      <div className="home-player" style={{ width: "100%" }}>
-        <MusicPlayer />
-      </div>
-    </div>
-    <Footer />
-    </div>
     </>
   );
 };

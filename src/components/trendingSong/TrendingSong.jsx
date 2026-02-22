@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { useMusicPlayer } from "../context/MusicPlayerContext";
-import { useSongs } from "../context/SongContext";
+import { useMusicPlayer } from "../../context/MusicPlayerContext";
+import { useSongs } from "../../context/SongContext";
 import { toast } from "react-toastify";
-import defaultImage from "../assets/images/publicidad2.png";
+import defaultImage from "../../assets/images/publicidad2.png";
 
 const TrendingSong = ({ songs }) => {
   const { playSong } = useMusicPlayer();
