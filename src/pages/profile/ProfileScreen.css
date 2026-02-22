@@ -1,0 +1,35 @@
+.password-input::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+.password-input::-webkit-input-placeholder {
+  color: #9ca3af;
+}
+
+.password-input::-moz-placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+.password-input:-ms-input-placeholder {
+  color: #9ca3af;
+}
+
+.bio-input::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+.bio-input::-webkit-input-placeholder {
+  color: #9ca3af;
+}
+
+.bio-input::-moz-placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+.bio-input:-ms-input-placeholder {
+  color: #9ca3af;
+}

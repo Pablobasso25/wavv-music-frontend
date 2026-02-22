@@ -82,7 +82,20 @@ const MusicPlayer = ({ isStatic = false }) => {
         }
         return;
       } else {
-        const res = await addSongToPlaylist(trackId);
+        const isDbSong = currentSong._id && currentSong._id.length === 24; 
+        
+        const songData = isDbSong ? { songId: currentSong._id } : {
+          externalSong: {
+            title: currentSong.title || currentSong.name,
+            artist: currentSong.artist,
+            image: currentSong.image || currentSong.cover,
+            youtubeUrl: currentSong.audio || currentSong.preview_url,
+            duration: currentSong.duration || "--:--"
+          }
+        };
+        
+        const res = await addSongToPlaylist(songData);
+
         if (res.success) {
           setIsLiked(true);
           playUISound("success");
@@ -586,7 +599,9 @@ const MusicPlayer = ({ isStatic = false }) => {
             <button
               className={showLyrics ? "active" : ""}
               onClick={() => setShowLyrics(!showLyrics)}
-              disabled={!currentSong}
+              disabled
+              style={{ opacity: 0.5, cursor: "not-allowed" }}
+              title="Letra no disponible"
             >
               <FileText size={16} />
             </button>
@@ -604,7 +619,7 @@ const MusicPlayer = ({ isStatic = false }) => {
           {showLyrics && (
             <div className="lyrics-panel">
               <div className="lyrics-header">
-                <span>Lyrics</span>
+                <span>Letra</span>
                 <button
                   className="lyrics-close-btn"
                   onClick={() => setShowLyrics(false)}
@@ -614,7 +629,7 @@ const MusicPlayer = ({ isStatic = false }) => {
               </div>
               <div className="lyrics-body">
                 <p>
-                  {currentSong?.lyrics || "No lyrics available for this track."}
+                  Letra no disponible
                 </p>
               </div>
             </div>

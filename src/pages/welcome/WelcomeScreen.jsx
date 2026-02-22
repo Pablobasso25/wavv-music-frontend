@@ -11,7 +11,7 @@ export function WelcomeScreen() {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
-        } 
+        }
         return prev + 1;
       });
     }, 35);
@@ -26,7 +26,7 @@ export function WelcomeScreen() {
     const wave2 = Math.sin(index * 0.15) * 20;
     const wave3 = Math.cos(index * 0.5) * 15;
     const randomness = Math.sin(index * 1.2) * 10;
-    
+
     return 40 + wave1 + wave2 + wave3 + randomness;
   };
 
@@ -34,8 +34,11 @@ export function WelcomeScreen() {
     <div
       className="w-full h-full relative overflow-hidden bg-gradient-to-br from-[#0f0a2e] via-[#1a1447] to-[#0a0520] flex items-center justify-center"
       style={{
-        height: "100vh",
-        width: "100vw",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -54,7 +57,7 @@ export function WelcomeScreen() {
           <div className="relative flex items-center">
             {/* Text "wav" with outline style */}
             <div className="flex items-center">
-              <span 
+              <span
                 className="text-8xl font-bold tracking-tight"
                 style={{
                   color: 'transparent',
@@ -66,10 +69,10 @@ export function WelcomeScreen() {
               >
                 wav
               </span>
-              <svg 
-                width="200" 
-                height="120" 
-                viewBox="0 0 200 120" 
+              <svg
+                width="200"
+                height="120"
+                viewBox="0 0 200 120"
                 className="ml-1"
                 style={{ filter: 'drop-shadow(0 0 10px rgba(100, 200, 255, 0.6))' }}
               >
@@ -80,7 +83,7 @@ export function WelcomeScreen() {
                     <stop offset="100%" style={{ stopColor: '#b84fff', stopOpacity: 1 }} />
                   </linearGradient>
                 </defs>
-                
+
                 <motion.path
                   d="M 10 60 Q 25 20, 40 60 T 70 60 Q 85 30, 100 60 Q 115 90, 130 60 Q 145 40, 160 60 T 190 60"
                   stroke="url(#waveGradient)"
@@ -93,7 +96,7 @@ export function WelcomeScreen() {
                   transition={{ duration: 0.1 }}
                   style={{ filter: 'blur(0.5px)' }}
                 />
-                
+
                 <motion.path
                   d="M 10 60 Q 25 20, 40 60 T 70 60 Q 85 30, 100 60 Q 115 90, 130 60 Q 145 40, 160 60 T 190 60"
                   stroke="url(#waveGradient)"
@@ -125,7 +128,7 @@ export function WelcomeScreen() {
               const height = generateIrregularHeight(i, isActive);
               const animationHeight1 = height + Math.sin(i * 0.5) * 8;
               const animationHeight2 = height - Math.cos(i * 0.3) * 6;
-              
+
               return (
                 <motion.div
                   key={i}
@@ -133,8 +136,8 @@ export function WelcomeScreen() {
                   animate={
                     isActive
                       ? {
-                          height: [`${height}%`, `${animationHeight1}%`, `${animationHeight2}%`, `${height}%`],
-                        }
+                        height: [`${height}%`, `${animationHeight1}%`, `${animationHeight2}%`, `${height}%`],
+                      }
                       : {}
                   }
                   transition={{
@@ -145,7 +148,7 @@ export function WelcomeScreen() {
                   }}
                   style={{
                     height: isActive ? `${height}%` : '10%',
-                    background: isActive 
+                    background: isActive
                       ? `linear-gradient(to top, #00d4ff, #7b5cff, #ff00ea)`
                       : '#2a2057',
                     width: "0.25rem",

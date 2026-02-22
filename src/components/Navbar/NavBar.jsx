@@ -72,10 +72,12 @@ const NavBar = () => {
     );
     if (result.isConfirmed) {
       logout();
-      navigate("/login");
+      navigate("/");
     }
   };
   const isAdminPage = location.pathname === "/admin";
+  const isPremiumUser = user?.role?.toLowerCase() === "premium" || user?.role?.toLowerCase() === "familiar";
+  const showPremiumButton = !isAdminPage && user?.role !== "admin" && !isPremiumUser;
   useEffect(() => {
     if (searchQuery.length === 0) {
       setSearchResults([]);
@@ -172,40 +174,37 @@ const NavBar = () => {
           onClick={() => navigate("/")}
         />
       </div>
-      {!isAdminPage && (
-        <div className="spotify-navbar-center" ref={searchRef}>
-          <div className="spotify-search">
-            <i className="bi bi-search spotify-search-icon"></i>
-            <input
-              type="text"
-              className="spotify-search-input"
-              placeholder={placeholder}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {isSearching && (
-              <div
-                className="spinner-border spinner-border-sm text-light"
-                role="status"
-                style={{ width: "1rem", height: "1rem" }}
-              >
-                <span className="visually-hidden">Buscando...</span>
-              </div>
-            )}
-          </div>
-          {!isAdminPage && (
-            <button
-              className="spotify-nav-icon"
-              onClick={() => navigate("/playlist")}
+      <div className="spotify-navbar-center" ref={searchRef}>
+        <div className="spotify-search">
+          <i className="bi bi-search spotify-search-icon"></i>
+          <input
+            type="text"
+            className="spotify-search-input"
+            placeholder={placeholder}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {isSearching && (
+            <div
+              className="spinner-border spinner-border-sm text-light"
+              role="status"
+              style={{ width: "1rem", height: "1rem" }}
             >
-              <i className="bi-music-note-list"></i>
-            </button>
+              <span className="visually-hidden">Buscando...</span>
+            </div>
           )}
-          {showDropdown && (
-            <div className="spotify-search-dropdown">
-              {searchResults.length > 0 ? (
-                <>
-                  {searchResults.map((track) => (
+        </div>
+        <button
+          className="spotify-nav-icon d-none d-lg-flex"
+          onClick={() => navigate("/playlist")}
+        >
+          <i className="bi-music-note-list"></i>
+        </button>
+        {showDropdown && searchResults.length > 0 && (
+          <div className="spotify-search-dropdown">
+            {searchResults.length > 0 ? (
+              <>
+                {searchResults.map((track) => (
                     <div
                       key={track.trackId}
                       className="spotify-track-item"
@@ -237,27 +236,17 @@ const NavBar = () => {
                         <i className="bi bi-plus-circle fs-5"></i>
                       </button>
                     </div>
-                  ))}
-                </>
-              ) : (
-                <div className="p-3 text-center text-secondary">
-                  No se encontraron resultados
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-      <div className="spotify-navbar-right">
-        {!isAdminPage && user?.role !== "admin" && (
-          <button
-            className="btn-premium d-none d-xl-block"
-            onClick={() => navigate("/subscription")}
-          >
-            <i className="bi bi-gem me-2"></i>
-            Explorar Premium
-          </button>
+                ))}
+              </>
+            ) : (
+              <div className="p-3 text-center text-secondary">
+                No se encontraron resultados
+              </div>
+            )}
+          </div>
         )}
+      </div>
+      <div className="spotify-navbar-right">
         <Dropdown
           align="end"
           show={showUserDropdown}
@@ -266,14 +255,7 @@ const NavBar = () => {
           <Dropdown.Toggle as={CustomToggle}>
             <div
               className="spotify-profile-circle"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (user?.role !== "admin") {
-                  navigate("/profile");
-                }
-              }}
               style={{
-                cursor: user?.role === "admin" ? "default" : "pointer",
                 overflow: "hidden",
               }}
             >
@@ -297,18 +279,26 @@ const NavBar = () => {
             <i className="bi bi-caret-down-fill spotify-caret"></i>
           </Dropdown.Toggle>
           <Dropdown.Menu className="dropdown-menu">
-            {!isAdminPage && user?.role !== "admin" && (
-              <Dropdown.Item
-                onClick={() => {
-                  navigate("/subscription");
-                  setShowUserDropdown(false);
-                }}
-                className="d-xl-none text-white d-flex align-items-center"
-              >
-                <i className="bi bi-gem me-2"></i>
-                Explorar Premium
-              </Dropdown.Item>
-            )}
+            <Dropdown.Item
+              onClick={() => {
+                navigate("/playlist");
+                setShowUserDropdown(false);
+              }}
+              className="d-lg-none text-white d-flex align-items-center"
+            >
+              <i className="bi bi-music-note-list me-2"></i>
+              Mi Playlist
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => {
+                navigate("/subscription");
+                setShowUserDropdown(false);
+              }}
+              className="text-white d-flex align-items-center"
+            >
+              <i className="bi bi-gem me-2"></i>
+              Explorar Premium
+            </Dropdown.Item>
             {!isAdminPage && user?.role !== "admin" && (
               <Dropdown.Item
                 onClick={() => {

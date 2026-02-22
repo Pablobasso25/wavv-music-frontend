@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Modal } from "react-bootstrap";
 import {
   Container,
   Row,
@@ -18,7 +18,7 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
 import "./RegisterScreen.css";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
   const [send, setSend] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
   const { signup, errors: registerErrors } = useAuth();
@@ -139,14 +139,17 @@ const RegisterScreen = () => {
     }
   };
   return (
-    <Container className="d-flex align-items-center justify-content-center vh-100 mt-2">
-      <Row className="w-100 justify-content-center">
-        <Col md={8} lg={7}>
-          <Card className="bg-dark text-white border-secondary shadow">
-            <Card.Header className="border-secondary">
-              <h4 className="text-center mb-0">Registro en WavvMusic</h4>
-            </Card.Header>
-            <Card.Body className="p-4">
+    <Modal
+      show={show}
+      onHide={handleClose}
+      centered
+      backdrop="static"
+      keyboard={false}
+      size="lg"
+      contentClassName="register-modal-content"
+    >
+      <Modal.Body className="p-4">
+        <h2 className="register-title">Crear cuenta</h2>
               {errorEmail && (
                 <Alert variant="danger" className="mb-4">
                   {errorEmail}
@@ -154,11 +157,11 @@ const RegisterScreen = () => {
               )}
               <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Nombre de usuario *</Form.Label>
+                  <Form.Label className="register-label">Nombre de usuario *</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Usuario"
-                    className="bg-dark text-white border-secondary"
+                    className="register-input"
                     isInvalid={errors.username}
                     maxLength={30}
                     {...register("username", {
@@ -182,11 +185,11 @@ const RegisterScreen = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>Email *</Form.Label>
+                  <Form.Label className="register-label">Email *</Form.Label>
                   <Form.Control
                     type="email"
                     placeholder="ejemplo@gmail.com"
-                    className="bg-dark text-white border-secondary"
+                    className="register-input"
                     isInvalid={errors.email}
                     maxLength={50}
                     {...register("email", {
@@ -206,11 +209,11 @@ const RegisterScreen = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>Contraseña *</Form.Label>
+                  <Form.Label className="register-label">Contraseña *</Form.Label>
                   <Form.Control
                     type="password"
-                    placeholder="Contraseña  (8-20 caracteres)"
-                    className="bg-dark text-white border-secondary"
+                    placeholder="Contraseña (8-20 caracteres)"
+                    className="register-input"
                     isInvalid={errors.password && forcePassword < 99}
                     maxLength={20}
                     {...register("password", {
@@ -356,11 +359,11 @@ const RegisterScreen = () => {
                   )}
                 </Form.Group>
                 <Form.Group className="mb-4">
-                  <Form.Label>Confirmar contraseña *</Form.Label>
+                  <Form.Label className="register-label">Confirmar contraseña *</Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Repite tu contraseña"
-                    className="bg-dark text-white border-secondary"
+                    className="register-input"
                     isInvalid={errors.confirmarPassword}
                     maxLength={20}
                     {...register("confirmarPassword", {
@@ -382,9 +385,8 @@ const RegisterScreen = () => {
                 </Form.Group>
                 <Button
                   type="submit"
-                  className="btn-primary-custom w-100 py-2"
+                  className="register-btn w-100"
                   disabled={send || forcePassword < 99}
-                  variant={forcePassword >= 99 ? "primary" : "secondary"}
                 >
                   {send ? (
                     <>
@@ -398,17 +400,18 @@ const RegisterScreen = () => {
                   )}
                 </Button>
               </Form>
-              <p className="text-secondary mt-3 text-center">
+              <p className="register-link-text">
                 ¿Ya tienes cuenta?{" "}
-                <Link to="/login" className="text-primary text-decoration-none">
+                <span
+                  className="register-link"
+                  onClick={() => onSwitchToLogin && onSwitchToLogin()}
+                  style={{ cursor: "pointer" }}
+                >
                   Ingresar
-                </Link>
+                </span>
               </p>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+      </Modal.Body>
+    </Modal>
   );
 };
 

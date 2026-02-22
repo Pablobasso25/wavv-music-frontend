@@ -7,43 +7,14 @@ import {
   updateUserRequest,
 } from "../../../api/songs";
 import Swal from "sweetalert2";
+import { showEditUserModal } from "../../../helpers/alerts";
 
 const UsersTable = ({ users, setUsers }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const handleEditUser = async (user) => {
-    const result = await Swal.fire({
-      title: "Editar Usuario",
-      html: `
-        <div class="text-start">
-          <label class="form-label text-white-50 small">Nombre de usuario</label>
-          <input id="swal-username" class="swal2-input m-0 mb-3 w-100" value="${user.username}">
-          <label class="form-label text-white-50 small">Email</label>
-          <input id="swal-email" class="swal2-input m-0 mb-3 w-100" value="${user.email}">
-          <label class="form-label text-white-50 small">Rol</label>
-          <input class="swal2-input m-0 mb-3 w-100" value="${user.role.toUpperCase()}" disabled style="background:#2a2a2a; cursor:not-allowed">
-          <label class="form-label text-white-50 small">Plan</label>
-          <select id="swal-plan" class="swal2-select m-0 w-100" style="display:flex">
-            <option value="free" ${user.subscription?.status === "free" ? "selected" : ""}>Free</option>
-            <option value="premium" ${user.subscription?.status === "premium" ? "selected" : ""}>Premium</option>
-          </select>
-        </div>
-      `,
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: "Guardar",
-      cancelButtonText: "Cancelar",
-      background: "#1a1a1a",
-      color: "#fff",
-      preConfirm: () => {
-        return {
-          username: document.getElementById("swal-username").value,
-          email: document.getElementById("swal-email").value,
-          subscriptionStatus: document.getElementById("swal-plan").value,
-        };
-      },
-    });
+    const result = await showEditUserModal(user);
 
     if (result.isConfirmed) {
       try {
@@ -72,9 +43,10 @@ const UsersTable = ({ users, setUsers }) => {
           showConfirmButton: false,
         });
       } catch (error) {
+        const errorMessage = error.response?.data?.message || "No se pudo actualizar el usuario";
         Swal.fire({
           title: "Error",
-          text: "No se pudo actualizar el usuario",
+          text: errorMessage,
           icon: "error",
           background: "#1a1a1a",
           color: "#fff",
