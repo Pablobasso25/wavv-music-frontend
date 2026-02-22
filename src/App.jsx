@@ -14,6 +14,7 @@ import SubscriptionScreen from "./pages/subscription/SubscriptionScreen.jsx";
 import { useAuth } from "./context/AuthContext";
 import ForgotPassword from "./pages/login/ForgotPassword.jsx";
 import ResetPassword from "./pages/login/ResetPassword.jsx";
+import ScrollToTop from "./components/scrollToTop/ScrollToTop.jsx";
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
@@ -24,81 +25,81 @@ const App = () => {
   }, []);
 
   if (welcome) return <WelcomeScreen />;
-  return (
-    <Routes>
-      <Route
-        path="/"
-        element={<HomeScreen />}
-      />
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <NavBar />
-            <ProfileScreen />
-            <Footer />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute adminOnly>
-            <NavBar />
-            <AdminScreen />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/playlist"
-        element={
-          <ProtectedRoute>
-            <NavBar />
-            <PlaylistScreen />
-            <Footer />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/about-us"
-        element={
-          <>
-            <NavBar />
-            <AboutUs />
-            <Footer />
-          </>
-        }
-      />
-      <Route
-        path="/subscription"
-        element={
-          <ProtectedRoute>
-            <NavBar />
-            <SubscriptionScreen />
-            <Footer />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-  path="/forgot-password"
-  element={
-    <>
-      <ForgotPassword />
-    </>
-  }
-/>
 
-<Route
-  path="/reset-password/:token"
-  element={
+  return (
     <>
-      <ResetPassword />
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <ProfileScreen />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly>
+              <NavBar />
+              <AdminScreen />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/playlist"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <PlaylistScreen />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/about-us"
+          element={
+            <>
+              <NavBar />
+              <AboutUs />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <SubscriptionScreen />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <>
+              <ForgotPassword />
+            </>
+          }
+        />
+
+        <Route
+          path="/reset-password/:token"
+          element={
+            <>
+              <ResetPassword />
+            </>
+          }
+        />
+        <Route path="*" element={<Error404Screen />} />
+      </Routes>
     </>
-  }
-/>
-      <Route path="*" element={<Error404Screen />} />
-    </Routes>
-    
   );
 };
 
