@@ -67,7 +67,7 @@ const AboutUs = () => {
           <TeamMember
             name="Luhana"
             img={LuhanaImg}
-            text="Enfocada, detallista y con una energía que contagia al equipo."
+            text="Enfocada, detallista, atenta y con una energía que contagia al equipo."
             github="https://github.com/JLuhanaJakubowicz"
             colors={colors}
           />
@@ -75,7 +75,7 @@ const AboutUs = () => {
           <TeamMember
             name="Juan"
             img={JuanImg}
-            text="Creativo, curioso y con una energía que impulsa al grupo."
+            text="Creativo, curioso, persistente y con una energía que impulsa al grupo."
             github="https://github.com/JuanFerreyra18"
             colors={colors}
           />
