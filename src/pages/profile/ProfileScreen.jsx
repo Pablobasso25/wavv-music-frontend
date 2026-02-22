@@ -4,6 +4,7 @@ import { Mail, Calendar, Edit2, User, Save, X, Lock, Camera, Eye, EyeOff, Check 
 import { useAuth } from "../../context/AuthContext";
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify'; 
+import './ProfileScreen.css';
 
 function ProfileScreen() {
   const { user, updateProfile, loading, refreshUser } = useAuth();
@@ -207,7 +208,7 @@ const handleFileChange = (e) => {
                           value={formData.bio}
                           onChange={handleChange}
                           placeholder="Cuéntanos algo sobre ti..."
-                          className="form-control text-light mb-3 flex-fill"
+                          className="form-control text-light mb-3 flex-fill bio-input"
                           style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #667eea" }}
                           rows="3"
                         />
@@ -281,7 +282,7 @@ const handleFileChange = (e) => {
                                 placeholder="Nueva contraseña (opcional)"
                                 value={formData.password} 
                                 onChange={handleChange} 
-                                className="form-control form-control-sm text-light pe-5" 
+                                className="form-control form-control-sm text-light pe-5 password-input" 
                                 style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #667eea" }} 
                               />
                             ) : (
