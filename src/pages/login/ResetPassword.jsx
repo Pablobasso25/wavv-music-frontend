@@ -105,15 +105,15 @@ function ResetPassword() {
                   <Form.Label>Nueva contraseña</Form.Label>
 
                   <ShowPassword
-  name="password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  className="bg-dark text-white border-secondary"
-  placeholder="Nueva contraseña"
-  required
-  minLength={8}
-  maxLength={20}
-/>
+                    name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-dark text-white border-secondary"
+                    placeholder="Nueva contraseña"
+                    required
+                    minLength={8}
+                    maxLength={20}
+                  />
 
                   {errors.password && (
                     <small className="text-danger">{errors.password}</small>
