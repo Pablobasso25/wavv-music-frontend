@@ -12,26 +12,72 @@ import {
 } from "react-bootstrap";
 import ShowPassword from "./ShowPassword";
 
+const validatePassword = (password) => {
+  return (
+    password.length >= 8 &&
+    password.length <= 20 &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /\d/.test(password) &&
+    /[!@#$%^&*(),.?":{}|_/]/.test(password) &&
+    !/\s/.test(password) &&
+    !/[<>]/.test(password)
+  );
+};
+
 function ResetPassword() {
   const { token } = useParams();
   const navigate = useNavigate();
+
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+
+    let newErrors = { ...errors };
+
+    if (!value) {
+      newErrors.password = "La contraseña es obligatoria";
+    } else if (!validatePassword(value)) {
+      newErrors.password =
+        "Debe tener 8-20 caracteres, mayúscula, minúscula, número y símbolo";
+    } else {
+      delete newErrors.password;
+    }
+
+    setErrors(newErrors);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
     setMessage("");
     setError("");
+
+    if (!password) {
+      return setError("La contraseña es obligatoria");
+    }
+
+    if (!validatePassword(password)) {
+      return setError(
+        "Debe tener 8-20 caracteres, mayúscula, minúscula, número y símbolo"
+      );
+    }
+
+    setLoading(true);
+
     try {
       const res = await resetPasswordRequest(token, password);
       setMessage(res.data.message);
       setTimeout(() => navigate("/login"), 3000);
     } catch (error) {
       setError(
-        error.response?.data?.message || "Error al cambiar la contraseña",
+        error.response?.data?.message || "Error al cambiar la contraseña"
       );
     } finally {
       setLoading(false);
@@ -49,25 +95,37 @@ function ResetPassword() {
             >
               <h3>Nueva contraseña</h3>
             </Card.Header>
+
             <Card.Body className="p-4">
               {message && <Alert variant="success">{message}</Alert>}
               {error && <Alert variant="danger">{error}</Alert>}
+
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-4">
                   <Form.Label>Nueva contraseña</Form.Label>
+
                   <ShowPassword
-                    name="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-dark text-white border-secondary"
-                    placeholder="Nueva contraseña"
-                    required
-                  />
+  name="password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  className="bg-dark text-white border-secondary"
+  placeholder="Nueva contraseña"
+  required
+  minLength={8}
+  maxLength={20}
+/>
+
+                  {errors.password && (
+                    <small className="text-danger">
+                      {errors.password}
+                    </small>
+                  )}
                 </Form.Group>
+
                 <Button
                   type="submit"
                   className="w-100"
-                  disabled={loading}
+                  disabled={loading || errors.password}
                   style={{ backgroundColor: "#6f42c1", borderColor: "#6f42c1" }}
                 >
                   {loading ? "Cambiando..." : "Cambiar"}
