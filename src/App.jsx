@@ -14,6 +14,8 @@ import AboutUs from "./pages/aboutUs/AboutUsScreen";
 import ProfileScreen from "./pages/profile/ProfileScreen.jsx";
 import SubscriptionScreen from "./pages/subscription/SubscriptionScreen.jsx";
 import { useAuth } from "./context/AuthContext";
+import ForgotPassword from "./pages/login/ForgotPassword.jsx";
+import ResetPassword from "./pages/login/ResetPassword.jsx";
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
@@ -104,8 +106,26 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+  path="/forgot-password"
+  element={
+    <>
+      <ForgotPassword />
+    </>
+  }
+/>
+
+<Route
+  path="/reset-password/:token"
+  element={
+    <>
+      <ResetPassword />
+    </>
+  }
+/>
       <Route path="*" element={<Error404Screen />} />
     </Routes>
+    
   );
 };
 
