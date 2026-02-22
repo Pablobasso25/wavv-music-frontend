@@ -39,7 +39,6 @@ export function WelcomeScreen() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(to bottom right, #0f0a2e, #1a1447, #0a0520)",
         background: "#000000",
       }}
     >
