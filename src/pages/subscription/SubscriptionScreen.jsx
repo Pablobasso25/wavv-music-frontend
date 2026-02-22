@@ -12,8 +12,8 @@ const PLAN_PRICES = {
 const SubscriptionScreen = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const isPremium = user?.role?.toLowerCase() === "premium";
-  const isFamiliar = user?.role?.toLowerCase() === "familiar";
+  const isPremium = user?.subscription?.status === "premium";
+  const isFamiliar = user?.subscription?.status === "familiar";
   const isFree = !isPremium && !isFamiliar;
   const handleBuy = async (planType, price) => {
     try {
@@ -191,25 +191,19 @@ const SubscriptionScreen = () => {
                 </ListGroup.Item>
               </ListGroup>
               <Button
-                onClick={() => handleBuy("Familiar", PLAN_PRICES.FAMILIAR)}
-                disabled={loading || isFamiliar}
+                disabled
                 className="mt-auto w-100 py-2  btn-expand"
                 style={{
-                  backgroundColor: isFamiliar ? "#6c757d" : "#0dcaf0",
-                  color: "#000000",
+                  backgroundColor: "#6c757d",
+                  color: "#ffffff",
                   border: "none",
-                  cursor: isFamiliar ? "not-allowed" : "pointer",
+                  cursor: "not-allowed",
+                  fontWeight: "600",
+                  fontSize: "0.95rem",
                 }}
               >
-                <span className="btn-icon">
-                  <i className={`bx ${isFamiliar ? "bx-lock" : "bx-cart"}`}></i>
-                </span>
-                <span className="btn-text">
-                  {isFamiliar
-                    ? "Tu plan actual"
-                    : loading
-                      ? "Procesando..."
-                      : "Suscribirme ahora"}
+                <span className="btn-text" style={{ maxWidth: "200px", opacity: 1, marginLeft: 0 }}>
+                  Próximamente
                 </span>
               </Button>
             </Card.Body>
