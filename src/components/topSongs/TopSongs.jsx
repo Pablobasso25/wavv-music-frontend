@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { Container, Col } from "react-bootstrap";
-import { useMusicPlayer } from "../context/MusicPlayerContext";
-import { useSongs } from "../context/SongContext";
+import { useMusicPlayer } from "../../context/MusicPlayerContext";
+import { useSongs } from "../../context/SongContext";
 import { useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
 import Swal from "sweetalert2";
-import { showPremiumAlert } from "../helpers/alerts";
-import publicidad2 from "../assets/images/publicidad2.png";
+import { showPremiumAlert } from "../../helpers/alerts";
+import publicidad2 from "../../assets/images/publicidad2.png";
 
 const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const {
@@ -33,10 +33,9 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   }, []);
 
   const handleAddToPlaylist = async (e, track) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Evita que la canción se reproduzca al hacer clic en el botón +
     const trackId = track._id || track.id || track.trackId;
-
-    const songData = track._id 
+    const songData = track._id
       ? { songId: trackId }
       : {
           externalSong: {
@@ -46,23 +45,17 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
             youtubeUrl: track.preview_url || track.audio,
             duration: track.duration_ms
               ? `${Math.floor(track.duration_ms / 60000)}:${String(
-                  Math.floor((track.duration_ms % 60000) / 1000)
+                  Math.floor((track.duration_ms % 60000) / 1000),
                 ).padStart(2, "0")}`
               : "--:--",
           },
         };
-
     const result = await addSongToPlaylist(songData);
-
     if (result.success) {
       playUISound("success");
       toast.success(`"${track.name}" agregada a tu playlist.`, {
         position: "bottom-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         theme: "dark",
         transition: Slide,
       });
@@ -84,7 +77,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const handleRemoveFromPlaylist = async (e, track) => {
     e.stopPropagation();
     const trackId = track._id || track.id;
-
     const confirm = await Swal.fire({
       title: "¿Borrar canción?",
       text: "Se eliminará de tu playlist.",
@@ -97,7 +89,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       background: "#191B1B",
       color: "#fff",
     });
-
     if (confirm.isConfirmed) {
       const result = await deleteSongFromPlaylist(trackId);
       if (result.success) {
@@ -108,12 +99,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
           autoClose: 2000,
         });
         getUserPlaylist();
-      } else {
-        playUISound("error");
-        toast.error("Error al eliminar", {
-          theme: "dark",
-          position: "bottom-right",
-        });
       }
     }
   };
@@ -122,10 +107,11 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     if (!userPlaylist || userPlaylist.length === 0) return false;
     const trackId = track._id || track.id || track.trackId;
     return userPlaylist.some(
-      (song) => 
-        song._id === trackId || 
+      (song) =>
+        song._id === trackId ||
         song.id === trackId ||
-        (song.title === track.name && song.artist === (album.artists?.[0]?.name || album.artistName))
+        (song.title === track.name &&
+          song.artist === (album.artists?.[0]?.name || album.artistName)),
     );
   };
 
@@ -140,25 +126,35 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   }
 
   return (
-    <Container fluid className="px-2 px-lg-3">
+    <Container
+      fluid
+      className="px-0 px-md-2"
+      style={{ width: "100%", maxWidth: "100%", margin: "0 auto" }}
+    >
       <div
-        className="music-list p-3 rounded-4"
+        className="music-list p-3 rounded-4 d-flex flex-column"
         style={{
           backgroundColor: "#111111",
-          height: fromHome ? "auto" : "80vh",
-          minHeight: fromHome ? "400px" : "auto",
-          maxHeight: fromHome ? "calc(100vh - 350px)" : "80vh",
-          overflowY: "auto",
+          height: "70vh",
+          minHeight: "500px",
+          margin: "0 auto",
+          width: "100%",
+          overflow: "hidden",
         }}
       >
-        <div className="header d-flex justify-content-between align-items-center mb-3">
-          <h5 className="mb-0 text-white">Canciones de {album.name}</h5>
-          {album.release_date && (
-            <span className="text-secondary small">{album.release_date}</span>
-          )}
+        <div className="header d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
+          <h5 className="mb-0 text-white w-100 text-center text-md-start">
+            Canciones de {album.name}
+          </h5>
         </div>
 
-        <div className="items">
+        <div
+          className="items w-100 flex-grow-1"
+          style={{
+            overflowY: "auto",
+            paddingRight: "5px",
+          }}
+        >
           {album.tracks.map((track, index) => {
             const isCurrentTrack = currentSong?.title === track.name;
             const trackId = track._id || track.id || track.trackId;
@@ -167,23 +163,22 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
             return (
               <div
                 key={index}
-                className="item d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 cursor-pointer"
+                className="item d-flex align-items-center justify-content-between p-2 p-md-3 rounded-3 mb-2 cursor-pointer w-100"
                 style={{
                   backgroundColor: "#191B1B",
                   transition: "0.2s",
+                  border: isCurrentTrack
+                    ? "1px solid #5773ff"
+                    : "1px solid transparent",
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = "#35393B")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = "#191B1B")
-                }
                 onClick={() => {
                   executeActionWithAd(() => {
                     const songToPlay = {
                       title: track.name,
                       artist:
-                        album.artists?.[0]?.name || album.name || "Artista",
+                        album.artists?.[0]?.name ||
+                        album.artistName ||
+                        "Artista",
                       album: album.name,
                       cover: track.cover || album.image,
                       audio:
@@ -193,7 +188,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                     };
                     const fullAlbumQueue = album.tracks.map((t) => ({
                       title: t.name,
-                      artist: album.artists?.[0]?.name || album.name,
+                      artist: album.artists?.[0]?.name || album.artistName,
                       cover: t.cover || album.image,
                       audio: t.preview_url || t.audio || t.youtubeUrl,
                       name: t.name,
@@ -203,47 +198,40 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                   });
                 }}
               >
-                <div className="d-flex align-items-center gap-3">
-                  <span
-                    className="fw-bold text-white"
-                    style={{ minWidth: "30px" }}
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-
+                <div className="d-flex align-items-center gap-2 gap-md-3 flex-grow-1 overflow-hidden">
                   <img
                     src={track.cover || album.image}
-                    className="rounded me-2 me-md-3"
-                    width="40"
-                    height="40"
+                    className="rounded flex-shrink-0"
+                    width="45"
+                    height="45"
                     alt={track.name}
                   />
-
-                  <div className="details">
+                  <div className="details overflow-hidden">
                     <h6
-                      className="mb-0 small"
+                      className="mb-0 text-truncate"
                       style={{
-                        color: isCurrentTrack ? "#0d6efd" : "white",
+                        fontSize: "0.9rem",
+                        maxWidth: "150px",
+                        color: isCurrentTrack ? "#5773ff" : "white",
                       }}
                     >
                       {track.name}
                     </h6>
                   </div>
                 </div>
-
-                <div className="actions d-flex align-items-center gap-3">
+                <div className="actions d-flex align-items-center gap-2 gap-md-3 flex-shrink-0">
                   <i
                     className={`bx ${
                       isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
-                    } cursor-pointer fs-2 text-white`}
-                    title={
-                      isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
-                    }
+                    } fs-3`}
+                    style={{
+                      color: isCurrentTrack ? "#5773ff" : "white",
+                      cursor: "pointer",
+                    }}
                   ></i>
-
                   {isPlaylist ? (
                     <i
-                      className="bx bxs-trash text-danger fs-4"
+                      className="bx bxs-trash text-danger fs-5"
                       onClick={(e) => handleRemoveFromPlaylist(e, track)}
                     ></i>
                   ) : (
@@ -252,24 +240,21 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                         added
                           ? "bxs-check-circle text-success"
                           : "bxs-plus-square text-secondary"
-                      } fs-4`}
+                      } fs-5`}
                       style={{ cursor: added ? "default" : "pointer" }}
-                      title={
-                        added ? "Ya está en tu playlist" : "Agregar a playlist"
-                      }
                       onClick={(e) => {
                         if (!added) handleAddToPlaylist(e, track);
                       }}
                     ></i>
                   )}
-
-                  <span style={{ color: "#494D4E" }}>
+                  <span
+                    className="small text-secondary"
+                    style={{ minWidth: "35px" }}
+                  >
                     {track.duration_ms
-                      ? Math.floor(track.duration_ms / 1000 / 60) +
-                        ":" +
-                        String(
-                          Math.floor((track.duration_ms / 1000) % 60),
-                        ).padStart(2, "0")
+                      ? `${Math.floor(track.duration_ms / 60000)}:${String(
+                          Math.floor((track.duration_ms % 60000) / 1000),
+                        ).padStart(2, "0")}`
                       : ""}
                   </span>
                 </div>

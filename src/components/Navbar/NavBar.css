@@ -201,8 +201,37 @@
 .btn-premium:active {
   transform: scale(0.98);
 }
+
 @media (max-width: 992px) {
-  .spotify-navbar-center {
+  .spotify-navbar {
+    padding: 0 12px;
+  }
+  
+  .spotify-logo {
+    width: 90px !important;
+  }
+  
+  .spotify-search {
+    max-width: 100%;
+    padding: 8px 12px;
+  }
+  
+  .spotify-search-dropdown {
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    width: calc(100vw - 24px);
+  }
+  
+  .spotify-username {
     display: none;
+  }
+  
+  .spotify-caret {
+    display: none;
+  }
+  
+  .spotify-profile {
+    padding: 6px;
   }
 }

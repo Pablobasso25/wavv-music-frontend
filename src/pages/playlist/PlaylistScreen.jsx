@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Col } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import ArtistasSidebar from "../../components/ArtistasSidebar";
+import ArtistasSidebar from "../../components/artistsSidebar/ArtistasSidebar";
 import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
-import TopSongs from "../../components/TopSongs";
+import TopSongs from "../../components/topSongs/TopSongs";
 import { useSongs } from "../../context/SongContext";
 import { getAlbumsRequest } from "../../api/songs";
 
@@ -70,42 +70,61 @@ const PlaylistScreen = () => {
   const displayAlbum = selectedAlbum || playlistAlbum;
 
   return (
-    <div className="bg-black min-vh-100 text-white">
-      <div className="d-flex">
-        <ArtistasSidebar onAlbumSelect={setSelectedAlbum} artistas={artists} />
-        <div className="flex-grow-1 p-4" style={{ marginBottom: "100px" }}>
-          {selectedAlbum ? (
-            <div className="px-2 px-lg-3 mb-3">
-              <button
-                className="btn d-flex align-items-center gap-2"
-                onClick={() => setSelectedAlbum(null)}
-                style={{
-                  backgroundColor: "#8b5cf6",
-                  border: "none",
-                  color: "white",
-                  padding: "10px 20px",
-                  borderRadius: "25px",
-                  fontSize: "1rem",
-                  fontWeight: "500",
-                  transition: "all 0.3s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.target.style.backgroundColor = "#7c3aed")
-                }
-                onMouseLeave={(e) =>
-                  (e.target.style.backgroundColor = "#8b5cf6")
-                }
-              >
-                <i className="bi bi-arrow-left"></i>
-                <span>Volver a Mi Playlist</span>
-              </button>
-            </div>
-          ) : (
-            <h2 className="mb-3 px-2 px-lg-3">Mi Playlist</h2>
-          )}
-          <TopSongs album={displayAlbum} isPlaylist={!selectedAlbum} />
+    <div className="bg-black min-vh-100 text-white w-100">
+      <div className="d-flex flex-column flex-lg-row w-100">
+        {/* Sidebar - Oculto en mobile */}
+        <div className="d-none d-lg-block flex-shrink-0">
+          <ArtistasSidebar
+            onAlbumSelect={setSelectedAlbum}
+            artistas={artists}
+          />
         </div>
-        <MusicPlayer />
+        <div
+          className="flex-grow-1 d-flex justify-content-center"
+          style={{ marginBottom: "100px" }}
+        >
+          <div
+            className="w-100 px-2 px-md-4"
+            style={{
+              maxWidth: "1200px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <div className="w-100 text-center text-md-start">
+              {selectedAlbum ? (
+                <div className="mb-3 pt-3 d-flex justify-content-center justify-content-md-start">
+                  <button
+                    className="btn d-flex align-items-center gap-2"
+                    onClick={() => setSelectedAlbum(null)}
+                    style={{
+                      backgroundColor: "#8b5cf6",
+                      border: "none",
+                      color: "white",
+                      padding: "10px 20px",
+                      borderRadius: "25px",
+                      fontSize: "1rem",
+                      fontWeight: "500",
+                      transition: "all 0.3s",
+                    }}
+                  >
+                    <i className="bi bi-arrow-left"></i>
+                    <span>Volver a Mi Playlist</span>
+                  </button>
+                </div>
+              ) : (
+                <h2 className="mb-3 pt-3">Mi Playlist</h2>
+              )}
+            </div>
+            <div className="w-100">
+              <TopSongs album={displayAlbum} isPlaylist={!selectedAlbum} />
+            </div>
+          </div>
+        </div>
+        <div className=" d-lg-block flex-shrink-0">
+          <MusicPlayer />
+        </div>
       </div>
     </div>
   );
