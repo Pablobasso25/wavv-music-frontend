@@ -3,7 +3,6 @@ import { defaultAlbum } from "../data/dataDefault";
 
 const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
   const contentRef = useRef(null);
-
   const displayList =
     artistas.length > 0
       ? artistas
@@ -15,13 +14,69 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
             album: defaultAlbum,
           },
         ];
-
   return (
-    <div
-      className="artistas-sidebar p-3"
-      ref={contentRef}
-      style={{ width: "240px", height: "100vh", overflowY: "auto" }}
-    >
+    <>
+   <style>
+  {`
+    .artistas-sidebar {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .artistas-list {
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 1rem;
+      padding-bottom: 10px;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+    .artistas-list::-webkit-scrollbar {
+      height: 6px;
+    }
+    .artistas-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+    .artistas-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+    .artista-item {
+      min-width: 110px;
+      flex-shrink: 0;
+    }
+    @media (max-width: 991px) {
+      .artistas-sidebar {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+    }
+    @media (min-width: 992px) {
+      .artistas-sidebar {
+        width: 240px;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: sticky;
+        top: 0;
+        flex-shrink: 0;
+      }
+      .artistas-list {
+        flex-direction: column;
+        overflow-x: hidden;
+        gap: 1rem;
+        padding-bottom: 0;
+      }
+      .artista-item {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+  `}
+</style>
+      <div className="artistas-sidebar p-3" ref={contentRef}>
       <div className="d-flex flex-column">
         <h6
           className="text-white mb-3 text-center"
@@ -29,11 +84,11 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
         >
           TOP ARTISTAS
         </h6>
-
+          <div className="artistas-list">
         {displayList.map((artista, index) => (
           <div
             key={artista.id || index}
-            className="artista-item d-flex flex-column align-items-center p-3 border-0 rounded mb-3"
+                className="artista-item d-flex flex-column align-items-center p-3 border-0 rounded"
             style={{
               cursor: "pointer",
               transition: "all 0.3s ease",
@@ -85,6 +140,8 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
         ))}
       </div>
     </div>
+      </div>
+    </>
   );
 };
 
