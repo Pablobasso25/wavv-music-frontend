@@ -11,6 +11,17 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+// ✅ Validación completa
+const validateEmail = (email) => {
+  const trimmed = email.trim();
+
+  return (
+    trimmed.length >= 5 &&
+    trimmed.length <= 50 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
+  );
+};
+
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -19,14 +30,35 @@ function ForgotPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
     setMessage("");
     setError("");
+
+    const cleanEmail = email.trim();
+
+    // ✅ VALIDACIÓN FRONTEND COMPLETA
+    if (!cleanEmail) {
+      return setError("El email es obligatorio");
+    }
+
+    if (cleanEmail.length < 5 || cleanEmail.length > 50) {
+      return setError("El email debe tener entre 5 y 50 caracteres");
+    }
+
+    if (!validateEmail(cleanEmail)) {
+      return setError("El email no es válido");
+    }
+
+    setLoading(true);
+
     try {
-      const res = await forgotPasswordRequest(email);
+      const res = await forgotPasswordRequest(cleanEmail);
       setMessage(res.data.message);
+      setEmail(""); // limpia input después de enviar
     } catch (error) {
-      setError(error.response?.data?.message || "Error al enviar la solicitud");
+      setError(
+        error.response?.data?.message || "Error al enviar la solicitud"
+      );
     } finally {
       setLoading(false);
     }
@@ -46,6 +78,7 @@ function ForgotPassword() {
             <Card.Body className="p-4">
               {message && <Alert variant="success">{message}</Alert>}
               {error && <Alert variant="danger">{error}</Alert>}
+
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-4">
                   <Form.Label>Email</Form.Label>
@@ -56,17 +89,24 @@ function ForgotPassword() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="bg-dark text-white border-secondary"
                     required
+                    minLength={5}
+                    maxLength={50}
                   />
                 </Form.Group>
+
                 <Button
                   type="submit"
                   className="w-100 mb-3"
                   disabled={loading}
-                  style={{ backgroundColor: "#6f42c1", borderColor: "#6f42c1" }}
+                  style={{
+                    backgroundColor: "#6f42c1",
+                    borderColor: "#6f42c1",
+                  }}
                 >
                   {loading ? "Enviando..." : "Enviar"}
                 </Button>
               </Form>
+
               <div className="text-center mt-3">
                 <Link to="/login" className="text-decoration-none text-light">
                   <small>Volver al inicio de sesión</small>
