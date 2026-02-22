@@ -16,8 +16,8 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
         ];
   return (
     <>
-   <style>
-  {`
+      <style>
+        {`
     .artistas-sidebar {
       width: 100%;
       max-width: 100%;
@@ -75,7 +75,7 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
       }
     }
   `}
-</style>
+      </style>
       <div className="artistas-sidebar p-3" ref={contentRef}>
         <div className="d-flex flex-column">
           <h6
@@ -117,7 +117,7 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
                     backgroundImage: `url(${
                       artista?.album?.image ||
                       artista?.image ||
-                      "https://via.placeholder.com/150x150/8b5cf6/ffffff?text=Artist"
+                      defaultAlbum.image
                     })`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
