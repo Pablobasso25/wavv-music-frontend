@@ -18,24 +18,19 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
     setIsPlaying,
     playUISound,
   } = useMusicPlayer();
-
   const {
     addSongToPlaylist,
     userPlaylist,
     getUserPlaylist,
     deleteSongFromPlaylist,
   } = useSongs();
-
   const navigate = useNavigate();
-
   useEffect(() => {
     getUserPlaylist();
   }, []);
-
   const handleAddToPlaylist = async (e, track) => {
     e.stopPropagation();
     const trackId = track._id || track.id || track.trackId;
-
     const songData = track._id 
       ? { songId: trackId }
       : {
@@ -46,14 +41,12 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
             youtubeUrl: track.preview_url || track.audio,
             duration: track.duration_ms
               ? `${Math.floor(track.duration_ms / 60000)}:${String(
-                  Math.floor((track.duration_ms % 60000) / 1000)
+                  Math.floor((track.duration_ms % 60000) / 1000),
                 ).padStart(2, "0")}`
               : "--:--",
           },
         };
-
     const result = await addSongToPlaylist(songData);
-
     if (result.success) {
       playUISound("success");
       toast.success(`"${track.name}" agregada a tu playlist.`, {
@@ -80,11 +73,9 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       });
     }
   };
-
   const handleRemoveFromPlaylist = async (e, track) => {
     e.stopPropagation();
     const trackId = track._id || track.id;
-
     const confirm = await Swal.fire({
       title: "¿Borrar canción?",
       text: "Se eliminará de tu playlist.",
@@ -97,7 +88,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       background: "#191B1B",
       color: "#fff",
     });
-
     if (confirm.isConfirmed) {
       const result = await deleteSongFromPlaylist(trackId);
       if (result.success) {
@@ -117,7 +107,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       }
     }
   };
-
   const isInPlaylist = (track) => {
     if (!userPlaylist || userPlaylist.length === 0) return false;
     const trackId = track._id || track.id || track.trackId;
@@ -125,10 +114,10 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       (song) => 
         song._id === trackId || 
         song.id === trackId ||
-        (song.title === track.name && song.artist === (album.artists?.[0]?.name || album.artistName))
+        (song.title === track.name &&
+          song.artist === (album.artists?.[0]?.name || album.artistName)),
     );
   };
-
   if (!album || !album.tracks || album.tracks.length === 0) {
     return (
       <Col xs={12}>
@@ -138,9 +127,30 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
       </Col>
     );
   }
-
   return (
-    <Container fluid className="px-2 px-lg-3">
+    <Container
+      fluid
+      className={`px-2 px-lg-3 ${!fromHome ? "top-songs-wrapper" : ""}`}
+      style={{ width: "100%", maxWidth: "100%" }}
+    >
+      <style>
+        {`
+          @media (max-width: 1280px) {
+            .top-songs-wrapper {
+              padding-left: 0 !important;
+              padding-right: 0 !important;
+              margin-left: -1.5rem;
+              margin-right: -1.5rem;
+              width: calc(100% + 3rem);
+            }
+            .top-songs-wrapper .music-list {
+              border-radius: 0 !important;
+              height: auto !important;
+              max-height: none !important;
+            }
+          }
+        `}
+      </style>
       <div
         className="music-list p-3 rounded-4"
         style={{
@@ -157,13 +167,11 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
             <span className="text-secondary small">{album.release_date}</span>
           )}
         </div>
-
         <div className="items">
           {album.tracks.map((track, index) => {
             const isCurrentTrack = currentSong?.title === track.name;
             const trackId = track._id || track.id || track.trackId;
             const added = isInPlaylist(track);
-
             return (
               <div
                 key={index}
@@ -210,7 +218,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
-
                   <img
                     src={track.cover || album.image}
                     className="rounded me-2 me-md-3"
@@ -218,7 +225,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                     height="40"
                     alt={track.name}
                   />
-
                   <div className="details">
                     <h6
                       className="mb-0 small"
@@ -230,7 +236,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                     </h6>
                   </div>
                 </div>
-
                 <div className="actions d-flex align-items-center gap-3">
                   <i
                     className={`bx ${
@@ -240,7 +245,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                       isCurrentTrack && isPlaying ? "Pausar" : "Reproducir"
                     }
                   ></i>
-
                   {isPlaylist ? (
                     <i
                       className="bx bxs-trash text-danger fs-4"
@@ -262,7 +266,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
                       }}
                     ></i>
                   )}
-
                   <span style={{ color: "#494D4E" }}>
                     {track.duration_ms
                       ? Math.floor(track.duration_ms / 1000 / 60) +
