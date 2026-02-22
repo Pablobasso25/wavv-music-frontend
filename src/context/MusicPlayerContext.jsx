@@ -13,7 +13,12 @@ const MusicPlayerContext = createContext();
 export const MusicPlayerProvider = ({ children }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [currentSong, setCurrentSong] = useState(null);
+  const [currentSong, setCurrentSong] = useState({
+    title: "Wavv Music",
+    artist: "Bienvenido",
+    cover: publicidad,
+    audio: "",
+  });
   const [isPlaying, setIsPlaying] = useState(false);
   const [queue, setQueue] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);

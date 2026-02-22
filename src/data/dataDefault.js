@@ -44,7 +44,8 @@ export const defaultSongs = [
     artist: "Lila Rivera",
     album: "Morning Light",
     duration: "04:12",
-    cover: "https://via.placeholder.com/300x300/ff6b6b/ffffff?text=Sunrise",
+    cover:
+      "https://images.unsplash.com/photo-1615185990787-0c2561e830e8?q=80&w=871&auto=format&fit=crop",
     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
     genre: "Pop",
     year: 2024,
@@ -56,7 +57,8 @@ export const defaultSongs = [
     artist: "Tyde Brennan",
     album: "Ocean Waves",
     duration: "04:35",
-    cover: "https://via.placeholder.com/300x300/4ecdc4/ffffff?text=Voyage",
+    cover:
+      "https://images.unsplash.com/photo-1615185990787-0c2561e830e8?q=80&w=871&auto=format&fit=crop",
     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
     genre: "Rock",
     year: 2024,
@@ -69,7 +71,7 @@ export const defaultSongs = [
     album: "Digital Dreams",
     duration: "03:58",
     cover:
-      "https://via.placeholder.com/300x300/5773ff/ffffff?text=Midnight+Drive",
+      "https://images.unsplash.com/photo-1615185990787-0c2561e830e8?q=80&w=871&auto=format&fit=crop",
     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
     genre: "Electronic",
     year: 2024,
@@ -81,7 +83,8 @@ export const defaultSongs = [
     artist: "Lila Rivera",
     album: "Morning Light",
     duration: "03:22",
-    cover: "https://via.placeholder.com/300x300/ff6b6b/ffffff?text=Echoes",
+    cover:
+      "https://images.unsplash.com/photo-1615185990787-0c2561e830e8?q=80&w=871&auto=format&fit=crop",
     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
     genre: "Pop",
     year: 2024,

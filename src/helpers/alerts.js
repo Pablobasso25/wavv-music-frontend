@@ -170,3 +170,102 @@ export const showPremiumAlert2 = (image) => {
     },
   });
 };
+
+export const showEditUserModal = (user) => {
+  const validateUsername = (value) => {
+    if (!value || value.trim() === "") return "El nombre de usuario es requerido";
+    if (value.length < 2) return "Debe tener al menos 2 caracteres";
+    if (value.length > 30) return "No puede tener más de 30 caracteres";
+    if (!/^[a-zA-Z0-9_]+$/.test(value)) return "Solo letras, números y guiones bajos";
+    return "";
+  };
+
+  const validateEmail = (value) => {
+    if (!value || value.trim() === "") return "El email es requerido";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Email inválido";
+    if (value.length > 50) return "No puede tener más de 50 caracteres";
+    return "";
+  };
+
+  return Swal.fire({
+    title: "Editar Usuario",
+    html: `
+      <style>
+        #swal-plan option {
+          background: #2a2a2a;
+          color: #fff;
+        }
+        #swal-plan option:hover,
+        #swal-plan option:checked {
+          background: #5773ff !important;
+          color: #fff !important;
+        }
+      </style>
+      <div class="text-start">
+        <label class="form-label text-white-50 small">Nombre de usuario</label>
+        <input id="swal-username" class="swal2-input m-0 mb-1 w-100" value="${user.username}">
+        <small id="username-error" class="text-danger d-block mb-2" style="min-height:18px"></small>
+        
+        <label class="form-label text-white-50 small">Email</label>
+        <input id="swal-email" type="email" class="swal2-input m-0 mb-1 w-100" value="${user.email}">
+        <small id="email-error" class="text-danger d-block mb-2" style="min-height:18px"></small>
+        
+        <label class="form-label text-white-50 small">Rol</label>
+        <input class="swal2-input m-0 mb-3 w-100" value="${user.role.toUpperCase()}" disabled style="background:#2a2a2a; cursor:not-allowed">
+        
+        <label class="form-label text-white-50 small">Plan</label>
+        <select id="swal-plan" class="swal2-select m-0 w-100" style="display:flex; background:#2a2a2a; color:#fff">
+          <option value="free" ${user.subscription?.status === "free" ? "selected" : ""}>Free</option>
+          <option value="premium" ${user.subscription?.status === "premium" ? "selected" : ""}>Premium</option>
+        </select>
+      </div>
+    `,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: "Guardar",
+    cancelButtonText: "Cancelar",
+    background: "#1a1a1a",
+    color: "#fff",
+    didOpen: () => {
+      const usernameInput = document.getElementById("swal-username");
+      const emailInput = document.getElementById("swal-email");
+      const usernameError = document.getElementById("username-error");
+      const emailError = document.getElementById("email-error");
+
+      usernameInput.addEventListener("input", (e) => {
+        usernameError.textContent = validateUsername(e.target.value);
+      });
+
+      emailInput.addEventListener("input", (e) => {
+        emailError.textContent = validateEmail(e.target.value);
+      });
+    },
+    preConfirm: () => {
+      const username = document.getElementById("swal-username").value.trim();
+      const email = document.getElementById("swal-email").value.trim();
+      const usernameError = document.getElementById("username-error");
+      const emailError = document.getElementById("email-error");
+
+      const usernameValidation = validateUsername(username);
+      const emailValidation = validateEmail(email);
+
+      if (usernameValidation) {
+        usernameError.textContent = usernameValidation;
+        Swal.showValidationMessage(usernameValidation);
+        return false;
+      }
+
+      if (emailValidation) {
+        emailError.textContent = emailValidation;
+        Swal.showValidationMessage(emailValidation);
+        return false;
+      }
+
+      return {
+        username,
+        email,
+        subscriptionStatus: document.getElementById("swal-plan").value,
+      };
+    },
+  });
+};

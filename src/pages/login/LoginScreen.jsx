@@ -1,23 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./LoginScreen.css";
 import ShowPassword from "./ShowPassword";
 
-const LoginScreen = ({ show, handleClose }) => {
-  const { login, isAuthenticated, errors: authErrors } = useAuth();
-  const navigate = useNavigate();
+const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
+  const { login, errors: authErrors } = useAuth();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      handleClose();
-      navigate("/");
-    }
-  }, [isAuthenticated, navigate, handleClose]);
 
   const handleChange = (e) => {
     let value = e.target.value;
@@ -99,13 +90,13 @@ const LoginScreen = ({ show, handleClose }) => {
 
         <p className="login-register-text">
           ¿No tienes cuenta?{" "}
-          <Link
-            to="/register"
+          <span
             className="login-register-link"
-            onClick={handleClose}
+            onClick={() => onSwitchToRegister && onSwitchToRegister()}
+            style={{ cursor: "pointer" }}
           >
             Regístrate aquí
-          </Link>
+          </span>
         </p>
         <p className="login-register-text">
           <Link
