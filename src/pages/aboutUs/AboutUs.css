@@ -1,0 +1,47 @@
+.social-expand-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 55px;
+  height: 55px;
+  overflow: hidden;
+  border-radius: 50px;
+  text-decoration: none;
+  background: linear-gradient(135deg, #5773ff, #3a2a55);
+  transition: all 0.4s ease;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(87, 115, 255, 0.2);
+}
+
+.social-expand-btn .icon {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  color: white;
+  flex-shrink: 0;
+  min-width: 55px;
+}
+
+.social-expand-btn .text {
+  opacity: 0;
+  white-space: nowrap;
+  margin-left: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  transition: 0.4s ease;
+}
+
+.social-expand-btn:hover {
+  width: 180px;
+  background: linear-gradient(135deg, #6b85ff, #5b3b88);
+  box-shadow: 0 6px 20px rgba(87, 115, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.social-expand-btn:hover .text {
+  opacity: 1;
+}

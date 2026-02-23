@@ -21,13 +21,13 @@ const AdminScreen = () => {
     try {
       if (currentTab === "songs") {
         const res = await getSongsRequest();
-        setSongs(res.data);
+        setSongs(res.data.songs || res.data || []);
       } else if (currentTab === "users") {
         const res = await getUsersRequest();
-        setUsers(res.data);
+        setUsers(res.data.users || res.data || []);
       } else if (currentTab === "artists") {
         const res = await getAlbumsRequest();
-        setArtists(res.data);
+        setArtists(res.data.albums || res.data || []);
       }
     } catch (error) {
       console.error(`Error cargando ${currentTab}:`, error);

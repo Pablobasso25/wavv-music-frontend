@@ -21,50 +21,63 @@ export function SongProvider({ children }) {
   const [searchResults, setSearchResults] = useState([]);
   const [userPlaylist, setUserPlaylist] = useState([]);
 
-  const getUserPlaylist = async () => {
+  const getUserPlaylist = async (page = 1, limit = 5) => {
     try {
-      const res = await getUserPlaylistRequest();
-      setUserPlaylist(res.data);
+      const res = await getUserPlaylistRequest(page, limit);
+      setUserPlaylist(res.data.songs || []);
+      return res.data;
     } catch (error) {
-      console.error("Error al obtener la playlist del usuario:", error);
+      setUserPlaylist([]);
+      return { songs: [], totalPages: 0, currentPage: 1, totalSongs: 0 };
     }
   };
 
-  const getSongs = async () => {
+  const getSongs = async (page = 1, limit = 5) => {
     try {
-      const res = await getSongsRequest();
-      setSongs(res.data);
+      const res = await getSongsRequest(page, limit);
+      const songsData = res.data.songs || res.data || [];
+      setSongs(songsData);
+      return res.data;
     } catch (error) {
-      console.error("Error al obtener canciones de DB:", error);
+      setSongs([]);
+      return { songs: [], totalPages: 0, currentPage: 1, totalSongs: 0 };
     }
   };
+
   const createSong = async (song) => {
     try {
       const res = await createSongRequest(song);
       setSongs([...songs, res.data]);
+      return { success: true, data: res.data };
     } catch (error) {
-      console.error("Error al crear canción:", error);
+      return { success: false, message: error.response?.data?.message };
     }
   };
+
   const searchExternalSongs = async (searchTerm) => {
     try {
       const res = await searchExternalSongsRequest(searchTerm);
       setSearchResults(res.data);
       return res.data;
     } catch (error) {
-      console.error("Error en búsqueda externa:", error);
       setSearchResults([]);
+      return [];
     }
   };
-  const addSongToPlaylist = async (songId) => {
+
+  const addSongToPlaylist = async (songData) => {
     try {
-      const res = await addSongToPlaylistRequest(songId);
+      const res = await addSongToPlaylistRequest(songData);
+      if (res.data.song) {
+        setUserPlaylist(prev => [...prev, res.data.song]);
+      }
       return { success: true, data: res.data };
     } catch (error) {
       return {
         success: false,
         status: error.response?.status,
-        code: error.response?.data.code,
+        code: error.response?.data?.code,
+        message: error.response?.data?.message || "Error al agregar canción",
       };
     }
   };
@@ -72,7 +85,6 @@ export function SongProvider({ children }) {
   const deleteSongFromPlaylist = async (songId) => {
     try {
       await removeSongFromPlaylistRequest(songId);
-
       setUserPlaylist(
         userPlaylist.filter(
           (song) => song._id !== songId && song.id !== songId,
@@ -80,10 +92,13 @@ export function SongProvider({ children }) {
       );
       return { success: true };
     } catch (error) {
-      console.error(error);
-      return { success: false, message: "Error al eliminar canción" };
+      return { 
+        success: false, 
+        message: error.response?.data?.message || "Error al eliminar canción" 
+      };
     }
   };
+
   return (
     <SongContext.Provider
       value={{

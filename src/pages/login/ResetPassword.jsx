@@ -74,7 +74,7 @@ function ResetPassword() {
     try {
       const res = await resetPasswordRequest(token, password);
       setMessage(res.data.message);
-      setTimeout(() => navigate("/login"), 3000);
+      setTimeout(() => navigate("/"), 3000);
     } catch (error) {
       setError(
         error.response?.data?.message || "Error al cambiar la contraseña"
@@ -105,20 +105,18 @@ function ResetPassword() {
                   <Form.Label>Nueva contraseña</Form.Label>
 
                   <ShowPassword
-  name="password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  className="bg-dark text-white border-secondary"
-  placeholder="Nueva contraseña"
-  required
-  minLength={8}
-  maxLength={20}
-/>
+                    name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-dark text-white border-secondary"
+                    placeholder="Nueva contraseña"
+                    required
+                    minLength={8}
+                    maxLength={20}
+                  />
 
                   {errors.password && (
-                    <small className="text-danger">
-                      {errors.password}
-                    </small>
+                    <small className="text-danger">{errors.password}</small>
                   )}
                 </Form.Group>
 

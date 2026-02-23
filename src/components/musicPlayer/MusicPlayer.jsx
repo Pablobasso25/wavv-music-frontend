@@ -11,12 +11,9 @@ import {
   Heart,
   Activity,
 } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { useSongs } from "../../context/SongContext";
-import { toast } from "react-toastify";
-import publicidad2 from "../../assets/images/publicidad2.png";
-import { showPremiumAlert } from "../../helpers/alerts";
 import "./MusicPlayer.css";
 
 const PLAYER_WIDTH = 300;
@@ -35,12 +32,9 @@ const MusicPlayer = ({ isStatic = false }) => {
     playUISound,
   } = useMusicPlayer();
   const {
-    addSongToPlaylist,
-    deleteSongFromPlaylist,
     userPlaylist,
     getUserPlaylist,
   } = useSongs();
-  const navigate = useNavigate();
   const [visible, setVisible] = useState(true);
   const [minimized, setMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 20, y: 80 });
@@ -54,78 +48,29 @@ const MusicPlayer = ({ isStatic = false }) => {
   const dragRef = useRef(null);
   const offsetRef = useRef({ x: 0, y: 0 });
   const location = useLocation();
+  
   useEffect(() => {
-    if (currentSong && userPlaylist) {
+    getUserPlaylist(1, 1000);
+  }, []);
+  
+  useEffect(() => {
+    if (currentSong && userPlaylist && Array.isArray(userPlaylist)) {
       const isSaved = userPlaylist.some(
-        (s) => s._id === currentSong._id || s.id === currentSong._id,
+        (s) => 
+          s._id === currentSong._id || 
+          s.id === currentSong._id ||
+          (s.title === (currentSong.title || currentSong.name) && s.artist === currentSong.artist)
       );
       setIsLiked(isSaved);
     } else {
       setIsLiked(false);
     }
   }, [currentSong, userPlaylist]);
-  const handleLike = async () => {
-    if (!currentSong) return;
-    const trackId = currentSong._id || currentSong.id;
-    try {
-      if (isLiked) {
-        const res = await deleteSongFromPlaylist(trackId);
-        if (res.success) {
-          setIsLiked(false);
-          playUISound("success");
-          toast.info("Eliminada de tu playlist", {
-            theme: "dark",
-            autoClose: 1500,
-            position: "bottom-right",
-          });
-          getUserPlaylist();
-        }
-        return;
-      } else {
-        const isDbSong = currentSong._id && currentSong._id.length === 24; 
-        
-        const songData = isDbSong ? { songId: currentSong._id } : {
-          externalSong: {
-            title: currentSong.title || currentSong.name,
-            artist: currentSong.artist,
-            image: currentSong.image || currentSong.cover,
-            youtubeUrl: currentSong.audio || currentSong.preview_url,
-            duration: currentSong.duration || "--:--"
-          }
-        };
-        
-        const res = await addSongToPlaylist(songData);
 
-        if (res.success) {
-          setIsLiked(true);
-          playUISound("success");
-          toast.success("Agregada a tu playlist", {
-            theme: "dark",
-            autoClose: 1500,
-            position: "bottom-right",
-          });
-          getUserPlaylist();
-        } else if (res.status === 403 && res.code === "PREMIUM_REQUIRED") {
-          if (audioRef.current) audioRef.current.pause();
-          setIsPlaying(false);
-          playUISound("error");
-          showPremiumAlert(navigate, publicidad2);
-        } else {
-          playUISound("error");
-          toast.error(res.message || "No se pudo agregar la canción", {
-            theme: "dark",
-            position: "bottom-right",
-          });
-        }
-      }
-    } catch (error) {
-      playUISound("error");
-      toast.error("Error de conexión. Intentá más tarde.", {
-        theme: "dark",
-        position: "bottom-right",
-      });
-    }
+  const handleLike = () => {
+    return;
   };
+  
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;

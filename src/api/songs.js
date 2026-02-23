@@ -1,6 +1,8 @@
 import axios from "./axios";
 
-export const getSongsRequest = () => axios.get("/songs");
+export const getSongsRequest = (page = 1, limit = 5) => 
+  axios.get(`/songs?page=${page}&limit=${limit}`);
+
 export const createSongRequest = (song) => axios.post("/songs", song);
 export const deleteSongRequest = (id) => axios.delete(`/songs/${id}`);
 export const getSongRequest = (id) => axios.get(`/songs/${id}`);
@@ -10,14 +12,20 @@ export const searchExternalSongsRequest = (term) =>
 export const addSongToPlaylistRequest = (songData) =>
   axios.post("/playlist/add", songData);
 export const getPlaylistRequest = () => axios.get("/playlist");
-export const getUserPlaylistRequest = () => axios.get("/playlist");
-export const removeSongFromPlaylistRequest = (songId) => axios.delete(`/playlist/${songId}`);
+export const getUserPlaylistRequest = (page = 1, limit = 5) => 
+  axios.get(`/playlist?page=${page}&limit=${limit}`);
+export const removeSongFromPlaylistRequest = (songId) => 
+  axios.delete(`/playlist/${songId}`);
 
-export const getAlbumsRequest = () => axios.get("/albums");
+export const getAlbumsRequest = (page = 1, limit = 5) => 
+  axios.get(`/albums?page=${page}&limit=${limit}`);
+export const getAlbumByIdRequest = (id, page = 1, limit = 5) => 
+  axios.get(`/albums/${id}?page=${page}&limit=${limit}`);
 export const createAlbumRequest = (album) => axios.post("/albums", album);
 export const deleteAlbumRequest = (id) => axios.delete(`/albums/${id}`);
 
-export const getUsersRequest = () => axios.get("/users");
+export const getUsersRequest = (page = 1, limit = 5) => 
+  axios.get(`/users?page=${page}&limit=${limit}`);
 export const deactivateUserRequest = (id) => axios.put(`/users/${id}/deactivate`);
 export const activateUserRequest = (id) => axios.put(`/users/${id}/activate`);
 export const deleteUserRequest = (id) => axios.delete(`/users/${id}`);
