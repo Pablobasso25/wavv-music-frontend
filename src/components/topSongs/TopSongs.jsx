@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { showPremiumAlert } from "../../helpers/alerts";
 import publicidad2 from "../../assets/images/publicidad2.png";
 
-const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
+const TopSongs = ({ album, isPlaylist = false, fromHome = false, onPageChange }) => {
   const {
     playSong,
     currentSong,
@@ -29,28 +29,32 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getUserPlaylist();
-  }, []);
+    if (!fromHome) {
+      getUserPlaylist(1, 1000);
+    }
+  }, [fromHome]);
 
-  const handleAddToPlaylist = async (e, track) => {
-    e.stopPropagation(); // Evita que la canción se reproduzca al hacer clic en el botón +
-    const trackId = track._id || track.id || track.trackId;
-    const songData = track._id
-      ? { songId: trackId }
-      : {
-          externalSong: {
-            title: track.name,
-            artist: album.artists?.[0]?.name || album.artistName || "Artista",
-            image: track.cover || album.image,
-            youtubeUrl: track.preview_url || track.audio,
-            duration: track.duration_ms
-              ? `${Math.floor(track.duration_ms / 60000)}:${String(
-                  Math.floor((track.duration_ms % 60000) / 1000),
-                ).padStart(2, "0")}`
-              : "--:--",
-          },
-        };
-    const result = await addSongToPlaylist(songData);
+ const handleAddToPlaylist = async (e, track) => {
+  e.stopPropagation();
+  
+  const songData = isPlaylist && track._id
+    ? { songId: track._id }
+    : {
+        externalSong: {
+          title: track.name,
+          artist: album.artists?.[0]?.name || album.artistName || "Artista",
+          image: track.cover || album.image,
+          youtubeUrl: track.preview_url || track.audio || track.youtubeUrl,
+          duration: track.duration_ms
+            ? `${Math.floor(track.duration_ms / 60000)}:${String(
+                Math.floor((track.duration_ms % 60000) / 1000),
+              ).padStart(2, "0")}`
+            : "--:--",
+        },
+      };
+  
+  const result = await addSongToPlaylist(songData);
+    
     if (result.success) {
       playUISound("success");
       toast.success(`"${track.name}" agregada a tu playlist.`, {
@@ -59,7 +63,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
         theme: "dark",
         transition: Slide,
       });
-      getUserPlaylist();
     } else if (result.status === 403 && result.code === "PREMIUM_REQUIRED") {
       if (audioRef.current) audioRef.current.pause();
       setIsPlaying(false);
@@ -98,7 +101,11 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
           theme: "dark",
           autoClose: 2000,
         });
-        getUserPlaylist();
+        if (onPageChange && album.currentPage) {
+          onPageChange(album.currentPage);
+        } else {
+          getUserPlaylist();
+        }
       }
     }
   };
@@ -135,8 +142,6 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
         className="music-list p-3 rounded-4 d-flex flex-column"
         style={{
           backgroundColor: "#111111",
-          height: "70vh",
-          minHeight: "500px",
           margin: "0 auto",
           width: "100%",
           overflow: "hidden",
@@ -262,6 +267,30 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false }) => {
             );
           })}
         </div>
+
+        {album.totalPages > 1 && onPageChange && (
+          <div className="d-flex justify-content-center align-items-center gap-3 mt-3 pt-3 border-top border-secondary flex-shrink-0">
+            <button
+              className="btn btn-sm btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
+              style={{ width: "35px", height: "35px" }}
+              onClick={() => onPageChange(album.currentPage - 1)}
+              disabled={album.currentPage === 1}
+            >
+              <i className="bx bx-chevron-left"></i>
+            </button>
+            <span className="text-white small">
+              Página {album.currentPage} de {album.totalPages}
+            </span>
+            <button
+              className="btn btn-sm btn-outline-light rounded-circle d-flex align-items-center justify-content-center"
+              style={{ width: "35px", height: "35px" }}
+              onClick={() => onPageChange(album.currentPage + 1)}
+              disabled={album.currentPage === album.totalPages}
+            >
+              <i className="bx bx-chevron-right"></i>
+            </button>
+          </div>
+        )}
       </div>
     </Container>
   );

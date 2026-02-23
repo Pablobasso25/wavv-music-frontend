@@ -20,7 +20,7 @@ const TrendingSong = ({ songs }) => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % songs.length);
         setFade(true);
       }, 500);
-    }, 2700);
+    }, 3100);
 
     return () => clearInterval(interval);
   }, [songs]);
@@ -63,13 +63,14 @@ const TrendingSong = ({ songs }) => {
         <Col xs={7} md={7} className="d-flex flex-column gap-2 gap-lg-3">
           <h2 className="h4 h3-lg">{song.title}</h2>
           <h4 className="h6 h5-lg">{song.artist}</h4>
-          <div className="d-flex gap-3 mt-3 mt-lg-4 align-items-center">
+          <div className="d-flex gap-2 gap-md-3 mt-2 mt-md-3 mt-lg-4 align-items-center">
             <Button
-              className="px-3 px-lg-4 py-2 rounded-pill fw-semibold"
+              className="px-2 px-md-3 px-lg-4 py-1 py-md-2 rounded-pill fw-semibold"
               style={{
                 backgroundColor: "#5773ff",
                 border: "none",
                 transition: "all 0.3s",
+                fontSize: "0.85rem",
               }}
               onMouseEnter={(e) => (e.target.style.backgroundColor = "#4562ee")}
               onMouseLeave={(e) => (e.target.style.backgroundColor = "#5773ff")}
@@ -83,16 +84,16 @@ const TrendingSong = ({ songs }) => {
                 })
               }
             >
-              <i className="bx bx-play me-2"></i> Reproducir
+              <i className="bx bx-play me-1 me-md-2"></i> Reproducir
             </Button>
             <Button
               variant="outline-light"
               className="rounded-circle d-flex align-items-center justify-content-center"
-              style={{ width: "45px", height: "45px", transition: "all 0.3s" }}
+              style={{ width: "35px", height: "35px", transition: "all 0.3s" }}
               onClick={handleAddToPlaylist}
               title="Agregar a playlist"
             >
-              <i className="bx bxs-heart fs-5"></i>
+              <i className="bx bxs-heart" style={{ fontSize: "1rem" }}></i>
             </Button>
           </div>
         </Col>

@@ -96,7 +96,7 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
                   backgroundColor: "#1a1a1a",
                   border: "1px solid #333",
                 }}
-                onClick={() => onAlbumSelect(artista.album)}
+                onClick={() => onAlbumSelect(artista)}
                 onMouseEnter={(event) => {
                   event.currentTarget.style.transform = "translateY(-2px)";
                   event.currentTarget.style.boxShadow =
