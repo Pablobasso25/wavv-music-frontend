@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button, Nav, Card } from "react-bootstrap";
-import { getSongsRequest, getAlbumsRequest, getUsersRequest } from "../../api/songs";
+import {
+  getSongsRequest,
+  getAlbumsRequest,
+  getUsersRequest,
+} from "../../api/songs";
 import UsersTable from "./components/UsersTable";
 import SongsTable from "./components/SongsTable";
 import ArtistsTable from "./components/ArtistsTable";
@@ -12,15 +16,13 @@ const AdminScreen = () => {
   const [songs, setSongs] = useState([]);
   const [artists, setArtists] = useState([]);
   const [showModal, setShowModal] = useState(false);
-
   useEffect(() => {
     loadData();
   }, [currentTab]);
-
   const loadData = async () => {
     try {
       if (currentTab === "songs") {
-        const res = await getSongsRequest();
+        const res = await getSongsRequest(1, 1000, true);
         setSongs(res.data.songs || res.data || []);
       } else if (currentTab === "users") {
         const res = await getUsersRequest();
@@ -33,7 +35,6 @@ const AdminScreen = () => {
       console.error(`Error cargando ${currentTab}:`, error);
     }
   };
-
   return (
     <Container className="pt-5 mt-3" style={{ paddingBottom: "100px" }}>
       <div className="d-flex flex-column flex-xl-row justify-content-between align-items-start align-items-xl-center mb-4 gap-3 gap-xl-5">
@@ -45,7 +46,6 @@ const AdminScreen = () => {
             Gestión integral de usuarios y contenido
           </p>
         </div>
-
         <div className="d-flex flex-column flex-xl-row align-items-stretch align-items-xl-center gap-3 w-100 w-xl-auto order-xl-2 flex-xl-shrink-0">
           <Nav
             variant="pills"
@@ -67,7 +67,6 @@ const AdminScreen = () => {
                 <span className="d-none d-xl-inline">Usuarios</span>
               </Nav.Link>
             </Nav.Item>
-
             <Nav.Item className="flex-fill">
               <Nav.Link
                 eventKey="songs"
@@ -82,7 +81,6 @@ const AdminScreen = () => {
                 <span className="d-none d-xl-inline">Canciones</span>
               </Nav.Link>
             </Nav.Item>
-
             <Nav.Item className="flex-fill">
               <Nav.Link
                 eventKey="artists"
@@ -98,7 +96,6 @@ const AdminScreen = () => {
               </Nav.Link>
             </Nav.Item>
           </Nav>
-          
           {(currentTab === "songs" || currentTab === "artists") && (
             <Button
               variant="success"
@@ -106,32 +103,36 @@ const AdminScreen = () => {
               onClick={() => setShowModal(true)}
             >
               <i className="bi bi-plus-lg me-2"></i>
-              <span className="d-none d-xl-inline">{currentTab === "songs" ? "Nueva Canción" : "Nuevo Artista"}</span>
-              <span className="d-inline d-xl-none">{currentTab === "songs" ? "Canción" : "Artista"}</span>
+              <span className="d-none d-xl-inline">
+                {currentTab === "songs" ? "Nueva Canción" : "Nuevo Artista"}
+              </span>
+              <span className="d-inline d-xl-none">
+                {currentTab === "songs" ? "Canción" : "Artista"}
+              </span>
             </Button>
           )}
         </div>
       </div>
-
       <Card
         className="border-0 shadow-lg overflow-auto"
-        style={{ backgroundColor: "#202026", borderRadius: "1rem", maxHeight: "calc(100vh - 300px)" }}
+        style={{
+          backgroundColor: "#202026",
+          borderRadius: "1rem",
+          maxHeight: "calc(100vh - 300px)",
+        }}
       >
         <Card.Body className="p-0">
           {currentTab === "users" && (
             <UsersTable users={users} setUsers={setUsers} />
           )}
-
           {currentTab === "songs" && (
             <SongsTable songs={songs} setSongs={setSongs} />
           )}
-
           {currentTab === "artists" && (
             <ArtistsTable artists={artists} setArtists={setArtists} />
           )}
         </Card.Body>
       </Card>
-
       <SearchModal
         show={showModal}
         onHide={() => setShowModal(false)}
@@ -140,6 +141,7 @@ const AdminScreen = () => {
         setSongs={setSongs}
         artists={artists}
         setArtists={setArtists}
+        reloadData={loadData}
       />
     </Container>
   );

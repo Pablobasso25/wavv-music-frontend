@@ -11,15 +11,14 @@ const SearchModal = ({
   setSongs,
   artists,
   setArtists,
+  reloadData,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-
     setIsSearching(true);
     try {
       let url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchQuery)}&media=music&limit=10`;
@@ -27,7 +26,6 @@ const SearchModal = ({
       if (currentTab === "artists") {
         url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchQuery)}&entity=album&limit=10`;
       }
-
       const response = await fetch(url);
       const data = await response.json();
       setSearchResults(data.results);
@@ -38,12 +36,10 @@ const SearchModal = ({
       setIsSearching(false);
     }
   };
-
   const addSongFromSearch = async (track) => {
     const exists = songs.some(
       (s) => s.title === track.trackName && s.artist === track.artistName,
     );
-
     if (exists) {
       Swal.fire({
         title: "Ya existe",
@@ -54,7 +50,6 @@ const SearchModal = ({
       });
       return;
     }
-
     try {
       const newSong = {
         title: track.trackName,
@@ -67,10 +62,9 @@ const SearchModal = ({
             ).padStart(2, "0")}`
           : "--:--",
       };
-
       const res = await createSongRequest(newSong);
       setSongs([...songs, res.data]);
-
+      if (reloadData) reloadData();
       Swal.fire({
         title: "¡Agregada!",
         text: `${track.trackName} se agregó correctamente.`,
@@ -90,12 +84,10 @@ const SearchModal = ({
       });
     }
   };
-
   const addArtistFromSearch = async (album) => {
     const exists = artists.some(
       (a) => a.album?.collectionId === album.collectionId,
     );
-
     if (exists) {
       Swal.fire({
         title: "Ya existe",
@@ -106,14 +98,12 @@ const SearchModal = ({
       });
       return;
     }
-
     try {
       const response = await fetch(
         `https://itunes.apple.com/lookup?id=${album.collectionId}&entity=song`,
       );
       const data = await response.json();
       const tracks = data.results.slice(1);
-
       const newAlbum = {
         collectionId: album.collectionId,
         name: album.collectionName,
@@ -127,10 +117,9 @@ const SearchModal = ({
           cover: track.artworkUrl100?.replace("100x100", "600x600"),
         })),
       };
-
       const res = await createAlbumRequest(newAlbum);
       setArtists([...artists, res.data]);
-
+      if (reloadData) reloadData();
       Swal.fire({
         title: "¡Agregado!",
         text: `${album.collectionName} se agregó correctamente.`,
@@ -150,7 +139,6 @@ const SearchModal = ({
       });
     }
   };
-
   return (
     <Modal
       show={show}
@@ -183,7 +171,6 @@ const SearchModal = ({
             </Button>
           </InputGroup>
         </Form>
-
         <div
           className="search-results"
           style={{ maxHeight: "400px", overflowY: "auto" }}
