@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import { useAuth } from "./AuthContext";
 import {
   searchExternalSongsRequest,
   getSongsRequest,
@@ -9,18 +10,21 @@ import {
 } from "../api/songs";
 
 const SongContext = createContext();
-
 export const useSongs = () => {
   const context = useContext(SongContext);
   if (!context) throw new Error("useSongs debe usarse dentro de SongProvider");
   return context;
 };
-
 export function SongProvider({ children }) {
   const [songs, setSongs] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [userPlaylist, setUserPlaylist] = useState([]);
-
+  const { user } = useAuth();
+  React.useEffect(() => {
+    if (!user) {
+      setUserPlaylist([]);
+    }
+  }, [user]);
   const getUserPlaylist = async (page = 1, limit = 5) => {
     try {
       const res = await getUserPlaylistRequest(page, limit);
@@ -31,10 +35,9 @@ export function SongProvider({ children }) {
       return { songs: [], totalPages: 0, currentPage: 1, totalSongs: 0 };
     }
   };
-
-  const getSongs = async (page = 1, limit = 5) => {
+  const getSongs = async (page = 1, limit = 5, includeUser = false) => {
     try {
-      const res = await getSongsRequest(page, limit);
+      const res = await getSongsRequest(page, limit, includeUser);
       const songsData = res.data.songs || res.data || [];
       setSongs(songsData);
       return res.data;
@@ -43,7 +46,6 @@ export function SongProvider({ children }) {
       return { songs: [], totalPages: 0, currentPage: 1, totalSongs: 0 };
     }
   };
-
   const createSong = async (song) => {
     try {
       const res = await createSongRequest(song);
@@ -53,7 +55,6 @@ export function SongProvider({ children }) {
       return { success: false, message: error.response?.data?.message };
     }
   };
-
   const searchExternalSongs = async (searchTerm) => {
     try {
       const res = await searchExternalSongsRequest(searchTerm);
@@ -64,12 +65,11 @@ export function SongProvider({ children }) {
       return [];
     }
   };
-
   const addSongToPlaylist = async (songData) => {
     try {
       const res = await addSongToPlaylistRequest(songData);
       if (res.data.song) {
-        setUserPlaylist(prev => [...prev, res.data.song]);
+        setUserPlaylist((prev) => [...prev, res.data.song]);
       }
       return { success: true, data: res.data };
     } catch (error) {
@@ -81,7 +81,6 @@ export function SongProvider({ children }) {
       };
     }
   };
-
   const deleteSongFromPlaylist = async (songId) => {
     try {
       await removeSongFromPlaylistRequest(songId);
@@ -92,13 +91,12 @@ export function SongProvider({ children }) {
       );
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        message: error.response?.data?.message || "Error al eliminar canción" 
+      return {
+        success: false,
+        message: error.response?.data?.message || "Error al eliminar canción",
       };
     }
   };
-
   return (
     <SongContext.Provider
       value={{
