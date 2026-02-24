@@ -15,15 +15,15 @@ import { useAuth } from "./context/AuthContext";
 import ForgotPassword from "./pages/login/ForgotPassword.jsx";
 import ResetPassword from "./pages/login/ResetPassword.jsx";
 import ScrollToTop from "./components/scrollToTop/ScrollToTop.jsx";
+import LoginScreen from "./pages/login/LoginScreen.jsx";
+import RegisterScreen from "./pages/register/RegisterScreen.jsx";
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
-
   useEffect(() => {
     const loading = setTimeout(() => setWelcome(false), 3000);
     return () => clearTimeout(loading);
   }, []);
-
   if (welcome) return <WelcomeScreen />;
 
   return (
@@ -81,6 +81,22 @@ const App = () => {
           }
         />
         <Route
+          path="/"
+          element={
+            <>
+              <LoginScreen />
+            </>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <>
+              <RegisterScreen />
+            </>
+          }
+        />
+        <Route
           path="/forgot-password"
           element={
             <>
@@ -88,7 +104,6 @@ const App = () => {
             </>
           }
         />
-
         <Route
           path="/reset-password/:token"
           element={
