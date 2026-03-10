@@ -61,19 +61,18 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
       onHide={handleClose}
       centered
       backdrop="static"
-      keyboard={false}
-      dialogClassName="login-modal-dialog"
       contentClassName="login-modal-content"
-      backdropClassName="modal-glass-backdrop"
     >
-      <Modal.Body className="login-modal-body">
-        <h2 className="login-title">Iniciar sesión</h2>
+      <Modal.Body className="login-modal-body p-4">
+        <h2 className="login-title mb-4 text-center text-white">Iniciar sesión</h2>
 
-        {(error || (authErrors && authErrors.length > 0)) && (
-          <Alert variant="danger">{error || authErrors[0]}</Alert>
+        {authErrors && authErrors.length > 0 && (
+          <Alert variant="danger" className="py-2 text-center">
+            {typeof authErrors[0] === 'object' ? authErrors[0].message : authErrors[0]}
+          </Alert>
         )}
 
-        <Form onSubmit={handleSubmit}>
+        <Form noValidate onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label className="login-label">Email</Form.Label>
             <Form.Control
@@ -82,21 +81,23 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
               placeholder="Usuario@gmail.com"
               value={formData.email}
               onChange={handleChange}
-              required
+              isInvalid={!!localErrors.email}
               className="login-input"
             />
+            <Form.Control.Feedback type="invalid">{localErrors.email}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-4">
             <Form.Label className="login-label">Contraseña</Form.Label>
             <ShowPassword
               name="password"
+              placeholder="Ingresa tu contraseña"
               value={formData.password}
               onChange={handleChange}
-              required
+              isInvalid={!!localErrors.password}
               className="login-input"
-              placeholder="Contraseña"
             />
+            {localErrors.password && <div className="text-danger small mt-1">{localErrors.password}</div>}
           </Form.Group>
 
           <Button type="submit" className="login-btn w-100" disabled={loading}>
