@@ -1,6 +1,6 @@
 export const validatePassword = (password, username) => {
   if (!password) return { force: 0, validations: {} };
-  
+
   const validations = {
     longitud: password.length >= 8,
     mayuscula: /[A-Z]/.test(password),
@@ -12,4 +12,14 @@ export const validatePassword = (password, username) => {
     noCaracteresPeligrosos: !/[<>]/.test(password),
     noPalabrasComunes: !/(password|123456|admin|qwerty)/i.test(password),
   };
-};  
+  let force = Math.min(password.length * 4, 32);
+  if (validations.longitud) force += 10;
+  if (validations.mayuscula) force += 10;
+  if (validations.minuscula) force += 10;
+  if (validations.numero) force += 10;
+  if (validations.simbolo) force += 18;
+  if (validations.noEspacios) force += 5;
+  if (validations.diferenteAlUsername) force += 5;
+
+  return { force: Math.min(force, 100), validations };
+};
