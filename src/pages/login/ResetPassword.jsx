@@ -96,30 +96,34 @@ function ResetPassword() {
                   <ShowPassword
                     name="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-dark text-white border-secondary"
-                    placeholder="Nueva contraseña"
+                    onChange={handlePasswordChange}
+                    className="login-input"
+                    placeholder="Contraseña segura"
                     required
-                    minLength={8}
-                    maxLength={20}
+                    isInvalid={!!errors.password}
                   />
 
                   {errors.password && (
-                    <small className="text-danger">{errors.password}</small>
+                    <div className="text-danger small mt-2" style={{ fontSize: '0.75rem' }}>
+                       {errors.password}
+                    </div>
                   )}
                 </Form.Group>
 
                 <Button
                   type="submit"
-                  className="w-100"
+                  className="login-btn w-100 fw-bold py-2"
                   disabled={loading || errors.password}
-                  style={{ backgroundColor: "#6f42c1", borderColor: "#6f42c1" }}
                 >
-                  {loading ? "Cambiando..." : "Cambiar"}
+                  {loading ? "Cambiando..." : "Actualizar contraseña"}
                 </Button>
               </Form>
-            </Card.Body>
-          </Card>
+
+              <div className="text-center mt-4 text-white-50">
+                <small>Serás redirigido al inicio tras el éxito.</small>
+              </div>
+            </div>
+          </div>
         </Col>
       </Row>
     </Container>
