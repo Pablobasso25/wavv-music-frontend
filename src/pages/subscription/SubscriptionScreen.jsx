@@ -60,6 +60,15 @@ const SubscriptionScreen = () => {
       setLoading(false);
     }
   };
+
+  if (pageLoading) {
+    return (
+      <Container className="vh-100 d-flex justify-content-center align-items-center">
+        <Spinner animation="border" variant="success" />
+      </Container>
+    );
+  }
+
   return (
     <Container className="py-5 mt-5">
       <Row className="justify-content-center text-center mb-5">
@@ -73,7 +82,7 @@ const SubscriptionScreen = () => {
         </Col>
       </Row>
       <Row className="justify-content-center gap-4">
-        <Col md={5} lg={3}>
+        <Col md={5} lg={4}>
           <Card className="bg-dark text-white border-secondary h-100 shadow-sm">
             <Card.Body className="d-flex flex-column">
               <Card.Title className="fs-2 fw-bold">Free</Card.Title>
@@ -82,38 +91,25 @@ const SubscriptionScreen = () => {
               </h3>
               <ListGroup variant="flush" className="bg-transparent mb-4">
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-success me-2"></i>
-                  Escucha todas las canciones
+                  <i className="bx bx-check text-success me-2"></i>Escucha todas
+                  las canciones
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-x text-danger me-2"></i>
-                  Límite de 5 canciones en Playlist
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-secondary border-secondary">
-                  Soporte estándar
+                  <i className="bx bx-x text-danger me-2"></i>Límite de 5
+                  canciones en Playlist
                 </ListGroup.Item>
               </ListGroup>
               <Button
                 disabled
-                className="mt-auto w-100 py-2 btn-expand"
-                style={{
-                  backgroundColor: "#6c757d",
-                  color: "#000000",
-                  border: "none",
-                  cursor: "not-allowed",
-                }}
+                className="mt-auto w-100 py-2"
+                style={{ backgroundColor: "#6c757d", border: "none" }}
               >
-                <span className="btn-icon">
-                  <i className="bx bx-lock"></i>
-                </span>
-                <span className="btn-text">
-                  {isFree ? "Tu plan actual" : "Plan Gratuito"}
-                </span>
+                {!isPremium ? "Tu plan actual" : "Plan Gratuito"}
               </Button>
             </Card.Body>
           </Card>
         </Col>
-        <Col md={5} lg={3}>
+        <Col md={5} lg={4}>
           <Card
             className="text-white h-100 shadow-lg border-success"
             style={{
@@ -121,124 +117,37 @@ const SubscriptionScreen = () => {
               borderWidth: "2px",
             }}
           >
-            <div className="position-absolute top-0 end-0 p-2 ">
-              <span
-                className="badge bg-success text-dark"
-                style={{ fontSize: "0.7rem" }}
-              >
-                PROMO
-              </span>
-            </div>
             <Card.Body className="d-flex flex-column">
               <Card.Title className="fs-2 fw-bold text-success">
                 Premium
               </Card.Title>
               <h3 className="mb-4">
-                $6000<small>/mes</small>
+                ${dbPlan ? dbPlan.price : "..."}
+                <small>/mes</small>
               </h3>
               <ListGroup variant="flush" className="bg-transparent mb-4">
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-success me-2"></i>
-                  Playlist <strong>Ilimitada</strong>
+                  <i className="bx bx-check text-success me-2"></i>Playlist{" "}
+                  <strong>Ilimitada</strong>
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-success me-2"></i>
-                  Sin anuncios
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-success me-2"></i>
-                  Calidad de audio superior
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-success me-2"></i>
-                  Soporte 24/7
+                  <i className="bx bx-check text-success me-2"></i>Sin anuncios
                 </ListGroup.Item>
               </ListGroup>
               <Button
-                onClick={() => handleBuy("Premium", PLAN_PRICES.PREMIUM)}
+                onClick={() => handleBuy("Premium")}
                 disabled={loading || isPremium}
-                className="mt-auto w-100 py-2  btn-expand"
+                className="mt-auto w-100 py-2 btn-expand"
                 style={{
                   backgroundColor: isPremium ? "#6c757d" : "#198754",
-                  color: "#000000",
                   border: "none",
-                  cursor: isPremium ? "not-allowed" : "pointer",
                 }}
               >
-                <span className="btn-icon">
-                  <i className={`bx ${isPremium ? "bx-lock" : "bx-cart"}`}></i>
-                </span>
-                <span className="btn-text">
                   {isPremium
                     ? "Tu plan actual"
                     : loading
                       ? "Procesando..."
                       : "Suscribirme ahora"}
-                </span>
-              </Button>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={5} lg={3}>
-          <Card
-            className="text-white h-100 shadow-lg border-info"
-            style={{
-              background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-              borderWidth: "2px",
-            }}
-          >
-            <div className="position-absolute top-0 end-0 p-2 ">
-              <span
-                className="badge bg-info text-dark"
-                style={{ fontSize: "0.7rem" }}
-              >
-                FAVORITO
-              </span>
-            </div>
-            <Card.Body className="d-flex flex-column">
-              <Card.Title className="fs-2 fw-bold text-info">
-                Familiar
-              </Card.Title>
-              <h3 className="mb-4">
-                $15000 <small>/mes</small>
-              </h3>
-              <ListGroup variant="flush" className="bg-transparent mb-4">
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-info me-2"></i>
-                  Playlist <strong>Ilimitada</strong>
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-info me-2"></i>
-                  Sin anuncios
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-info me-2"></i>
-                  Calidad de audio superior
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-info me-2"></i>
-                  Soporte 24/7
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-info me-2"></i>
-                  <strong>Hasta 3 dispositivos simultáneos</strong>
-                </ListGroup.Item>
-              </ListGroup>
-              <Button
-                disabled
-                className="mt-auto w-100 py-2  btn-expand"
-                style={{
-                  backgroundColor: "#6c757d",
-                  color: "#ffffff",
-                  border: "none",
-                  cursor: "not-allowed",
-                  fontWeight: "600",
-                  fontSize: "0.95rem",
-                }}
-              >
-                <span className="btn-text" style={{ maxWidth: "200px", opacity: 1, marginLeft: 0 }}>
-                  Próximamente
-                </span>
               </Button>
             </Card.Body>
           </Card>
