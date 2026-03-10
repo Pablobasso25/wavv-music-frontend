@@ -33,7 +33,7 @@ function ForgotPassword() {
     try {
       const res = await forgotPasswordRequest(cleanEmail);
       setMessage(res.data.message);
-      setEmail(""); 
+      setEmail("");
     } catch (error) {
       setError(error.response?.data?.message || "Error al enviar la solicitud");
     } finally {

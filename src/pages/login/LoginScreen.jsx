@@ -65,7 +65,7 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
     >
       <Modal.Body className="login-modal-body p-4">
         <h2 className="login-title mb-4 text-center text-white">Iniciar sesión</h2>
-
+        
         {authErrors && authErrors.length > 0 && (
           <Alert variant="danger" className="py-2 text-center">
             {typeof authErrors[0] === 'object' ? authErrors[0].message : authErrors[0]}
@@ -111,7 +111,7 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
             Regístrate aquí
           </span>
         </p>
-        <p className="login-register-text">
+          <p className="login-register-text">
           <Link
             to="/forgot-password"
             className="login-register-link"

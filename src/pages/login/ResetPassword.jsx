@@ -82,7 +82,7 @@ function ResetPassword() {
           <div className="login-modal-content p-4 shadow">
             <div className="login-modal-body">
               <h2 className="login-title mb-4 text-center">Nueva contraseña</h2>
-
+              
               <p className="text-white-50 text-center mb-4 small">
                 Crea una nueva contraseña segura para tu cuenta de Wavv Music.
               </p>
