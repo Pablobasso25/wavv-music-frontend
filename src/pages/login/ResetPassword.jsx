@@ -64,15 +64,12 @@ function ResetPassword() {
     }
 
     setLoading(true);
-
     try {
       const res = await resetPasswordRequest(token, password);
       setMessage(res.data.message);
       setTimeout(() => navigate("/"), 3000);
     } catch (error) {
-      setError(
-        error.response?.data?.message || "Error al cambiar la contraseña"
-      );
+      setError(error.response?.data?.message || "Error al cambiar la contraseña");
     } finally {
       setLoading(false);
     }
@@ -81,23 +78,21 @@ function ResetPassword() {
   return (
     <Container className="d-flex align-items-center justify-content-center vh-100">
       <Row className="w-100 justify-content-center">
-        <Col md={6} lg={5}>
-          <Card className="bg-dark text-white border-secondary shadow">
-            <Card.Header
-              className="border-secondary text-center pt-4 pb-2"
-              style={{ background: "transparent" }}
-            >
-              <h3>Nueva contraseña</h3>
-            </Card.Header>
+        <Col md={6} lg={4}>
+          <div className="login-modal-content p-4 shadow">
+            <div className="login-modal-body">
+              <h2 className="login-title mb-4 text-center">Nueva contraseña</h2>
 
-            <Card.Body className="p-4">
-              {message && <Alert variant="success">{message}</Alert>}
-              {error && <Alert variant="danger">{error}</Alert>}
+              <p className="text-white-50 text-center mb-4 small">
+                Crea una nueva contraseña segura para tu cuenta de Wavv Music.
+              </p>
+
+              {message && <Alert variant="success" className="py-2 small text-center">{message}</Alert>}
+              {error && <Alert variant="danger" className="py-2 small text-center">{error}</Alert>}
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-4">
-                  <Form.Label>Nueva contraseña</Form.Label>
-
+                  <Form.Label className="login-label">Nueva contraseña</Form.Label>
                   <ShowPassword
                     name="password"
                     value={password}
