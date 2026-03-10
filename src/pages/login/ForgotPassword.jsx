@@ -78,13 +78,13 @@ function ForgotPassword() {
                 </Button>
               </Form>
 
-              <div className="text-center mt-3">
-                <Link to="/login" className="text-decoration-none text-light">
-                  <small>Volver al inicio de sesión</small>
+              <div className="text-center mt-4">
+                <Link to="/" className="login-register-link small">
+                  Volver al inicio de sesión
                 </Link>
               </div>
-            </Card.Body>
-          </Card>
+            </div>
+          </div>
         </Col>
       </Row>
     </Container>
