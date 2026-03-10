@@ -23,3 +23,10 @@ export const validatePassword = (password, username) => {
 
   return { force: Math.min(force, 100), validations };
 };
+  export const getForceConfig = (force) => {
+  if (force === 0) return { texto: "No ingresado", variant: "secondary" };
+  if (force < 50) return { texto: "Débil", variant: "danger" };
+  if (force < 80) return { texto: "Regular", variant: "warning" };
+  if (force < 99) return { texto: "Buena", variant: "info" };
+  return { texto: "Segura", variant: "success" };
+};
