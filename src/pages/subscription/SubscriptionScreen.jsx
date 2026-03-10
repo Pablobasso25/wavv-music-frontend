@@ -1,29 +1,63 @@
 import React, { useState } from "react";
 import "./SubscriptonScreen.css";
-import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
-import { createPreferenceRequest } from "../../api/payment";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  ListGroup,
+  Spinner,
+} from "react-bootstrap";
+import { createPreferenceRequest, getPlansRequest } from "../../api/payment";
 import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
 
-const PLAN_PRICES = {
-  PREMIUM: 6000,
-  FAMILIAR: 15000,
-};
 const SubscriptionScreen = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [dbPlan, setDbPlan] = useState(null);
+
   const isPremium = user?.subscription?.status === "premium";
-  const isFamiliar = user?.subscription?.status === "familiar";
-  const isFree = !isPremium && !isFamiliar;
-  const handleBuy = async (planType, price) => {
+
+  useEffect(() => {
+    const fetchPlan = async () => {
+      try {
+        const res = await getPlansRequest();
+        const premium = res.data.find(
+          (p) => p.name.toLowerCase() === "premium",
+        );
+        setDbPlan(premium);
+      } catch (error) {
+        console.error("Error cargando precio real:", error);
+      } finally {
+        setPageLoading(false);
+      }
+    };
+    fetchPlan();
+  }, []);
+
+  const handleBuy = async (planType) => {
+    if (!dbPlan) return;
+    setLoading(true);
     try {
-      const res = await createPreferenceRequest({ planType, price });   
+      const res = await createPreferenceRequest({
+        planType: dbPlan.name,
+        price: Number(dbPlan.price),
+      });
+
       const initPoint =
         res.data?.init_point || res.data?.initPoint || res.init_point;
+
       if (initPoint) {
         window.location.href = initPoint;
       } 
     } catch (error) {
+      console.error("Error al procesar la compra:", error);
+      Swal.fire("Error", "No se pudo conectar con Mercado Pago", "error");
+    } finally {
+      setLoading(false);
     }
   };
   return (
