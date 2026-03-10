@@ -4,22 +4,12 @@ import {
   Container,
   Row,
   Col,
-  Card,
   Form,
   Button,
   Alert,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
-const validateEmail = (email) => {
-  const trimmed = email.trim();
-
-  return (
-    trimmed.length >= 5 &&
-    trimmed.length <= 50 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
-  );
-};
+import "../login/LoginScreen.css"; 
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -29,7 +19,6 @@ function ForgotPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setMessage("");
     setError("");
 
