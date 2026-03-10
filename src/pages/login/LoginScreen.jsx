@@ -23,16 +23,33 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
     }
   }, [show]);
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let cleanValue = value;
 
+    if (name === "password") cleanValue = value.replace(/[<>\s]/g, "");
+
+    const maxLength = name === "email" ? LOGIN_LIMITS.email.max : LOGIN_LIMITS.password.max;
+    if (cleanValue.length > maxLength) return;
+
+    setFormData({ ...formData, [name]: cleanValue });
+    if (localErrors[name]) setLocalErrors({ ...localErrors, [name]: null });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formErrors = validateLogin(formData);
+    
+    if (Object.keys(formErrors).length > 0) {
+      setLocalErrors(formErrors);
+      return;
+    }
+
+    setLoading(true);
     try {
       await login(formData);
     } catch (err) {
-      console.error("Error capturado en el componente:", err);
-      if (!err.response) setError("No se pudo conectar con el servidor");
+      console.error("Error en login:", err);
     } finally {
       setLoading(false);
     }
