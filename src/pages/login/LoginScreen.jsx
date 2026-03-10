@@ -100,18 +100,14 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
             {localErrors.password && <div className="text-danger small mt-1">{localErrors.password}</div>}
           </Form.Group>
 
-          <Button type="submit" className="login-btn w-100" disabled={loading}>
+          <Button type="submit" className="login-btn w-100 py-2 fw-bold" disabled={loading}>
             {loading ? "Iniciando sesión..." : "Ingresar"}
           </Button>
         </Form>
 
-        <p className="login-register-text">
+        <p className="login-register-text mt-4 text-center">
           ¿No tienes cuenta?{" "}
-          <span
-            className="login-register-link"
-            onClick={() => onSwitchToRegister && onSwitchToRegister()}
-            style={{ cursor: "pointer" }}
-          >
+          <span className="login-register-link fw-bold" onClick={onSwitchToRegister} style={{ cursor: "pointer" }}>
             Regístrate aquí
           </span>
         </p>
