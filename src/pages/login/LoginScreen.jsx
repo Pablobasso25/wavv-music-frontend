@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "./LoginScreen.css";
+import { validateLogin, LOGIN_LIMITS } from "../../utils/authValidations";
 import ShowPassword from "./ShowPassword";
+import "./LoginScreen.css";
+import { Link } from "react-router-dom";
 
 const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
   const { login, errors: authErrors } = useAuth();
