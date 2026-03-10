@@ -7,22 +7,19 @@ import "./LoginScreen.css";
 import { Link } from "react-router-dom";
 
 const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
-  const { login, errors: authErrors } = useAuth();
+  const { login, isAuthenticated, errors: authErrors } = useAuth();
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState(null);
+  const [localErrors, setLocalErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    let value = e.target.value;
-    if (e.target.name === "password") {
-      value = value.replace(/[<>\s]/g, "");
-    }
-    setFormData({ ...formData, [e.target.name]: value });
-  };
+  useEffect(() => {
+    if (isAuthenticated) handleClose();
+  }, [isAuthenticated, handleClose]);
 
   useEffect(() => {
     if (!show) {
-      setError(null);
+      setFormData({ email: "", password: "" });
+      setLocalErrors({});
     }
   }, [show]);
 
