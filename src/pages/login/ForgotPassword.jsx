@@ -24,28 +24,18 @@ function ForgotPassword() {
 
     const cleanEmail = email.trim();
 
-    if (!cleanEmail) {
-      return setError("El email es obligatorio");
-    }
-
+    if (!cleanEmail) return setError("El email es obligatorio");
     if (cleanEmail.length < 5 || cleanEmail.length > 50) {
       return setError("El email debe tener entre 5 y 50 caracteres");
     }
 
-    if (!validateEmail(cleanEmail)) {
-      return setError("El email no es válido");
-    }
-
     setLoading(true);
-
     try {
       const res = await forgotPasswordRequest(cleanEmail);
       setMessage(res.data.message);
       setEmail(""); 
     } catch (error) {
-      setError(
-        error.response?.data?.message || "Error al enviar la solicitud"
-      );
+      setError(error.response?.data?.message || "Error al enviar la solicitud");
     } finally {
       setLoading(false);
     }
