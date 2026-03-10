@@ -5,12 +5,12 @@ import {
   Container,
   Row,
   Col,
-  Card,
   Form,
   Button,
   Alert,
 } from "react-bootstrap";
 import ShowPassword from "./ShowPassword";
+import "../login/LoginScreen.css"; 
 
 const validatePassword = (password) => {
   return (
@@ -55,18 +55,12 @@ function ResetPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setMessage("");
     setError("");
 
-    if (!password) {
-      return setError("La contraseña es obligatoria");
-    }
-
+    if (!password) return setError("La contraseña es obligatoria");
     if (!validatePassword(password)) {
-      return setError(
-        "Debe tener 8-20 caracteres, mayúscula, minúscula, número y símbolo"
-      );
+      return setError("La contraseña no cumple con los requisitos de seguridad");
     }
 
     setLoading(true);
