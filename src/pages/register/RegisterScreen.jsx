@@ -32,7 +32,7 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
     setSend(true);
     try {
       await signup(data);
-    Swal.fire({
+      Swal.fire({
       title: "¡Bienvenido!",
       html: `
         <div style="text-align: center;">
@@ -75,114 +75,114 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
     >
       <Modal.Body className="p-4">
         <h2 className="register-title mb-4">Crear cuenta</h2>
-              <Form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group className="mb-3">
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Form.Group className="mb-3">
             <Form.Label className="register-label">
               Nombre de usuario *
             </Form.Label>
-                  <Form.Control
-                    type="text"
+            <Form.Control
+              type="text"
               placeholder="Nombre de usuario"
-                    className="register-input"
+              className="register-input"
               isInvalid={!!errors.username}
-                    {...register("username", {
-                      required: "El nombre de usuario es obligatorio",
+              {...register("username", {
+                required: "El nombre de usuario es obligatorio",
                 minLength: { value: 2, message: "Mínimo 2 caracteres" },
-                    })}
-                  />
+              })}
+            />
             {errors.username && (
               <div className="text-danger small mt-1">
                 {errors.username.message}
               </div>
             )}
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label className="register-label">Email *</Form.Label>
-                  <Form.Control
-                    type="email"
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label className="register-label">Email *</Form.Label>
+            <Form.Control
+              type="email"
               placeholder="Usuario@gmail.com"
-                    className="register-input"
+              className="register-input"
               isInvalid={!!errors.email}
-                    {...register("email", {
-                      required: "El email es obligatorio",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              {...register("email", {
+                required: "El email es obligatorio",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   message: "Ingresa un correo válido",
-                      },
-                    })}
-                  />
+                },
+              })}
+            />
             {errors.email && (
               <div className="text-danger small mt-1">
                 {errors.email.message}
               </div>
             )}
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label className="register-label">Contraseña *</Form.Label>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label className="register-label">Contraseña *</Form.Label>
             <ShowPassword
               placeholder="Contraseña"
-                    className="register-input"
+              className="register-input"
               isInvalid={
                 !!errors.password || (password?.length > 0 && force < 99)
               }
-                    {...register("password", {
-                      required: "La contraseña es obligatoria",
-                    })}
-                  />
+              {...register("password", {
+                required: "La contraseña es obligatoria",
+              })}
+            />
             {(errors.password || (password?.length > 0 && force < 99)) && (
               <div className="text-danger small mt-1">
                 {errors.password?.message || "La contraseña aún no es segura"}
-                    </div>
-                  )}
+              </div>
+            )}
             <PasswordStrengthBar
               force={force}
               validations={validations}
               password={password}
             />
-                </Form.Group>
-                <Form.Group className="mb-4">
+          </Form.Group>
+          <Form.Group className="mb-4">
             <Form.Label className="register-label">
               Confirmar contraseña *
             </Form.Label>
             <ShowPassword
-                    placeholder="Repite tu contraseña"
-                    className="register-input"
+              placeholder="Repite tu contraseña"
+              className="register-input"
               isInvalid={!!errors.confirmarPassword}
-                    {...register("confirmarPassword", {
-                      required: "Confirma tu contraseña",
+              {...register("confirmarPassword", {
+                required: "Confirma tu contraseña",
                 validate: (v) =>
                   v === password || "Las contraseñas no coinciden",
-                    })}
-                  />
+              })}
+            />
             {errors.confirmarPassword && (
               <div className="text-danger small mt-1">
                 {errors.confirmarPassword.message}
               </div>
             )}
-                </Form.Group>
+          </Form.Group>
 
-                <Button
-                  type="submit"
-                  className="register-btn w-100"
+          <Button
+            type="submit"
+            className="register-btn w-100"
             disabled={send || force < 99}
-                >
+          >
             {send
               ? "Registrando..."
               : force < 99
                 ? "Registrarse"
                 : "Registrarse"}
-                </Button>
-              </Form>
-              <p className="register-link-text">
-                ¿Ya tienes cuenta?{" "}
-                <span
-                  className="register-link"
-                  onClick={() => onSwitchToLogin && onSwitchToLogin()}
-                  style={{ cursor: "pointer" }}
-                >
-                  Ingresar
-                </span>
-              </p>
+          </Button>
+        </Form>
+        <p className="register-link-text">
+          ¿Ya tienes cuenta?{" "}
+          <span
+            className="register-link"
+            onClick={() => onSwitchToLogin && onSwitchToLogin()}
+            style={{ cursor: "pointer" }}
+          >
+            Ingresar
+          </span>
+        </p>
       </Modal.Body>
     </Modal>
   );
