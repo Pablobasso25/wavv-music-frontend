@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./SubscriptonScreen.css";
 import {
   Container,
@@ -52,7 +52,7 @@ const SubscriptionScreen = () => {
 
       if (initPoint) {
         window.location.href = initPoint;
-      } 
+      }
     } catch (error) {
       console.error("Error al procesar la compra:", error);
       Swal.fire("Error", "No se pudo conectar con Mercado Pago", "error");
@@ -143,11 +143,11 @@ const SubscriptionScreen = () => {
                   border: "none",
                 }}
               >
-                  {isPremium
-                    ? "Tu plan actual"
-                    : loading
-                      ? "Procesando..."
-                      : "Suscribirme ahora"}
+                {isPremium
+                  ? "Tu plan actual"
+                  : loading
+                    ? "Procesando..."
+                    : "Suscribirme ahora"}
               </Button>
             </Card.Body>
           </Card>
