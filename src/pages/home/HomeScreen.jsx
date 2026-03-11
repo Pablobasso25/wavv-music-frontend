@@ -14,7 +14,6 @@ import { getAlbumsRequest, getAlbumByIdRequest } from "../../api/songs";
 
 const HomeScreen = () => {
   const location = useLocation();
-  const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [selectedAlbumData, setSelectedAlbumData] = useState(null);
   const [artists, setArtists] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -24,27 +23,24 @@ const HomeScreen = () => {
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const loadingTimer = setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsLoading(false);
       if (!isAuthenticated) {
         setShowLoginModal(true);
+        setShowRegisterModal(false);
       }
     }, 1000);
-    return () => clearTimeout(loadingTimer);
+    return () => clearTimeout(timer);
   }, [isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated) {
       getSongs();
       loadArtists();
+      setShowLoginModal(false);
+      setShowRegisterModal(false);
     }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      getSongs();
-    }
-  }, [location.pathname]);
+  }, [isAuthenticated, location.pathname]);
 
   const loadArtists = async () => {
     try {
@@ -57,9 +53,7 @@ const HomeScreen = () => {
         albumId: album._id,
       }));
       setArtists(formattedArtists);
-      if (formattedArtists.length > 0) {
-        handleAlbumSelect(formattedArtists[0]);
-      }
+      if (formattedArtists.length > 0) handleAlbumSelect(formattedArtists[0]);
     } catch (error) {
       setArtists([]);
     }
@@ -69,62 +63,17 @@ const HomeScreen = () => {
     try {
       const res = await getAlbumByIdRequest(artist.albumId, 1, 4);
       const albumData = res.data.album;
-
-      const formattedAlbum = {
-        id: albumData._id,
-        name: albumData.name,
-        image: albumData.image,
-        artistName: albumData.artistName,
-        artists: [{ name: albumData.artistName }],
-        tracks: (albumData.tracks || []).map((track) => ({
-          _id: track._id,
-          id: track._id,
-          trackId: track.trackId || track._id,
-          name: track.name,
-          duration_ms: track.duration_ms,
-          preview_url: track.preview_url || track.audio,
-          audio: track.preview_url || track.audio,
-          youtubeUrl: track.preview_url || track.audio,
-          cover: track.cover || albumData.image,
+      setSelectedAlbumData({
+        ...albumData,
+        tracks: (albumData.tracks || []).map((t) => ({
+          ...t,
+          cover: albumData.image,
         })),
         totalPages: res.data.totalPages,
         currentPage: res.data.currentPage,
-      };
-
-      setSelectedAlbumData(formattedAlbum);
-      setSelectedAlbum(artist);
+      });
     } catch (error) {
       setSelectedAlbumData(null);
-    }
-  };
-
-  const handleAlbumPageChange = async (page) => {
-    if (selectedAlbum) {
-      const res = await getAlbumByIdRequest(selectedAlbum.albumId, page, 4);
-      const albumData = res.data.album;
-
-      const formattedAlbum = {
-        id: albumData._id,
-        name: albumData.name,
-        image: albumData.image,
-        artistName: albumData.artistName,
-        artists: [{ name: albumData.artistName }],
-        tracks: (albumData.tracks || []).map((track) => ({
-          _id: track._id,
-          id: track._id,
-          trackId: track.trackId || track._id,
-          name: track.name,
-          duration_ms: track.duration_ms,
-          preview_url: track.preview_url || track.audio,
-          audio: track.preview_url || track.audio,
-          youtubeUrl: track.preview_url || track.audio,
-          cover: track.cover || albumData.image,
-        })),
-        totalPages: res.data.totalPages,
-        currentPage: res.data.currentPage,
-      };
-
-      setSelectedAlbumData(formattedAlbum);
     }
   };
 
@@ -132,37 +81,31 @@ const HomeScreen = () => {
     <>
       {isLoading && (
         <div
+          className="loader-overlay"
           style={{
             position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0, 0, 0, 0.9)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            inset: 0,
+            background: "#000",
             zIndex: 9999,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Cargando...</span>
-          </div>
+          <div className="spinner-border text-primary" />
         </div>
       )}
-
       <LoginScreen
         show={showLoginModal && !isAuthenticated}
-        handleClose={() => {}}
+        handleClose={() => setShowLoginModal(false)}
         onSwitchToRegister={() => {
           setShowLoginModal(false);
           setShowRegisterModal(true);
         }}
       />
-
       <RegisterScreen
         show={showRegisterModal && !isAuthenticated}
-        handleClose={() => {}}
+        handleClose={() => setShowRegisterModal(false)}
         onSwitchToLogin={() => {
           setShowRegisterModal(false);
           setShowLoginModal(true);
@@ -175,10 +118,7 @@ const HomeScreen = () => {
             (showLoginModal || showRegisterModal) && !isAuthenticated
               ? "blur(8px)"
               : "none",
-          pointerEvents:
-            (showLoginModal || showRegisterModal) && !isAuthenticated
-              ? "none"
-              : "auto",
+          transition: "filter 0.3s ease",
         }}
       >
         <NavBar />
@@ -187,18 +127,15 @@ const HomeScreen = () => {
             artistas={artists}
             onAlbumSelect={handleAlbumSelect}
           />
-          <div
-            className="home-content"
-            style={{ minWidth: 0, overflow: "hidden", width: "100%" }}
-          >
+          <div className="home-content">
             {songs.length > 0 && <TrendingSong songs={songs} />}
             <TopSongs
               album={selectedAlbumData}
               fromHome={true}
-              onPageChange={handleAlbumPageChange}
+              onPageChange={handleAlbumSelect}
             />
           </div>
-          <div className="home-player" style={{ width: "100%" }}>
+          <div className="home-player">
             <MusicPlayer />
           </div>
         </div>
@@ -209,3 +146,4 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
+
