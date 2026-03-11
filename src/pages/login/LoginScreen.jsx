@@ -1,40 +1,55 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "./LoginScreen.css";
+import { validateLogin, LOGIN_LIMITS } from "../../utils/authValidations";
 import ShowPassword from "./ShowPassword";
+import "./LoginScreen.css";
+import { Link } from "react-router-dom";
 
 const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
-  const { login, errors: authErrors } = useAuth();
+  const { login, isAuthenticated, errors: authErrors } = useAuth();
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState(null);
+  const [localErrors, setLocalErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    let value = e.target.value;
-    if (e.target.name === "password") {
-      value = value.replace(/[<>\s]/g, "");
-    }
-    setFormData({ ...formData, [e.target.name]: value });
-  };
+  useEffect(() => {
+    if (isAuthenticated) handleClose();
+  }, [isAuthenticated, handleClose]);
 
   useEffect(() => {
     if (!show) {
-      setError(null);
+      setFormData({ email: "", password: "" });
+      setLocalErrors({});
     }
   }, [show]);
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let cleanValue = value;
 
+    if (name === "password") cleanValue = value.replace(/[<>\s]/g, "");
+
+    const maxLength = name === "email" ? LOGIN_LIMITS.email.max : LOGIN_LIMITS.password.max;
+    if (cleanValue.length > maxLength) return;
+
+    setFormData({ ...formData, [name]: cleanValue });
+    if (localErrors[name]) setLocalErrors({ ...localErrors, [name]: null });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formErrors = validateLogin(formData);
+    
+    if (Object.keys(formErrors).length > 0) {
+      setLocalErrors(formErrors);
+      return;
+    }
+
+    setLoading(true);
     try {
       await login(formData);
     } catch (err) {
-      console.error("Error capturado en el componente:", err);
-      if (!err.response) setError("No se pudo conectar con el servidor");
+      console.error("Error en login:", err);
     } finally {
       setLoading(false);
     }
@@ -46,19 +61,18 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
       onHide={handleClose}
       centered
       backdrop="static"
-      keyboard={false}
-      dialogClassName="login-modal-dialog"
       contentClassName="login-modal-content"
-      backdropClassName="modal-glass-backdrop"
     >
-      <Modal.Body className="login-modal-body">
-        <h2 className="login-title">Iniciar sesión</h2>
-
-        {(error || (authErrors && authErrors.length > 0)) && (
-          <Alert variant="danger">{error || authErrors[0]}</Alert>
+      <Modal.Body className="login-modal-body p-4">
+        <h2 className="login-title mb-4 text-center text-white">Iniciar sesión</h2>
+        
+        {authErrors && authErrors.length > 0 && (
+          <Alert variant="danger" className="py-2 text-center">
+            {typeof authErrors[0] === 'object' ? authErrors[0].message : authErrors[0]}
+          </Alert>
         )}
 
-        <Form onSubmit={handleSubmit}>
+        <Form noValidate onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label className="login-label">Email</Form.Label>
             <Form.Control
@@ -67,39 +81,37 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
               placeholder="Usuario@gmail.com"
               value={formData.email}
               onChange={handleChange}
-              required
+              isInvalid={!!localErrors.email}
               className="login-input"
             />
+            <Form.Control.Feedback type="invalid">{localErrors.email}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-4">
             <Form.Label className="login-label">Contraseña</Form.Label>
             <ShowPassword
               name="password"
+              placeholder="Ingresa tu contraseña"
               value={formData.password}
               onChange={handleChange}
-              required
+              isInvalid={!!localErrors.password}
               className="login-input"
-              placeholder="Contraseña"
             />
+            {localErrors.password && <div className="text-danger small mt-1">{localErrors.password}</div>}
           </Form.Group>
 
-          <Button type="submit" className="login-btn w-100" disabled={loading}>
+          <Button type="submit" className="login-btn w-100 py-2 fw-bold" disabled={loading}>
             {loading ? "Iniciando sesión..." : "Ingresar"}
           </Button>
         </Form>
 
-        <p className="login-register-text">
+        <p className="login-register-text mt-4 text-center">
           ¿No tienes cuenta?{" "}
-          <span
-            className="login-register-link"
-            onClick={() => onSwitchToRegister && onSwitchToRegister()}
-            style={{ cursor: "pointer" }}
-          >
+          <span className="login-register-link fw-bold" onClick={onSwitchToRegister} style={{ cursor: "pointer" }}>
             Regístrate aquí
           </span>
         </p>
-        <p className="login-register-text">
+          <p className="login-register-text">
           <Link
             to="/forgot-password"
             className="login-register-link"

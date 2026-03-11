@@ -4,22 +4,12 @@ import {
   Container,
   Row,
   Col,
-  Card,
   Form,
   Button,
   Alert,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
-const validateEmail = (email) => {
-  const trimmed = email.trim();
-
-  return (
-    trimmed.length >= 5 &&
-    trimmed.length <= 50 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
-  );
-};
+import "../login/LoginScreen.css"; 
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -29,34 +19,23 @@ function ForgotPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setMessage("");
     setError("");
 
     const cleanEmail = email.trim();
 
-    if (!cleanEmail) {
-      return setError("El email es obligatorio");
-    }
-
+    if (!cleanEmail) return setError("El email es obligatorio");
     if (cleanEmail.length < 5 || cleanEmail.length > 50) {
       return setError("El email debe tener entre 5 y 50 caracteres");
     }
 
-    if (!validateEmail(cleanEmail)) {
-      return setError("El email no es válido");
-    }
-
     setLoading(true);
-
     try {
       const res = await forgotPasswordRequest(cleanEmail);
       setMessage(res.data.message);
-      setEmail(""); 
+      setEmail("");
     } catch (error) {
-      setError(
-        error.response?.data?.message || "Error al enviar la solicitud"
-      );
+      setError(error.response?.data?.message || "Error al enviar la solicitud");
     } finally {
       setLoading(false);
     }
@@ -65,53 +44,47 @@ function ForgotPassword() {
   return (
     <Container className="d-flex align-items-center justify-content-center vh-100">
       <Row className="w-100 justify-content-center">
-        <Col md={6} lg={5}>
-          <Card className="bg-dark text-white border-secondary shadow">
-            <Card.Header
-              className="border-secondary text-center pt-4 pb-2"
-              style={{ background: "transparent" }}
-            >
-              <h3>Recuperar contraseña</h3>
-            </Card.Header>
-            <Card.Body className="p-4">
-              {message && <Alert variant="success">{message}</Alert>}
-              {error && <Alert variant="danger">{error}</Alert>}
+        <Col md={6} lg={4}>
+          <div className="login-modal-content p-4 shadow">
+            <div className="login-modal-body">
+              <h2 className="login-title mb-4 text-center">Recuperar cuenta</h2>
+              
+              <p className="text-white-50 text-center mb-4 small">
+                Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.
+              </p>
+
+              {message && <Alert variant="success" className="py-2 small">{message}</Alert>}
+              {error && <Alert variant="danger" className="py-2 small">{error}</Alert>}
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-4">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label className="login-label">Email</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="Tu email"
+                    placeholder="Usuario@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-dark text-white border-secondary"
+                    className="login-input"
                     required
-                    minLength={5}
-                    maxLength={50}
                   />
                 </Form.Group>
 
                 <Button
                   type="submit"
-                  className="w-100 mb-3"
+                  className="login-btn w-100 fw-bold"
                   disabled={loading}
-                  style={{
-                    backgroundColor: "#6f42c1",
-                    borderColor: "#6f42c1",
-                  }}
                 >
-                  {loading ? "Enviando..." : "Enviar"}
+                  {loading ? "Enviando..." : "Enviar enlace"}
                 </Button>
               </Form>
 
-              <div className="text-center mt-3">
-                <Link to="/login" className="text-decoration-none text-light">
-                  <small>Volver al inicio de sesión</small>
+              <div className="text-center mt-4">
+                <Link to="/" className="login-register-link small">
+                  Volver al inicio de sesión
                 </Link>
               </div>
-            </Card.Body>
-          </Card>
+            </div>
+          </div>
         </Col>
       </Row>
     </Container>
