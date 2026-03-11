@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-import { validateLogin, LOGIN_LIMITS } from "../../utils/authValidations";
+import { validateLogin, LOGIN_LIMITS } from "../../utils/authValidation";
 import ShowPassword from "./ShowPassword";
 import "./LoginScreen.css";
 import { Link } from "react-router-dom";
