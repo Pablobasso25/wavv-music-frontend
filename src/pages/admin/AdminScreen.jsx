@@ -83,6 +83,7 @@ const AdminScreen = () => {
             {renderNavLink("artists", "bi-mic-fill", "Artistas")}
             {renderNavLink("plans", "bi-credit-card-fill", "Planes")}
           </Nav>
+
           {(currentTab === "songs" || currentTab === "artists") && (
             <Button
               variant="success"
@@ -96,22 +97,26 @@ const AdminScreen = () => {
         </div>
       </div>
       <Card
-        className="border-0 shadow-lg overflow-auto"
+        className="border-0 shadow-lg"
         style={{
           backgroundColor: "#202026",
           borderRadius: "1rem",
-          maxHeight: "calc(100vh - 300px)",
+          minHeight: "400px",
         }}
       >
         <Card.Body className="p-0">
-          {currentTab === "users" && (
-            <UsersTable users={users} setUsers={setUsers} />
-          )}
-          {currentTab === "songs" && (
-            <SongsTable songs={songs} setSongs={setSongs} />
-          )}
-          {currentTab === "artists" && (
-            <ArtistsTable artists={artists} setArtists={setArtists} />
+          {loading ? (
+            <div className="d-flex flex-column align-items-center justify-content-center py-5">
+              <Spinner animation="border" variant="primary" className="mb-2" />
+              <span className="text-secondary">Cargando {currentTab}...</span>
+            </div>
+          ) : (
+            <div className="overflow-auto" style={{ maxHeight: "calc(100vh - 350px)" }}>
+              {currentTab === "users" && <UsersTable users={users} setUsers={setUsers} />}
+              {currentTab === "songs" && <SongsTable songs={songs} setSongs={setSongs} />}
+              {currentTab === "artists" && <ArtistsTable artists={artists} setArtists={setArtists} />}
+              {currentTab === "plans" && <PlansManager plans={plans} reloadPlans={loadData} />}
+            </div>
           )}
         </Card.Body>
       </Card>
@@ -119,10 +124,6 @@ const AdminScreen = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
         currentTab={currentTab}
-        songs={songs}
-        setSongs={setSongs}
-        artists={artists}
-        setArtists={setArtists}
         reloadData={loadData}
       />
     </Container>
