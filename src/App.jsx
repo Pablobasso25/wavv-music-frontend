@@ -17,6 +17,7 @@ import ResetPassword from "./pages/login/ResetPassword.jsx";
 import ScrollToTop from "./components/scrollToTop/ScrollToTop.jsx";
 import LoginScreen from "./pages/login/LoginScreen.jsx";
 import RegisterScreen from "./pages/register/RegisterScreen.jsx";
+import PaymentSuccess from "./pages/subscription/PaymentSuccess.jsx";
 
 const App = () => {
   const [welcome, setWelcome] = useState(true);
@@ -76,6 +77,16 @@ const App = () => {
             <ProtectedRoute>
               <NavBar />
               <SubscriptionScreen />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-success"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <PaymentSuccess />
               <Footer />
             </ProtectedRoute>
           }
