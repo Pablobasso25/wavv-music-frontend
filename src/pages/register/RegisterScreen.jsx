@@ -1,27 +1,19 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Modal } from "react-bootstrap";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Form,
-  Button,
-  Alert,
-  ProgressBar,
-  ListGroup,
-  Badge,
-} from "react-bootstrap";
+import { Modal, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
+import { validatePassword } from "../../utils/passwordUtils";
+import PasswordStrengthBar from "./PasswordStrengthBar";
+import ShowPassword from "../login/ShowPassword";
 import "./RegisterScreen.css";
 
 const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
   const [send, setSend] = useState(false);
-  const [errorEmail, setErrorEmail] = useState("");
-  const { signup, errors: registerErrors } = useAuth();
+  const { signup } = useAuth();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -29,59 +21,19 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
     formState: { errors },
   } = useForm({
     mode: "onChange",
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmarPassword: "",
-    },
   });
-  const navigate = useNavigate();
-  const password = watch("password");
-  const username = watch("username");
-  const validatePassword = (password) => {
-    if (!password) return { force: 0, validations: {} };
-    const validations = {
-      longitud: password.length >= 8,
-      mayuscula: /[A-Z]/.test(password),
-      minuscula: /[a-z]/.test(password),
-      numero: /\d/.test(password),
-      simbolo: /[!@#$%^&*(),.?":{}|_/]/.test(password),
-      noEspacios: !/\s/.test(password),
-      longitudMaxima: password.length <= 20,
-      diferenteAlUsername: password !== username,
-      noCaracteresPeligrosos: !/[<>]/.test(password),
-      noPalabrasComunes: !/(password|123456|admin|12345678|123456789)/i.test(
-        password,
-      ),
-    };
-    let force = 0;
-    force += Math.min(password.length * 4, 32);
-    if (validations.longitud) force += 10;
-    if (validations.mayuscula) force += 10;
-    if (validations.minuscula) force += 10;
-    if (validations.numero) force += 10;
-    if (validations.simbolo) force += 18;
-    if (validations.noEspacios) force += 5;
-    if (validations.diferenteAlUsername) force += 5;
-    return {
-      force: Math.min(force, 100),
-      validations,
-    };
-  };
-  const { force: forcePassword, validations } = validatePassword(password);
-  const informationForce = () => {
-    if (forcePassword === 0)
-      return { texto: "No ingresado", variant: "secondary" };
-    if (forcePassword < 50) return { texto: "Débil", variant: "danger" };
-    if (forcePassword < 80) return { texto: "Regular", variant: "warning" };
-    if (forcePassword < 99) return { texto: "Buena", variant: "info" };
-    return { texto: "Segura", variant: "success" };
-  };
-  const infoForce = informationForce();
-  const showSuccessAlert = () => {
-    Swal.fire({
-      title: "✔️ ¡Bienvenido!",
+
+  const password = watch("password", "");
+  const username = watch("username", "");
+
+  const { force, validations } = validatePassword(password, username);
+
+  const onSubmit = async (data) => {
+    setSend(true);
+    try {
+      await signup(data);
+      Swal.fire({
+      title: "¡Bienvenido!",
       html: `
         <div style="text-align: center;">
           <p style="margin-bottom: 10px; font-size: 16px;">Tu cuenta ha sido creada con éxito en <strong>Wavv Music</strong>.</p>
@@ -99,317 +51,138 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
     }).then(() => {
       navigate("/");
     });
-  };
-  const onSubmit = async (data) => {
-    if (forcePassword < 99) {
-      Swal.fire({
-        title: "🔒 Contraseña insuficiente",
-        text: "La contraseña debe cumplir con todos los requisitos de seguridad",
-        icon: "warning",
-        background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-        color: "#ffffff",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#ffc107",
-      });
-      return;
-    }
-    setSend(true);
-    try {
-      await signup(data);
-      showSuccessAlert();
     } catch (error) {
-      const serverErrors = error.response?.data;
-      let errorMessage = "Error de conexión con el servidor";
-      if (Array.isArray(serverErrors)) {
-        errorMessage = serverErrors[0];
-      } else if (typeof serverErrors === "string") {
-        errorMessage = serverErrors;
-      } else if (serverErrors?.message) {
-        errorMessage = serverErrors.message;
-      }
       Swal.fire({
-        title: " Error de registro",
-        text: errorMessage,
+        title: "Error",
+        text: error.response?.data[0] || "Error en el servidor",
         icon: "error",
-        background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-        color: "#ffffff",
+        background: "#1a1a1a",
+        color: "#fff",
       });
     } finally {
       setSend(false);
     }
   };
+
   return (
     <Modal
       show={show}
       onHide={handleClose}
       centered
       backdrop="static"
-      keyboard={false}
       size="lg"
       contentClassName="register-modal-content"
     >
       <Modal.Body className="p-4">
-        <h2 className="register-title">Crear cuenta</h2>
-              {errorEmail && (
-                <Alert variant="danger" className="mb-4">
-                  {errorEmail}
-                </Alert>
-              )}
-              <Form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="register-label">Nombre de usuario *</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Usuario"
-                    className="register-input"
-                    isInvalid={errors.username}
-                    maxLength={30}
-                    {...register("username", {
-                      required: "El nombre de usuario es obligatorio",
-                      minLength: {
-                        value: 2,
-                        message: "Mínimo 2 caracteres",
-                      },
-                      maxLength: {
-                        value: 30,
-                        message: "Máximo 30 caracteres",
-                      },
-                      pattern: {
-                        value: /^[a-zA-Z0-9_]+$/,
-                        message: "Solo letras, números y guiones bajos",
-                      },
-                    })}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.username && errors.username.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label className="register-label">Email *</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="ejemplo@gmail.com"
-                    className="register-input"
-                    isInvalid={errors.email}
-                    maxLength={50}
-                    {...register("email", {
-                      required: "El email es obligatorio",
-                      maxLength: {
-                        value: 50,
-                        message: "El email no puede tener más de 50 caracteres",
-                      },
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Por favor ingresa un email válido",
-                      },
-                    })}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email && errors.email.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label className="register-label">Contraseña *</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Contraseña (8-20 caracteres)"
-                    className="register-input"
-                    isInvalid={errors.password && forcePassword < 99}
-                    maxLength={20}
-                    {...register("password", {
-                      required: "La contraseña es obligatoria",
-                      minLength: {
-                        value: 8,
-                        message:
-                          "La contraseña debe tener al menos 8 caracteres",
-                      },
-                      maxLength: {
-                        value: 20,
-                        message:
-                          "La contraseña no puede tener más de 20 caracteres",
-                      },
-                      onChange: (event) => {
-                        event.target.value = event.target.value.replace(
-                          /[<>\s]/g,
-                          "",
-                        );
-                      },
-                      validate: {
-                        fuerza: () =>
-                          forcePassword >= 99 ||
-                          (forcePassword > 0 &&
-                            "La contraseña debe ser SEGURA"),
-                        noEspacios: (value) =>
-                          !/\s/.test(value) ||
-                          "La contraseña no puede contener espacios",
-                        diferenteAlUsername: (value) => {
-                          const currentUsername = watch("username");
-                          return (
-                            value !== currentUsername ||
-                            "La contraseña no puede ser igual al nombre de usuario"
-                          );
-                        },
-                        noCaracteresPeligrosos: (value) =>
-                          !/[<>]/.test(value) ||
-                          "La contraseña no puede contener < o >",
-                        noPalabrasComunes: (value) =>
-                          !/(password|123456|admin|qwerty)/i.test(value) ||
-                          "La contraseña es muy común",
-                      },
-                    })}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.password &&
-                      forcePassword < 99 &&
-                      errors.password.message}
-                  </Form.Control.Feedback>
-                  {password && (
-                    <div className="text-end mt-1">
-                      <small
-                        className={
-                          password.length > 20 ? "text-danger" : "text-white-50"
-                        }
-                      >
-                        {password.length}/20 caracteres
-                      </small>
-                    </div>
-                  )}
-                  {password && (
-                    <div className="mt-2">
-                      <div className="d-flex justify-content-between align-items-center mb-1">
-                        <small className="text-white-50">
-                          Fuerza de la contraseña:
-                        </small>
-                        <Badge bg={infoForce.variant}>{infoForce.texto}</Badge>
-                      </div>
-                      <ProgressBar
-                        now={forcePassword}
-                        variant={infoForce.variant}
-                        className="mb-2"
-                      />
-                      {Object.keys(validations).some(
-                        (key) => !validations[key],
-                      ) &&
-                        forcePassword < 99 && (
-                          <div
-                            style={{ maxHeight: "100px", overflowY: "auto" }}
-                            className="border border-warning rounded p-2"
-                          >
-                            <div className="row g-1">
-                              {!validations.longitud && (
-                                <div className="col-12">
-                                  <small className="text-danger">
-                                    ❌ Mínimo 8 caracteres
-                                  </small>
-                                </div>
-                              )}
-                              {!validations.mayuscula && (
-                                <div className="col-12">
-                                  <small className="text-danger">
-                                    ❌ Al menos una mayúscula
-                                  </small>
-                                </div>
-                              )}
-                              {!validations.minuscula && (
-                                <div className="col-12">
-                                  <small className="text-danger">
-                                    ❌ Al menos una minúscula
-                                  </small>
-                                </div>
-                              )}
-                              {!validations.numero && (
-                                <div className="col-12">
-                                  <small className="text-danger">
-                                    ❌ Al menos un número
-                                  </small>
-                                </div>
-                              )}
-                              {!validations.simbolo && (
-                                <div className="col-12">
-                                  <small className="text-danger">
-                                    ❌ Al menos un símbolo (!@#$% etc.)
-                                  </small>
-                                </div>
-                              )}
-                              {!validations.noEspacios && (
-                                <div className="col-12">
-                                  <small className="text-danger">
-                                    ❌ Sin espacios
-                                  </small>
-                                </div>
-                              )}
-                              {!validations.diferenteAlUsername && (
-                                <div className="col-12">
-                                  <small className="text-danger">
-                                    ❌ Diferente al usuario
-                                  </small>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      {forcePassword >= 99 && (
-                        <div className="border border-success rounded p-2 text-center">
-                          <small className="text-success ">
-                            ✅ Contraseña segura
-                          </small>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </Form.Group>
-                <Form.Group className="mb-4">
-                  <Form.Label className="register-label">Confirmar contraseña *</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Repite tu contraseña"
-                    className="register-input"
-                    isInvalid={errors.confirmarPassword}
-                    maxLength={20}
-                    {...register("confirmarPassword", {
-                      required: "Confirma tu contraseña",
-                      onChange: (event) => {
-                        event.target.value = event.target.value.replace(
-                          /[<>\s]/g,
-                          "",
-                        );
-                      },
-                      validate: (value) =>
-                        value === password || "Las contraseñas no coinciden",
-                    })}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.confirmarPassword &&
-                      errors.confirmarPassword.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Button
-                  type="submit"
-                  className="register-btn w-100"
-                  disabled={send || forcePassword < 99}
-                >
-                  {send ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" />
-                      Registrando...
-                    </>
-                  ) : forcePassword < 99 ? (
-                    "🔒 Contraseña debe ser SEGURA"
-                  ) : (
-                    "Registrarse"
-                  )}
-                </Button>
-              </Form>
-              <p className="register-link-text">
-                ¿Ya tienes cuenta?{" "}
-                <span
-                  className="register-link"
-                  onClick={() => onSwitchToLogin && onSwitchToLogin()}
-                  style={{ cursor: "pointer" }}
-                >
-                  Ingresar
-                </span>
-              </p>
+        <h2 className="register-title mb-4">Crear cuenta</h2>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Form.Group className="mb-3">
+            <Form.Label className="register-label">
+              Nombre de usuario *
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nombre de usuario"
+              className="register-input"
+              isInvalid={!!errors.username}
+              {...register("username", {
+                required: "El nombre de usuario es obligatorio",
+                minLength: { value: 2, message: "Mínimo 2 caracteres" },
+              })}
+            />
+            {errors.username && (
+              <div className="text-danger small mt-1">
+                {errors.username.message}
+              </div>
+            )}
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label className="register-label">Email *</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Usuario@gmail.com"
+              className="register-input"
+              isInvalid={!!errors.email}
+              {...register("email", {
+                required: "El email es obligatorio",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Ingresa un correo válido",
+                },
+              })}
+            />
+            {errors.email && (
+              <div className="text-danger small mt-1">
+                {errors.email.message}
+              </div>
+            )}
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label className="register-label">Contraseña *</Form.Label>
+            <ShowPassword
+              placeholder="Contraseña"
+              className="register-input"
+              isInvalid={
+                !!errors.password || (password?.length > 0 && force < 99)
+              }
+              {...register("password", {
+                required: "La contraseña es obligatoria",
+              })}
+            />
+            {(errors.password || (password?.length > 0 && force < 99)) && (
+              <div className="text-danger small mt-1">
+                {errors.password?.message || "La contraseña aún no es segura"}
+              </div>
+            )}
+            <PasswordStrengthBar
+              force={force}
+              validations={validations}
+              password={password}
+            />
+          </Form.Group>
+          <Form.Group className="mb-4">
+            <Form.Label className="register-label">
+              Confirmar contraseña *
+            </Form.Label>
+            <ShowPassword
+              placeholder="Repite tu contraseña"
+              className="register-input"
+              isInvalid={!!errors.confirmarPassword}
+              {...register("confirmarPassword", {
+                required: "Confirma tu contraseña",
+                validate: (v) =>
+                  v === password || "Las contraseñas no coinciden",
+              })}
+            />
+            {errors.confirmarPassword && (
+              <div className="text-danger small mt-1">
+                {errors.confirmarPassword.message}
+              </div>
+            )}
+          </Form.Group>
+
+          <Button
+            type="submit"
+            className="register-btn w-100"
+            disabled={send || force < 99}
+          >
+            {send
+              ? "Registrando..."
+              : force < 99
+                ? "Registrarse"
+                : "Registrarse"}
+          </Button>
+        </Form>
+        <p className="register-link-text">
+          ¿Ya tienes cuenta?{" "}
+          <span
+            className="register-link"
+            onClick={() => onSwitchToLogin && onSwitchToLogin()}
+            style={{ cursor: "pointer" }}
+          >
+            Ingresar
+          </span>
+        </p>
       </Modal.Body>
     </Modal>
   );
