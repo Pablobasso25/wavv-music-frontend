@@ -1,16 +1,9 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { resetPasswordRequest } from "../../api/auth";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Alert,
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import ShowPassword from "./ShowPassword";
-import "../login/LoginScreen.css"; 
+import "../login/LoginScreen.css";
 
 const validatePassword = (password) => {
   return (
@@ -60,7 +53,9 @@ function ResetPassword() {
 
     if (!password) return setError("La contraseña es obligatoria");
     if (!validatePassword(password)) {
-      return setError("La contraseña no cumple con los requisitos de seguridad");
+      return setError(
+        "La contraseña no cumple con los requisitos de seguridad",
+      );
     }
 
     setLoading(true);
@@ -69,7 +64,9 @@ function ResetPassword() {
       setMessage(res.data.message);
       setTimeout(() => navigate("/"), 3000);
     } catch (error) {
-      setError(error.response?.data?.message || "Error al cambiar la contraseña");
+      setError(
+        error.response?.data?.message || "Error al cambiar la contraseña",
+      );
     } finally {
       setLoading(false);
     }
@@ -82,17 +79,27 @@ function ResetPassword() {
           <div className="login-modal-content p-4 shadow">
             <div className="login-modal-body">
               <h2 className="login-title mb-4 text-center">Nueva contraseña</h2>
-              
+
               <p className="text-white-50 text-center mb-4 small">
                 Crea una nueva contraseña segura para tu cuenta de Wavv Music.
               </p>
 
-              {message && <Alert variant="success" className="py-2 small text-center">{message}</Alert>}
-              {error && <Alert variant="danger" className="py-2 small text-center">{error}</Alert>}
+              {message && (
+                <Alert variant="success" className="py-2 small text-center">
+                  {message}
+                </Alert>
+              )}
+              {error && (
+                <Alert variant="danger" className="py-2 small text-center">
+                  {error}
+                </Alert>
+              )}
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-4">
-                  <Form.Label className="login-label">Nueva contraseña</Form.Label>
+                  <Form.Label className="login-label">
+                    Nueva contraseña
+                  </Form.Label>
                   <ShowPassword
                     name="password"
                     value={password}
@@ -100,12 +107,17 @@ function ResetPassword() {
                     className="login-input"
                     placeholder="Contraseña segura"
                     required
+                    minLength={8}
+                    maxLength={20}
                     isInvalid={!!errors.password}
                   />
 
                   {errors.password && (
-                    <div className="text-danger small mt-2" style={{ fontSize: '0.75rem' }}>
-                       {errors.password}
+                    <div
+                      className="text-danger small mt-2"
+                      style={{ fontSize: "0.75rem" }}
+                    >
+                      {errors.password}
                     </div>
                   )}
                 </Form.Group>
