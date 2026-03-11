@@ -33,24 +33,24 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
     try {
       await signup(data);
       Swal.fire({
-      title: "¡Bienvenido!",
-      html: `
+        title: "¡Bienvenido!",
+        html: `
         <div style="text-align: center;">
           <p style="margin-bottom: 10px; font-size: 16px;">Tu cuenta ha sido creada con éxito en <strong>Wavv Music</strong>.</p>
           <p style="margin-bottom: 0; font-size: 14px; color: #b0b0b0;">¡Te hemos enviado un email de bienvenida! Entrando a Wavv Music...</p>
         </div>
       `,
-      icon: "success",
-      background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-      color: "#ffffff",
-      iconColor: "#6f42c1",
-      confirmButtonText: "¡Empezar a escuchar!",
-      confirmButtonColor: "#6f42c1",
-      timer: 3000,
-      timerProgressBar: true,
-    }).then(() => {
-      navigate("/");
-    });
+        icon: "success",
+        background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+        color: "#ffffff",
+        iconColor: "#6f42c1",
+        confirmButtonText: "¡Empezar a escuchar!",
+        confirmButtonColor: "#6f42c1",
+        timer: 3000,
+        timerProgressBar: true,
+      }).then(() => {
+        navigate("/");
+      });
     } catch (error) {
       Swal.fire({
         title: "Error",
@@ -85,9 +85,11 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
               placeholder="Nombre de usuario"
               className="register-input"
               isInvalid={!!errors.username}
+              maxLength={30}
               {...register("username", {
                 required: "El nombre de usuario es obligatorio",
                 minLength: { value: 2, message: "Mínimo 2 caracteres" },
+                maxLength: { value: 30, message: "Máximo 30 caracteres" },
               })}
             />
             {errors.username && (
@@ -103,11 +105,14 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
               placeholder="Usuario@gmail.com"
               className="register-input"
               isInvalid={!!errors.email}
+              maxLength={50}
               {...register("email", {
                 required: "El email es obligatorio",
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   message: "Ingresa un correo válido",
+                  minLength: { value: 5, message: "Mínimo 5 caracteres" },
+                  maxLength: { value: 50, message: "Máximo 50 caracteres" },
                 },
               })}
             />
@@ -122,11 +127,14 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
             <ShowPassword
               placeholder="Contraseña"
               className="register-input"
+              maxLength={20}
               isInvalid={
                 !!errors.password || (password?.length > 0 && force < 99)
               }
               {...register("password", {
                 required: "La contraseña es obligatoria",
+                 minLength: { value: 8, message: "Mínimo 8 caracteres" },
+                  maxLength: { value: 20, message: "Máximo 20 caracteres" },
               })}
             />
             {(errors.password || (password?.length > 0 && force < 99)) && (
@@ -148,8 +156,10 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
               placeholder="Repite tu contraseña"
               className="register-input"
               isInvalid={!!errors.confirmarPassword}
+              maxLength={20}
               {...register("confirmarPassword", {
                 required: "Confirma tu contraseña",
+                maxLength: { value: 20, message: "Máximo 20 caracteres" },
                 validate: (v) =>
                   v === password || "Las contraseñas no coinciden",
               })}
