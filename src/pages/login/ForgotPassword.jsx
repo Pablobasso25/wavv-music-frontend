@@ -1,121 +1,130 @@
-import React, { useState } from "react";
-import { forgotPasswordRequest } from "../../api/auth";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Form,
-  Button,
-  Alert,
-} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form, Alert } from "react-bootstrap";
+import { useAuth } from "../../context/AuthContext";
+import { validateLogin, LOGIN_LIMITS } from "../../utils/authValidation";
+import ShowPassword from "./ShowPassword";
+import "./LoginScreen.css";
 import { Link } from "react-router-dom";
 
-const validateEmail = (email) => {
-  const trimmed = email.trim();
-
-  return (
-    trimmed.length >= 5 &&
-    trimmed.length <= 50 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
-  );
-};
-
-function ForgotPassword() {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
+  const { login, isAuthenticated, errors: authErrors } = useAuth();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [localErrors, setLocalErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) handleClose();
+  }, [isAuthenticated, handleClose]);
+
+  useEffect(() => {
+    if (!show) {
+      setFormData({ email: "", password: "" });
+      setLocalErrors({});
+    }
+  }, [show]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let cleanValue = value;
+
+    if (name === "password") cleanValue = value.replace(/[<>\s]/g, "");
+
+    const maxLength = name === "email" ? LOGIN_LIMITS.email.max : LOGIN_LIMITS.password.max;
+    if (cleanValue.length > maxLength) return;
+
+    setFormData({ ...formData, [name]: cleanValue });
+    if (localErrors[name]) setLocalErrors({ ...localErrors, [name]: null });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setMessage("");
-    setError("");
-
-    const cleanEmail = email.trim();
-
-    if (!cleanEmail) {
-      return setError("El email es obligatorio");
-    }
-
-    if (cleanEmail.length < 5 || cleanEmail.length > 50) {
-      return setError("El email debe tener entre 5 y 50 caracteres");
-    }
-
-    if (!validateEmail(cleanEmail)) {
-      return setError("El email no es válido");
+    const formErrors = validateLogin(formData);
+    
+    if (Object.keys(formErrors).length > 0) {
+      setLocalErrors(formErrors);
+      return;
     }
 
     setLoading(true);
-
     try {
-      const res = await forgotPasswordRequest(cleanEmail);
-      setMessage(res.data.message);
-      setEmail(""); 
-    } catch (error) {
-      setError(
-        error.response?.data?.message || "Error al enviar la solicitud"
-      );
+      await login(formData);
+    } catch (err) {
+      console.error("Error en login:", err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center vh-100">
-      <Row className="w-100 justify-content-center">
-        <Col md={6} lg={5}>
-          <Card className="bg-dark text-white border-secondary shadow">
-            <Card.Header
-              className="border-secondary text-center pt-4 pb-2"
-              style={{ background: "transparent" }}
-            >
-              <h3>Recuperar contraseña</h3>
-            </Card.Header>
-            <Card.Body className="p-4">
-              {message && <Alert variant="success">{message}</Alert>}
-              {error && <Alert variant="danger">{error}</Alert>}
+    <Modal
+      show={show}
+      onHide={handleClose}
+      centered
+      backdrop="static"
+      contentClassName="login-modal-content"
+    >
+      <Modal.Body className="login-modal-body p-4">
+        <h2 className="login-title mb-4 text-center text-white">Iniciar sesión</h2>
+        
+        {authErrors && authErrors.length > 0 && (
+          <Alert variant="danger" className="py-2 text-center">
+            {typeof authErrors[0] === 'object' ? authErrors[0].message : authErrors[0]}
+          </Alert>
+        )}
 
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-4">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="Tu email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-dark text-white border-secondary"
-                    required
-                    minLength={5}
-                    maxLength={50}
-                  />
-                </Form.Group>
+        <Form noValidate onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label className="login-label">Email</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              placeholder="Usuario@gmail.com"
+              value={formData.email}
+              onChange={handleChange}
+              isInvalid={!!localErrors.email}
+              className="login-input"
+              maxLength={50}
+            />
+            <Form.Control.Feedback type="invalid">{localErrors.email}</Form.Control.Feedback>
+          </Form.Group>
 
-                <Button
-                  type="submit"
-                  className="w-100 mb-3"
-                  disabled={loading}
-                  style={{
-                    backgroundColor: "#6f42c1",
-                    borderColor: "#6f42c1",
-                  }}
-                >
-                  {loading ? "Enviando..." : "Enviar"}
-                </Button>
-              </Form>
+          <Form.Group className="mb-4">
+            <Form.Label className="login-label">Contraseña</Form.Label>
+            <ShowPassword
+              name="password"
+              placeholder="Ingresa tu contraseña"
+              value={formData.password}
+              onChange={handleChange}
+              isInvalid={!!localErrors.password}
+              className="login-input"
+              maxLength={20}
+            />
+            {localErrors.password && <div className="text-danger small mt-1">{localErrors.password}</div>}
+          </Form.Group>
 
-              <div className="text-center mt-3">
-                <Link to="/login" className="text-decoration-none text-light">
-                  <small>Volver al inicio de sesión</small>
-                </Link>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+          <Button type="submit" className="login-btn w-100 py-2 fw-bold" disabled={loading}>
+            {loading ? "Iniciando sesión..." : "Ingresar"}
+          </Button>
+        </Form>
+
+        <p className="login-register-text mt-4 text-center">
+          ¿No tienes cuenta?{" "}
+          <span className="login-register-link fw-bold" onClick={onSwitchToRegister} style={{ cursor: "pointer" }}>
+            Regístrate aquí
+          </span>
+        </p>
+          <p className="login-register-text">
+          <Link
+            to="/forgot-password"
+            className="login-register-link"
+            onClick={handleClose}
+          >
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </p>
+      </Modal.Body>
+    </Modal>
   );
-}
+};
 
-export default ForgotPassword;
+export default LoginScreen;
