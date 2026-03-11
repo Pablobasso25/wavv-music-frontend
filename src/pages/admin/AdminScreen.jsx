@@ -5,10 +5,12 @@ import {
   getAlbumsRequest,
   getUsersRequest,
 } from "../../api/songs";
+import { getPlansRequest } from "../../api/payment";
 import UsersTable from "./components/UsersTable";
 import SongsTable from "./components/SongsTable";
 import ArtistsTable from "./components/ArtistsTable";
 import SearchModal from "./components/SearchModal";
+import PlansManager from "./components/PlansManager";
 
 const AdminScreen = () => {
   const [currentTab, setCurrentTab] = useState("users");
