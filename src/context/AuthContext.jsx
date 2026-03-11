@@ -16,11 +16,21 @@ export const AuthProvider = ({ children }) => {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    if (errors.length > 0) {
+      const timer = setTimeout(() => {
+        setErrors([]);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [errors]);
+
   const signup = async (user) => {
     try {
       const res = await registerRequest(user);
       setUser(res.data);
       setIsAuthenticated(true);
+      setErrors([]);
       return res.data;
     } catch (error) {
       setErrors(error.response.data);
@@ -63,10 +73,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await logoutRequest();
-    Cookies.remove("token");
-    setIsAuthenticated(false);
-    setUser(null);
+    try {
+      await logoutRequest();
+    } catch {
+    } finally {
+      Cookies.remove("token");
+      setIsAuthenticated(false);
+      setUser(null);
+      setErrors([]);
+    }
   };
 
   const refreshUser = async () => {
@@ -75,9 +90,7 @@ export const AuthProvider = ({ children }) => {
       if (res.data) {
         setUser(res.data);
       }
-    } catch (error) {
-      console.error("Error al encontrar usuario:", error);
-    }
+    } catch {}
   };
 
   useEffect(() => {
@@ -115,6 +128,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         errors,
         loading,
+        setErrors,
       }}
     >
       {children}
