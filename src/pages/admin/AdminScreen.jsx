@@ -58,7 +58,7 @@ const AdminScreen = () => {
         }`}
         style={{ transition: "all 0.3s", fontSize: "0.85rem", border: "none" }}
       >
-        <i className={bi `${icon} me-1 me-xl-2`}></i>
+        <i className={`bi ${icon} me-1 me-xl-2`}></i>
         <span className="d-none d-xl-inline">{label}</span>
       </Nav.Link>
     </Nav.Item>

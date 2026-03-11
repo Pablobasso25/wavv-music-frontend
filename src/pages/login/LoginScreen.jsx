@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
-import { validateLogin, LOGIN_LIMITS } from "../../utils/authValidation.js";
+import { validateLogin, LOGIN_LIMITS } from "../../utils/authValidations";
 import ShowPassword from "./ShowPassword";
 import "./LoginScreen.css";
 import { Link } from "react-router-dom";
@@ -83,6 +83,7 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
               onChange={handleChange}
               isInvalid={!!localErrors.email}
               className="login-input"
+              maxLength={50}
             />
             <Form.Control.Feedback type="invalid">{localErrors.email}</Form.Control.Feedback>
           </Form.Group>
@@ -96,6 +97,7 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
               onChange={handleChange}
               isInvalid={!!localErrors.password}
               className="login-input"
+              maxLength={20}
             />
             {localErrors.password && <div className="text-danger small mt-1">{localErrors.password}</div>}
           </Form.Group>

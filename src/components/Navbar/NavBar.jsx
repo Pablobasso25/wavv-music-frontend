@@ -71,8 +71,9 @@ const NavBar = () => {
       "Cerrar Sesión",
     );
     if (result.isConfirmed) {
-      logout();
-      navigate("/");
+      setShowUserDropdown(false);
+      await logout();
+      navigate("/", { replace: true });
     }
   };
   const isAdminPage = location.pathname === "/admin";
