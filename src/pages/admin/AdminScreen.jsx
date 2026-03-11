@@ -17,24 +17,34 @@ const AdminScreen = () => {
   const [users, setUsers] = useState([]);
   const [songs, setSongs] = useState([]);
   const [artists, setArtists] = useState([]);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     loadData();
   }, [currentTab]);
+
   const loadData = async () => {
+    setLoading(true);
     try {
-      if (currentTab === "songs") {
-        const res = await getSongsRequest(1, 1000, true);
-        setSongs(res.data.songs || res.data || []);
-      } else if (currentTab === "users") {
+      if (currentTab === "users") {
         const res = await getUsersRequest();
         setUsers(res.data.users || res.data || []);
+      } else if (currentTab === "songs") {
+        const res = await getSongsRequest(1, 1000, true);
+        setSongs(res.data.songs || res.data || []);
       } else if (currentTab === "artists") {
         const res = await getAlbumsRequest();
         setArtists(res.data.albums || res.data || []);
+      } else if (currentTab === "plans") {
+        const res = await getPlansRequest();
+        setPlans(res.data || []);
       }
     } catch (error) {
       console.error(`Error cargando ${currentTab}:`, error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
