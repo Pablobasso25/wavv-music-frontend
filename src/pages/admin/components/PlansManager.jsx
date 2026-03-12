@@ -42,12 +42,35 @@ const PlansManager = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    
+    if (selectedPlan?.price === "" || selectedPlan?.price === null || selectedPlan?.price === undefined) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Precio requerido",
+        text: "El plan debe tener un precio válido para continuar.",
+        background: "#1a1a1a",
+        color: "#fff",
+        confirmButtonColor: "#5773ff",
+      });
+    }
+
+    if (Number(selectedPlan.price) < 0) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Precio inválido",
+        text: "El precio no puede ser negativo.",
+        background: "#1a1a1a",
+        color: "#fff",
+        confirmButtonColor: "#5773ff",
+      });
+    }
+
     setSaving(true);
     try {
       await updatePlanRequest(selectedPlan.id, {
       title: selectedPlan.title,
       price: selectedPlan.price,
-      features: selectedPlan.features,
+      benefits: selectedPlan.features,
       isActive: selectedPlan.isActive
     });
       Swal.fire({
@@ -90,7 +113,7 @@ const PlansManager = () => {
         <Row>
               <Col md={12}>
                 <Form.Group className="mb-2">
-                  <Form.Label className="text-light">Precio (Sincronizado con Mercado Pago)</Form.Label>
+                  <Form.Label className="text-light">Precio </Form.Label>
                   <InputGroup>
                     <InputGroup.Text className="bg-secondary border-secondary text-white">$</InputGroup.Text>
               <Form.Control
@@ -98,8 +121,11 @@ const PlansManager = () => {
                       min="0"
                       onWheel={(e) => e.target.blur()}
                       onKeyDown={(e) => ["-", "e", "E", "+"].includes(e.key) && e.preventDefault()}
-                      value={selectedPlan?.price || ""}
-                onChange={(e) => setSelectedPlan({ ...selectedPlan, price: parseFloat(e.target.value) })}
+                      value={selectedPlan?.price ?? ""}
+                      onChange={(e) => {
+                        if (e.target.value.length > 10) return;
+                        setSelectedPlan({ ...selectedPlan, price: e.target.value });
+                      }}
                       className="bg-black text-white border-secondary p-2 text-center"
                       style={{ fontSize: "1rem" }}
               />
