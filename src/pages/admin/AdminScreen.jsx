@@ -69,7 +69,6 @@ const AdminScreen = () => {
       <div className="d-flex flex-column flex-xl-row justify-content-between align-items-start align-items-xl-center mb-4 gap-3 gap-xl-5">
         <div className="mb-0 flex-shrink-0">
           <h2 className="text-white fw-bold display-6 mb-1">Panel de Control</h2>
-          <p className="text-secondary m-0">Gestión integral de Wavv Music (Datos Reales)</p>
         </div>
         <div className="d-flex flex-column flex-xl-row align-items-stretch align-items-xl-center gap-3 w-100 w-xl-auto order-xl-2 flex-xl-shrink-0">
           <Nav
