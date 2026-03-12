@@ -20,23 +20,82 @@ const App = () => {
   const [welcome, setWelcome] = useState(true);
 
   useEffect(() => {
+    if (window.location.pathname.includes("password")) {
+      setWelcome(false);
+      return;
+    }
     const loading = setTimeout(() => setWelcome(false), 3000);
     return () => clearTimeout(loading);
   }, []);
 
-  if (welcome) return <WelcomeScreen />;
+  if (welcome && !window.location.pathname.includes("password")) {
+    return <WelcomeScreen />;
+  }
 
   return (
     <>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomeScreen />} />
-        <Route path="/profile" element={<ProtectedRoute><NavBar /><ProfileScreen /><Footer /></ProtectedRoute>} />
-        <Route path="/admin" element={<ProtectedRoute adminOnly><NavBar /><AdminScreen /></ProtectedRoute>} />
-        <Route path="/playlist" element={<ProtectedRoute><NavBar /><PlaylistScreen /><Footer /></ProtectedRoute>} />
-        <Route path="/subscription" element={<ProtectedRoute><NavBar /><SubscriptionScreen /><Footer /></ProtectedRoute>} />
-        <Route path="/payment-success" element={<ProtectedRoute><NavBar /><PaymentSuccess /><Footer /></ProtectedRoute>} />
-        <Route path="/about-us" element={<><NavBar /><AboutUs /><Footer /></>} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <ProfileScreen />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly>
+              <NavBar />
+              <AdminScreen />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/playlist"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <PlaylistScreen />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <SubscriptionScreen />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-success"
+          element={
+            <ProtectedRoute>
+              <NavBar />
+              <PaymentSuccess />
+              <Footer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/about-us"
+          element={
+            <>
+              <NavBar />
+              <AboutUs />
+              <Footer />
+            </>
+          }
+        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="*" element={<Error404Screen />} />
