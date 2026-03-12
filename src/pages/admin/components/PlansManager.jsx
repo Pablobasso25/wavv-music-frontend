@@ -68,33 +68,61 @@ const PlansManager = () => {
   if (loading) return <div className="text-center p-5"><Spinner animation="border" variant="primary" /></div>;
 
   return (
-    <div className="p-4 text-white">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3>Gestión de Planes Reales</h3>
-        <Badge bg={selectedPlan?.isActive ? "success" : "danger"}>
-            {selectedPlan?.isActive ? "Activo en tienda" : "Pausado"}
-        </Badge>
+    <div className="p-3 text-white d-flex justify-content-center">
+      <div className="w-100" style={{ maxWidth: "500px" }}>
+        <div className="bg-dark border border-secondary rounded p-4 shadow-lg text-center">
+          <div className="d-flex justify-content-center align-items-center mb-3 border-bottom border-secondary pb-2">
+            <h3 className="m-0 fw-bold fs-5">Gestión de Planes</h3>
       </div>
 
       <Form onSubmit={handleSave}>
+            <style>
+              {`
+                input[type=number]::-webkit-inner-spin-button, 
+                input[type=number]::-webkit-outer-spin-button { 
+                  -webkit-appearance: none; 
+                  margin: 0; 
+                }
+                input[type=number] { -moz-appearance: textfield; }
+              `}
+            </style>
+            <h5 className="text-uppercase text-secondary mb-2 small" style={{ letterSpacing: "1px" }}>Detalles Económicos</h5>
         <Row>
-          <Col md={6}>
-            <h5>Detalles Económicos</h5>
-            <Form.Group className="mb-3">
-              <Form.Label>Precio (Sincronizado con Mercado Pago)</Form.Label>
+              <Col md={12}>
+                <Form.Group className="mb-2">
+                  <Form.Label className="text-light">Precio (Sincronizado con Mercado Pago)</Form.Label>
+                  <InputGroup>
+                    <InputGroup.Text className="bg-secondary border-secondary text-white">$</InputGroup.Text>
               <Form.Control
                 type="number"
-                value={selectedPlan?.price}
+                      min="0"
+                      onWheel={(e) => e.target.blur()}
+                      onKeyDown={(e) => ["-", "e", "E", "+"].includes(e.key) && e.preventDefault()}
+                      value={selectedPlan?.price || ""}
                 onChange={(e) => setSelectedPlan({ ...selectedPlan, price: parseFloat(e.target.value) })}
-                className="bg-dark text-white border-secondary"
+                      className="bg-black text-white border-secondary p-2 text-center"
+                      style={{ fontSize: "1rem" }}
               />
+                  </InputGroup>
             </Form.Group>
           </Col>
         </Row>
-        <Button variant="primary" type="submit" disabled={saving} className="mt-4">
-          {saving ? "Sincronizando DB..." : "Guardar cambios"}
+            
+            <div className="d-flex justify-content-center mt-3 pt-2 border-top border-secondary">
+              <Button variant="primary" type="submit" disabled={saving} className="px-3 fw-bold btn-sm">
+                {saving ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                    Sincronizando DB...
+                  </>
+                ) : (
+                  "Guardar cambios"
+                )}
         </Button>
+            </div>
       </Form>
+    </div>
+      </div>
     </div>
   );
 };
