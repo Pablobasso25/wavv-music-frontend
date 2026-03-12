@@ -96,9 +96,9 @@ const PlansManager = () => {
         <div className="bg-dark border border-secondary rounded p-4 shadow-lg text-center">
           <div className="d-flex justify-content-center align-items-center mb-3 border-bottom border-secondary pb-2">
             <h3 className="m-0 fw-bold fs-5">Gestión de Planes</h3>
-      </div>
+          </div>
 
-      <Form onSubmit={handleSave}>
+          <Form onSubmit={handleSave}>
             <style>
               {`
                 input[type=number]::-webkit-inner-spin-button, 
@@ -110,14 +110,14 @@ const PlansManager = () => {
               `}
             </style>
             <h5 className="text-uppercase text-secondary mb-2 small" style={{ letterSpacing: "1px" }}>Detalles Económicos</h5>
-        <Row>
+            <Row>
               <Col md={12}>
                 <Form.Group className="mb-2">
                   <Form.Label className="text-light">Precio </Form.Label>
                   <InputGroup>
                     <InputGroup.Text className="bg-secondary border-secondary text-white">$</InputGroup.Text>
-              <Form.Control
-                type="number"
+                    <Form.Control
+                      type="number"
                       min="0"
                       onWheel={(e) => e.target.blur()}
                       onKeyDown={(e) => ["-", "e", "E", "+"].includes(e.key) && e.preventDefault()}
@@ -128,11 +128,11 @@ const PlansManager = () => {
                       }}
                       className="bg-black text-white border-secondary p-2 text-center"
                       style={{ fontSize: "1rem" }}
-              />
+                    />
                   </InputGroup>
-            </Form.Group>
-          </Col>
-        </Row>
+                </Form.Group>
+              </Col>
+            </Row>
             
             <div className="d-flex justify-content-center mt-3 pt-2 border-top border-secondary">
               <Button variant="primary" type="submit" disabled={saving} className="px-3 fw-bold btn-sm">
@@ -144,10 +144,10 @@ const PlansManager = () => {
                 ) : (
                   "Guardar cambios"
                 )}
-        </Button>
+              </Button>
             </div>
-      </Form>
-    </div>
+          </Form>
+        </div>
       </div>
     </div>
   );
