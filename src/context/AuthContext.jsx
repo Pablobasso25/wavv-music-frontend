@@ -6,7 +6,6 @@ import {
   logoutRequest,
   updateProfileRequest,
 } from "../api/auth";
-import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -77,7 +76,6 @@ export const AuthProvider = ({ children }) => {
       await logoutRequest();
     } catch {
     } finally {
-      Cookies.remove("token");
       setIsAuthenticated(false);
       setUser(null);
       setErrors([]);
