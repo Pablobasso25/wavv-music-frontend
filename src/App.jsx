@@ -20,17 +20,11 @@ const App = () => {
   const [welcome, setWelcome] = useState(true);
 
   useEffect(() => {
-    if (window.location.pathname.includes("password")) {
-      setWelcome(false);
-      return;
-    }
     const loading = setTimeout(() => setWelcome(false), 3000);
     return () => clearTimeout(loading);
   }, []);
 
-  if (welcome && !window.location.pathname.includes("password")) {
-    return <WelcomeScreen />;
-  }
+  if (welcome) return <WelcomeScreen />;
 
   return (
     <>
