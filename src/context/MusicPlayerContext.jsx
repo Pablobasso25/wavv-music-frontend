@@ -76,21 +76,34 @@ export const MusicPlayerProvider = ({ children }) => {
   };
 
   const playSong = (song, songList = []) => {
+    if (!song) return;
+    const audioSrc =
+      song.audioUrl || song.audio || song.previewUrl || song.preview_url;
+
+    if (!audioSrc) {
+      console.error("No se encontró link de audio válido:", song);
+      return;
+    }
+
     if (songList.length > 0) {
       setQueue(songList);
       const index = songList.findIndex(
-        (s) => s._id === song._id || s.title === song.title,
+        (s) =>
+          (s._id || s.id) === (song._id || song.id) || s.title === song.title,
       );
       setCurrentIndex(index !== -1 ? index : 0);
-    } else {
+    }else {
       if (queue.length === 0) {
         setQueue([song]);
         setCurrentIndex(0);
       }
     }
+
     setCurrentSong(song);
-    audioRef.current.src = song.audio || song.youtubeUrl || song.preview_url;
-    audioRef.current.play().catch((e) => console.log("Error play:", e));
+    audioRef.current.src = audioSrc;
+    audioRef.current
+      .play()
+      .catch((e) => console.log("Error al reproducir:", e));
     setIsPlaying(true);
   };
 
@@ -114,14 +127,17 @@ export const MusicPlayerProvider = ({ children }) => {
       if (nextSong) {
         setCurrentSong(nextSong);
         audioRef.current.src =
-          nextSong.audio || nextSong.youtubeUrl || nextSong.preview_url;
-        audioRef.current.play();
+          nextSong.audioUrl ||
+          nextSong.audio ||
+          nextSong.previewUrl ||
+          nextSong.preview_url;
+        audioRef.current.play().catch((e) => console.log(e));
         setIsPlaying(true);
       }
     }
   };
 
-  const prevTrack = () => {
+const prevTrack = () => {
     if (queue.length > 0) {
       let prevIdx = currentIndex - 1;
       if (prevIdx < 0) prevIdx = queue.length - 1;
@@ -129,9 +145,8 @@ export const MusicPlayerProvider = ({ children }) => {
       const prevSong = queue[prevIdx];
       if (prevSong) {
         setCurrentSong(prevSong);
-        audioRef.current.src =
-          prevSong.audio || prevSong.youtubeUrl || prevSong.preview_url;
-        audioRef.current.play();
+        audioRef.current.src = prevSong.audioUrl || prevSong.audio || prevSong.previewUrl || prevSong.preview_url;
+        audioRef.current.play().catch(e => console.log(e));
         setIsPlaying(true);
       }
     }
