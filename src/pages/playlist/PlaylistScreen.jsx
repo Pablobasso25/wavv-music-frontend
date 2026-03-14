@@ -50,9 +50,12 @@ const PlaylistScreen = () => {
   };
 
   const handleAlbumSelect = async (artist) => {
+    const albumId = artist.albumId || artist._id || artist.id;
+    
+    if (!albumId) return;
     try {
       if (artist.albumId) {
-        const res = await getAlbumByIdRequest(artist.albumId, 1, 5);
+       const res = await getAlbumByIdRequest(albumId, 1, 5);
         const albumData = res.data.album;
 
         const formattedAlbum = {
@@ -69,10 +72,10 @@ const PlaylistScreen = () => {
             duration_ms: track.duration_ms,
             preview_url: track.preview_url || track.audio,
             audio: track.preview_url || track.audio,
-            youtubeUrl: track.preview_url || track.audio,
+            audioUrl: track.audioUrl || track.preview_url || track.audio,
             cover: track.cover || albumData.image,
           })),
-          totalPages: res.data.totalPages,
+       totalPages: res.data.totalPages,
           currentPage: res.data.currentPage,
         };
 
@@ -106,7 +109,7 @@ const PlaylistScreen = () => {
           duration_ms: track.duration_ms,
           preview_url: track.preview_url || track.audio,
           audio: track.preview_url || track.audio,
-          youtubeUrl: track.preview_url || track.audio,
+          audioUrl: track.audioUrl || track.preview_url || track.audio,
           cover: track.cover || albumData.image,
         })),
         totalPages: res.data.totalPages,
@@ -131,8 +134,7 @@ const PlaylistScreen = () => {
         _id: song._id,
         id: song._id,
         name: song.title,
-        preview_url: song.youtubeUrl,
-        audio: song.youtubeUrl,
+        audioUrl: song.audioUrl,
         cover: song.image,
         artist: song.artist,
         duration_ms: durationMs,

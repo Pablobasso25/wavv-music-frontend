@@ -15,6 +15,7 @@ import { getAlbumsRequest, getAlbumByIdRequest } from "../../api/songs";
 const HomeScreen = () => {
   const location = useLocation();
   const [selectedAlbumData, setSelectedAlbumData] = useState(null);
+  const [selectedArtist, setSelectedArtist] = useState(null);
   const [artists, setArtists] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -59,21 +60,40 @@ const HomeScreen = () => {
     }
   };
 
-  const handleAlbumSelect = async (artist) => {
+  const handleAlbumFetch = async (artist, page = 1) => {
+    const albumId = artist.albumId || artist._id || artist.id;
+    if (!albumId) return;
+
     try {
-      const res = await getAlbumByIdRequest(artist.albumId, 1, 4);
+      const res = await getAlbumByIdRequest(albumId, page, 4);
       const albumData = res.data.album;
       setSelectedAlbumData({
         ...albumData,
+        id: albumId,
         tracks: (albumData.tracks || []).map((t) => ({
           ...t,
-          cover: albumData.image,
+          _id: t._id,
+          id: t._id,
+          name: t.name || t.title,
+          audioUrl: t.audioUrl || t.preview_url || t.audio,
+          cover: t.cover || albumData.image,
         })),
         totalPages: res.data.totalPages,
         currentPage: res.data.currentPage,
       });
     } catch (error) {
       setSelectedAlbumData(null);
+    }
+  };
+
+  const handleAlbumSelect = (artist) => {
+    setSelectedArtist(artist);
+    handleAlbumFetch(artist, 1);
+  };
+
+  const handlePageChange = (page) => {
+    if (selectedArtist) {
+      handleAlbumFetch(selectedArtist, page);
     }
   };
 
@@ -132,7 +152,7 @@ const HomeScreen = () => {
             <TopSongs
               album={selectedAlbumData}
               fromHome={true}
-              onPageChange={handleAlbumSelect}
+              onPageChange={handlePageChange}
             />
           </div>
           <div className="home-player">
