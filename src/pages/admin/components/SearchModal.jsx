@@ -37,7 +37,7 @@ const SearchModal = ({
     }
   };
   const addSongFromSearch = async (track) => {
-    const exists = songs.some(
+    const exists = songs?.some(
       (s) => s.title === track.trackName && s.artist === track.artistName,
     );
     if (exists) {
@@ -55,7 +55,7 @@ const SearchModal = ({
         title: track.trackName,
         artist: track.artistName,
         image: track.artworkUrl100?.replace("100x100", "600x600"),
-        youtubeUrl: track.previewUrl,
+        audioUrl: track.previewUrl,
         duration: track.trackTimeMillis
           ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
               Math.floor((track.trackTimeMillis % 60000) / 1000),
@@ -63,6 +63,7 @@ const SearchModal = ({
           : "--:--",
       };
       const res = await createSongRequest(newSong);
+
       setSongs([...songs, res.data]);
       if (reloadData) reloadData();
       Swal.fire({
@@ -77,7 +78,7 @@ const SearchModal = ({
     } catch (error) {
       Swal.fire({
         title: "Error",
-        text: "No se pudo agregar la canción",
+        text: "No se pudo procesar el audio en el servidor",
         icon: "error",
         background: "#1a1a1a",
         color: "#fff",
@@ -113,7 +114,7 @@ const SearchModal = ({
           trackId: track.trackId,
           name: track.trackName,
           duration_ms: track.trackTimeMillis,
-          preview_url: track.previewUrl,
+          audioUrl: track.previewUrl,
           cover: track.artworkUrl100?.replace("100x100", "600x600"),
         })),
       };

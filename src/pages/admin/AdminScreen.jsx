@@ -124,6 +124,10 @@ const AdminScreen = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
         currentTab={currentTab}
+        songs={songs}
+        setSongs={setSongs}
+        artists={artists}  
+        setArtists={setArtists}
         reloadData={loadData}
       />
     </Container>

@@ -1,36 +1,11 @@
 import React, { useState } from "react";
-import { Table, Image, Button, Badge } from "react-bootstrap";
-import { deleteSongRequest, setTrendingSongRequest, getSongsRequest } from "../../../api/songs";
+import { Table, Image, Button } from "react-bootstrap";
+import { deleteSongRequest } from "../../../api/songs";
 import Swal from "sweetalert2";
 
 const SongsTable = ({ songs, setSongs }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
-  const setTrending = async (id) => {
-    try {
-      await setTrendingSongRequest(id);
-      const res = await getSongsRequest();
-      setSongs(res.data);
-      Swal.fire({
-        title: "¡Trending!",
-        text: "Canción marcada como destacada",
-        icon: "success",
-        background: "#1a1a1a",
-        color: "#fff",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo marcar como trending",
-        icon: "error",
-        background: "#1a1a1a",
-        color: "#fff",
-      });
-    }
-  };
 
   const deleteSong = async (id) => {
     Swal.fire({
@@ -85,7 +60,6 @@ const SongsTable = ({ songs, setSongs }) => {
               <th className="py-3">Título</th>
               <th className="py-3">Artista</th>
               <th className="py-3">Duración</th>
-              <th className="py-3 text-center">Estado</th>
               <th className="py-3 pe-4 text-end">Acciones</th>
             </tr>
           </thead>
@@ -105,26 +79,8 @@ const SongsTable = ({ songs, setSongs }) => {
                 <td className="fw-bold text-white">{song.title}</td>
                 <td className="text-white-50">{song.artist}</td>
                 <td className="text-white-50">{song.duration || "--:--"}</td>
-                <td className="text-center">
-                  {song.isTrending && (
-                    <Badge bg="warning" text="dark">
-                      <i className="bi bi-star-fill me-1"></i>
-                      Trending
-                    </Badge>
-                  )}
-                </td>
                 <td className="text-end pe-4">
                   <div className="d-flex gap-2 justify-content-end">
-                    <Button
-                      variant="outline-warning"
-                      size="sm"
-                      className="rounded-circle d-flex align-items-center justify-content-center"
-                      style={{ width: "32px", height: "32px" }}
-                      onClick={() => setTrending(song._id)}
-                      title="Marcar como Trending"
-                    >
-                      <i className="bi bi-star-fill" style={{ fontSize: "0.8rem" }}></i>
-                    </Button>
                     <Button
                       variant="outline-danger"
                       size="sm"
