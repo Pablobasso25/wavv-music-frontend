@@ -77,8 +77,11 @@ const NavBar = () => {
     }
   };
   const isAdminPage = location.pathname === "/admin";
-  const isPremiumUser = user?.role?.toLowerCase() === "premium" || user?.role?.toLowerCase() === "familiar";
-  const showPremiumButton = !isAdminPage && user?.role !== "admin" && !isPremiumUser;
+  const isPremiumUser =
+    user?.role?.toLowerCase() === "premium" ||
+    user?.role?.toLowerCase() === "familiar";
+  const showPremiumButton =
+    !isAdminPage && user?.role !== "admin" && !isPremiumUser;
   useEffect(() => {
     if (searchQuery.length === 0) {
       setSearchResults([]);
@@ -125,15 +128,15 @@ const NavBar = () => {
   }, []);
   const handlePlaySong = (track) => {
     const songData = {
-      _id: track.trackId,
-      id: track.trackId,
-      title: track.trackName,
-      artist: track.artistName,
-      album: track.collectionName,
-      cover: track.artworkUrl100?.replace("100x100", "600x600"),
-      image: track.artworkUrl100?.replace("100x100", "600x600"),
-      audio: track.previewUrl,
-      name: track.trackName,
+      _id: track.trackId || track.id,
+      id: track.trackId || track.id,
+      title: track.trackName || track.title,
+      artist: track.artistName || track.artist,
+      album: track.collectionName || track.album,
+      cover: track.artworkUrl100?.replace("100x100", "600x600") || track.image,
+      image: track.artworkUrl100?.replace("100x100", "600x600") || track.image,
+      audioUrl: track.previewUrl || track.audio || track.audioUrl,
+      name: track.trackName || track.title,
     };
     playSong(songData);
     setShowDropdown(false);
@@ -142,19 +145,20 @@ const NavBar = () => {
   const handleAddSong = async (track) => {
     const songData = {
       externalSong: {
-        title: track.trackName,
-        artist: track.artistName,
-        image: track.artworkUrl100?.replace("100x100", "600x600"),
-        youtubeUrl: track.previewUrl,
+        title: track.trackName || track.title,
+        artist: track.artistName || track.artist,
+        image:
+          track.artworkUrl100?.replace("100x100", "600x600") || track.image,
+        audioUrl: track.previewUrl || track.audio || track.preview_url,
         duration: track.trackTimeMillis
           ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
-              Math.floor((track.trackTimeMillis % 60000) / 1000)
+              Math.floor((track.trackTimeMillis % 60000) / 1000),
             ).padStart(2, "0")}`
-          : "--:--",
+          : track.duration || "--:--",
       },
     };
-
     const res = await addSongToPlaylist(songData);
+
     if (res.success) {
       toast.success("Canción agregada a tu playlist");
       getUserPlaylist();
@@ -175,6 +179,7 @@ const NavBar = () => {
           onClick={() => navigate("/")}
         />
       </div>
+      {user?.role !== 'admin' && (
       <div className="spotify-navbar-center" ref={searchRef}>
         <div className="spotify-search">
           <i className="bi bi-search spotify-search-icon"></i>
@@ -206,37 +211,37 @@ const NavBar = () => {
             {searchResults.length > 0 ? (
               <>
                 {searchResults.map((track) => (
-                    <div
-                      key={track.trackId}
-                      className="spotify-track-item"
-                      onClick={() => handlePlaySong(track)}
-                    >
-                      <img
-                        src={track.artworkUrl100}
-                        alt={track.trackName}
-                        width="50"
-                        height="50"
-                        className="rounded"
-                      />
-                      <div className="flex-grow-1 ms-2">
-                        <div className="text-white fw-semibold">
-                          {track.trackName}
-                        </div>
-                        <div className="text-secondary small">
-                          {track.artistName}
-                        </div>
+                  <div
+                    key={track.trackId}
+                    className="spotify-track-item"
+                    onClick={() => handlePlaySong(track)}
+                  >
+                    <img
+                      src={track.artworkUrl100}
+                      alt={track.trackName}
+                      width="50"
+                      height="50"
+                      className="rounded"
+                    />
+                    <div className="flex-grow-1 ms-2">
+                      <div className="text-white fw-semibold">
+                        {track.trackName}
                       </div>
-                      <button
-                        className="btn btn-link text-primary p-0 ms-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddSong(track);
-                        }}
-                        title="Agregar a playlist"
-                      >
-                        <i className="bi bi-plus-circle fs-5"></i>
-                      </button>
+                      <div className="text-secondary small">
+                        {track.artistName}
+                      </div>
                     </div>
+                    <button
+                      className="btn btn-link text-primary p-0 ms-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddSong(track);
+                      }}
+                      title="Agregar a playlist"
+                    >
+                      <i className="bi bi-plus-circle fs-5"></i>
+                    </button>
+                  </div>
                 ))}
               </>
             ) : (
@@ -247,6 +252,7 @@ const NavBar = () => {
           </div>
         )}
       </div>
+      )}
       <div className="spotify-navbar-right">
         <Dropdown
           align="end"
@@ -290,6 +296,7 @@ const NavBar = () => {
               <i className="bi bi-music-note-list me-2"></i>
               Mi Playlist
             </Dropdown.Item>
+            {user?.role !== 'admin' && (
             <Dropdown.Item
               onClick={() => {
                 navigate("/subscription");
@@ -300,6 +307,7 @@ const NavBar = () => {
               <i className="bi bi-gem me-2"></i>
               Explorar Premium
             </Dropdown.Item>
+            )}
             {!isAdminPage && user?.role !== "admin" && (
               <Dropdown.Item
                 onClick={() => {

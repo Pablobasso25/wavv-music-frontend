@@ -8,7 +8,12 @@ import Swal from "sweetalert2";
 import { showPremiumAlert } from "../../helpers/alerts";
 import publicidad2 from "../../assets/images/publicidad2.png";
 
-const TopSongs = ({ album, isPlaylist = false, fromHome = false, onPageChange }) => {
+const TopSongs = ({
+  album,
+  isPlaylist = false,
+  fromHome = false,
+  onPageChange,
+}) => {
   const {
     playSong,
     currentSong,
@@ -34,27 +39,29 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false, onPageChange })
     }
   }, [fromHome]);
 
- const handleAddToPlaylist = async (e, track) => {
-  e.stopPropagation();
-  
-  const songData = isPlaylist && track._id
-    ? { songId: track._id }
-    : {
-        externalSong: {
-          title: track.name,
-          artist: album.artists?.[0]?.name || album.artistName || "Artista",
-          image: track.cover || album.image,
-          youtubeUrl: track.preview_url || track.audio || track.youtubeUrl,
-          duration: track.duration_ms
-            ? `${Math.floor(track.duration_ms / 60000)}:${String(
-                Math.floor((track.duration_ms % 60000) / 1000),
-              ).padStart(2, "0")}`
-            : "--:--",
-        },
-      };
-  
-  const result = await addSongToPlaylist(songData);
-    
+  const handleAddToPlaylist = async (e, track) => {
+    e.stopPropagation();
+    const urlAudio =
+      track.preview_url || track.previewUrl || track.audio || track.audioUrl;
+
+    if (!urlAudio) {
+      return toast.error("Esta canción no tiene un link de audio válido.");
+    }
+
+    const songData = {
+      externalSong: {
+        title: track.name || track.title,
+        artist: album.artistName || album.artists?.[0]?.name || "Artista",
+        image: track.cover || album.image,
+        audioUrl: urlAudio,
+        duration: track.duration_ms
+          ? `${Math.floor(track.duration_ms / 60000)}:${String(Math.floor((track.duration_ms % 60000) / 1000)).padStart(2, "0")}`
+          : track.duration || "--:--",
+      },
+    };
+
+    const result = await addSongToPlaylist(songData);
+
     if (result.success) {
       playUISound("success");
       toast.success(`"${track.name}" agregada a tu playlist.`, {
@@ -92,6 +99,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false, onPageChange })
       background: "#191B1B",
       color: "#fff",
     });
+
     if (confirm.isConfirmed) {
       const result = await deleteSongFromPlaylist(trackId);
       if (result.success) {
@@ -118,7 +126,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false, onPageChange })
         song._id === trackId ||
         song.id === trackId ||
         (song.title === track.name &&
-          song.artist === (album.artists?.[0]?.name || album.artistName)),
+          song.artist === (album.artistName || album.artists?.[0]?.name)),
     );
   };
 
@@ -161,8 +169,8 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false, onPageChange })
           }}
         >
           {album.tracks.map((track, index) => {
-            const isCurrentTrack = currentSong?.title === track.name;
-            const trackId = track._id || track.id || track.trackId;
+            const isCurrentTrack =
+              currentSong?.title === (track.name || track.title);
             const added = isInPlaylist(track);
 
             return (
@@ -177,28 +185,29 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false, onPageChange })
                     : "1px solid transparent",
                 }}
                 onClick={() => {
+                  const urlAudio =
+                    track.preview_url ||
+                    track.previewUrl ||
+                    track.audio ||
+                    track.audioUrl;
                   executeActionWithAd(() => {
                     const songToPlay = {
-                      title: track.name,
-                      artist:
-                        album.artists?.[0]?.name ||
-                        album.artistName ||
-                        "Artista",
+                      title: track.name || track.title,
+                      artist: album.artistName || track.artist || "Artista",
                       album: album.name,
                       cover: track.cover || album.image,
-                      audio:
-                        track.preview_url || track.audio || track.youtubeUrl,
-                      name: track.name,
-                      _id: trackId,
+                      audioUrl: urlAudio,
+                      _id: track._id || track.id || track.trackId,
                     };
                     const fullAlbumQueue = album.tracks.map((t) => ({
-                      title: t.name,
-                      artist: album.artists?.[0]?.name || album.artistName,
+                      title: t.name || t.title,
+                      artist: album.artistName || t.artist || "Artista",
                       cover: t.cover || album.image,
-                      audio: t.preview_url || t.audio || t.youtubeUrl,
-                      name: t.name,
+                      audioUrl:
+                        t.preview_url || t.previewUrl || t.audio || t.audioUrl,
                       _id: t._id || t.id,
                     }));
+
                     playSong(songToPlay, fullAlbumQueue);
                   });
                 }}
@@ -260,7 +269,7 @@ const TopSongs = ({ album, isPlaylist = false, fromHome = false, onPageChange })
                       ? `${Math.floor(track.duration_ms / 60000)}:${String(
                           Math.floor((track.duration_ms % 60000) / 1000),
                         ).padStart(2, "0")}`
-                      : ""}
+                      : track.duration || ""}
                   </span>
                 </div>
               </div>

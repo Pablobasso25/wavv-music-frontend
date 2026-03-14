@@ -157,7 +157,7 @@ const MusicPlayer = ({ isStatic = false }) => {
   const songImage =
     currentSong?.image ||
     currentSong?.cover ||
-    currentSong?.album?.images?.[0]?.url ||
+    currentSong?.album?.image ||
     "https://via.placeholder.com/150";
   if (isMobile) {
     if (!currentSong) return null;

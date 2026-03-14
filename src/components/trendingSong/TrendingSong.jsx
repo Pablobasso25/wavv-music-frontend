@@ -30,6 +30,8 @@ const TrendingSong = ({ songs }) => {
   const song = songs[currentIndex];
 
   const handleAddToPlaylist = async () => {
+    const audioLink = song.audioUrl || song.audio || song.previewUrl;
+
     const songData = song._id
       ? { songId: song._id }
       : {
@@ -37,7 +39,7 @@ const TrendingSong = ({ songs }) => {
             title: song.title,
             artist: song.artist,
             image: song.image,
-            youtubeUrl: song.youtubeUrl,
+            audioUrl: audioLink,
             duration: song.duration || "--:--",
           },
         };
@@ -79,8 +81,10 @@ const TrendingSong = ({ songs }) => {
                   title: song.title,
                   artist: song.artist,
                   cover: song.image,
-                  audio: song.youtubeUrl,
+                  audioUrl: song.audioUrl || song.audio,
+                  audio: song.audioUrl || song.audio,
                   name: song.title,
+                  _id: song._id,
                 })
               }
             >
