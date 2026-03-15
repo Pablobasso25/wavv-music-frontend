@@ -11,26 +11,24 @@ import {
 } from "react-bootstrap";
 import { createPreferenceRequest, getPlansRequest } from "../../api/payment";
 import { useAuth } from "../../context/AuthContext";
-import Swal from "sweetalert2";
+import { showError } from "../../helpers/alerts";
 
 const SubscriptionScreen = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
-  const [dbPlan, setDbPlan] = useState(null);
+  const [plans, setPlans] = useState([]);
 
-  const isPremium = user?.subscription?.status === "premium";
+  const currentPlanName = user?.subscription?.status?.toLowerCase() || "free";
 
   useEffect(() => {
     const fetchPlan = async () => {
       try {
         const res = await getPlansRequest();
-        const premium = res.data.find(
-          (p) => p.name.toLowerCase() === "premium",
-        );
-        setDbPlan(premium);
+        const sortedPlans = res.data.sort((a, b) => a.price - b.price);
+        setPlans(sortedPlans);
       } catch (error) {
-        console.error("Error cargando precio real:", error);
+        console.error("Error cargando los planes:", error);
       } finally {
         setPageLoading(false);
       }
@@ -38,13 +36,12 @@ const SubscriptionScreen = () => {
     fetchPlan();
   }, []);
 
-  const handleBuy = async (planType) => {
-    if (!dbPlan) return;
+  const handleBuy = async (plan) => {
+    if (plan.price === 0) return;
     setLoading(true);
     try {
       const res = await createPreferenceRequest({
-        planType: dbPlan.name,
-        price: Number(dbPlan.price),
+        planId: plan._id,
       });
 
       const initPoint =
@@ -55,7 +52,7 @@ const SubscriptionScreen = () => {
       }
     } catch (error) {
       console.error("Error al procesar la compra:", error);
-      Swal.fire("Error", "No se pudo conectar con Mercado Pago", "error");
+      showError("No se pudo conectar con Mercado Pago");
     } finally {
       setLoading(false);
     }
@@ -82,76 +79,71 @@ const SubscriptionScreen = () => {
         </Col>
       </Row>
       <Row className="justify-content-center gap-4">
-        <Col md={5} lg={4}>
-          <Card className="bg-dark text-white border-secondary h-100 shadow-sm">
-            <Card.Body className="d-flex flex-column">
-              <Card.Title className="fs-2 fw-bold">Free</Card.Title>
-              <h3 className="text-secondary mb-4">
-                $0 <small>/mes</small>
-              </h3>
-              <ListGroup variant="flush" className="bg-transparent mb-4">
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-success me-2"></i>Escucha todas
-                  las canciones
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-x text-danger me-2"></i>Límite de 5
-                  canciones en Playlist
-                </ListGroup.Item>
-              </ListGroup>
-              <Button
-                disabled
-                className="mt-auto w-100 py-2"
-                style={{ backgroundColor: "#6c757d", border: "none" }}
+        {plans.map((plan) => {
+          const isCurrentPlan = currentPlanName === plan.name.toLowerCase();
+          const isFreePlan = plan.price === 0;
+
+          return (
+            <Col md={5} lg={4} key={plan._id}>
+              <Card
+                className={`h-100 shadow-lg ${
+                  !isFreePlan
+                    ? "border-success text-white"
+                    : "border-secondary bg-dark text-white"
+                }`}
+                style={
+                  !isFreePlan
+                    ? {
+                        background:
+                          "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+                        borderWidth: "2px",
+                      }
+                    : {}
+                }
               >
-                {!isPremium ? "Tu plan actual" : "Plan Gratuito"}
-              </Button>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={5} lg={4}>
-          <Card
-            className="text-white h-100 shadow-lg border-success"
-            style={{
-              background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-              borderWidth: "2px",
-            }}
-          >
-            <Card.Body className="d-flex flex-column">
-              <Card.Title className="fs-2 fw-bold text-success">
-                Premium
-              </Card.Title>
-              <h3 className="mb-4">
-                ${dbPlan ? dbPlan.price : "..."}
-                <small>/mes</small>
-              </h3>
-              <ListGroup variant="flush" className="bg-transparent mb-4">
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-success me-2"></i>Playlist{" "}
-                  <strong>Ilimitada</strong>
-                </ListGroup.Item>
-                <ListGroup.Item className="bg-transparent text-white border-secondary">
-                  <i className="bx bx-check text-success me-2"></i>Sin anuncios
-                </ListGroup.Item>
-              </ListGroup>
-              <Button
-                onClick={() => handleBuy("Premium")}
-                disabled={loading || isPremium}
-                className="mt-auto w-100 py-2 btn-expand"
-                style={{
-                  backgroundColor: isPremium ? "#6c757d" : "#198754",
-                  border: "none",
-                }}
-              >
-                {isPremium
-                  ? "Tu plan actual"
-                  : loading
-                    ? "Procesando..."
-                    : "Suscribirme ahora"}
-              </Button>
-            </Card.Body>
-          </Card>
-        </Col>
+                <Card.Body className="d-flex flex-column">
+                  <Card.Title
+                    className={`fs-2 fw-bold ${!isFreePlan ? "text-success" : ""}`}
+                  >
+                    {plan.name}
+                  </Card.Title>
+                  <h3 className={isFreePlan ? "text-secondary mb-4" : "mb-4"}>
+                    ${plan.price} <small>/mes</small>
+                  </h3>
+                  <ListGroup variant="flush" className="bg-transparent mb-4">
+                    {plan.benefits?.map((benefit, index) => (
+                      <ListGroup.Item
+                        key={index}
+                        className="bg-transparent text-white border-secondary"
+                      >
+                        <i className="bx bx-check text-success me-2"></i>
+                        {benefit}
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                  <Button
+                    onClick={() => handleBuy(plan)}
+                    disabled={loading || isCurrentPlan || isFreePlan}
+                    className="mt-auto w-100 py-2 btn-expand"
+                    style={{
+                      backgroundColor:
+                        isCurrentPlan || isFreePlan ? "#6c757d" : "#198754",
+                      border: "none",
+                    }}
+                  >
+                    {isCurrentPlan
+                      ? "Tu plan actual"
+                      : isFreePlan
+                        ? "Plan Gratuito"
+                        : loading
+                          ? "Procesando..."
+                          : "Suscribirme ahora"}
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          );
+        })}
       </Row>
     </Container>
   );
