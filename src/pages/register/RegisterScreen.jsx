@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Modal, Form, Button } from "react-bootstrap";
+import { Modal, Form, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { showError } from "../../helpers/alerts";
 import { useAuth } from "../../context/AuthContext";
 import { validatePassword } from "../../utils/passwordUtils";
 import PasswordStrengthBar from "./PasswordStrengthBar";
@@ -52,13 +53,7 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
         navigate("/");
       });
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: error.response?.data[0] || "Error en el servidor",
-        icon: "error",
-        background: "#1a1a1a",
-        color: "#fff",
-      });
+      showError(error.response?.data[0] || "Error en el servidor");
     } finally {
       setSend(false);
     }
@@ -133,8 +128,8 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
               }
               {...register("password", {
                 required: "La contraseña es obligatoria",
-                 minLength: { value: 8, message: "Mínimo 8 caracteres" },
-                  maxLength: { value: 20, message: "Máximo 20 caracteres" },
+                minLength: { value: 8, message: "Mínimo 8 caracteres" },
+                maxLength: { value: 20, message: "Máximo 20 caracteres" },
               })}
             />
             {(errors.password || (password?.length > 0 && force < 99)) && (
@@ -176,11 +171,23 @@ const RegisterScreen = ({ show, handleClose, onSwitchToLogin }) => {
             className="register-btn w-100"
             disabled={send || force < 99}
           >
-            {send
-              ? "Registrando..."
-              : force < 99
-                ? "Registrarse"
-                : "Registrarse"}
+            {send ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Registrando...
+              </>
+            ) : force < 99 ? (
+              "Registrarse"
+            ) : (
+              "Registrarse"
+            )}
           </Button>
         </Form>
         <p className="register-link-text">

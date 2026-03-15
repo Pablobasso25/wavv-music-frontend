@@ -6,12 +6,12 @@ import {
   deleteUserRequest,
   updateUserRequest,
 } from "../../../api/songs";
-import Swal from "sweetalert2";
-import { showEditUserModal } from "../../../helpers/alerts";
+import { showEditUserModal, showConfirm, showSuccess, showError } from "../../../helpers/alerts";
+import { PAGINATION } from "../../../config/constants";
 
 const UsersTable = ({ users, setUsers }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = PAGINATION.ADMIN_TABLE_ITEMS;
 
   const handleEditUser = async (user) => {
     const result = await showEditUserModal(user);
@@ -33,61 +33,25 @@ const UsersTable = ({ users, setUsers }) => {
             : u,
         );
         setUsers(updatedUsers);
-        Swal.fire({
-          title: "Actualizado",
-          text: "Usuario actualizado correctamente",
-          icon: "success",
-          background: "#1a1a1a",
-          color: "#fff",
-          timer: 1500,
-          showConfirmButton: false,
-        });
+        showSuccess("Usuario actualizado correctamente", "Actualizado");
       } catch (error) {
-        const errorMessage = error.response?.data?.message || "No se pudo actualizar el usuario";
-        Swal.fire({
-          title: "Error",
-          text: errorMessage,
-          icon: "error",
-          background: "#1a1a1a",
-          color: "#fff",
-        });
+        const errorMessage =
+          error.response?.data?.message || "No se pudo actualizar el usuario";
+        showError(errorMessage);
       }
     }
   };
 
   const permanentDeleteUser = async (id) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción eliminará permanentemente al usuario",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-      background: "#1a1a1a",
-      color: "#fff",
-    }).then(async (result) => {
+    showConfirm("Esta acción eliminará permanentemente al usuario").then(async (result) => {
       if (result.isConfirmed) {
         try {
           await deleteUserRequest(id);
           const filteredUsers = users.filter((u) => u._id !== id);
           setUsers(filteredUsers);
-          Swal.fire({
-            title: "Eliminado",
-            text: "Usuario eliminado permanentemente",
-            icon: "success",
-            background: "#1a1a1a",
-            color: "#fff",
-          });
+          showSuccess("Usuario eliminado permanentemente", "Eliminado");
         } catch (error) {
-          Swal.fire({
-            title: "Error",
-            text: "No se pudo eliminar el usuario",
-            icon: "error",
-            background: "#1a1a1a",
-            color: "#fff",
-          });
+          showError("No se pudo eliminar el usuario");
         }
       }
     });
@@ -100,39 +64,14 @@ const UsersTable = ({ users, setUsers }) => {
         u._id === id ? { ...u, isActive: true } : u,
       );
       setUsers(updatedUsers);
-      Swal.fire({
-        title: "Activado",
-        text: "El usuario ha sido dado de alta.",
-        icon: "success",
-        background: "#1a1a1a",
-        color: "#fff",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      showSuccess("El usuario ha sido dado de alta.", "Activado");
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo dar de alta al usuario",
-        icon: "error",
-        background: "#1a1a1a",
-        color: "#fff",
-      });
+      showError("No se pudo dar de alta al usuario");
     }
   };
 
   const deleteUser = async (id) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "El usuario será dado de baja",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, dar de baja",
-      cancelButtonText: "Cancelar",
-      background: "#1a1a1a",
-      color: "#fff",
-    }).then(async (result) => {
+    showConfirm("El usuario será dado de baja").then(async (result) => {
       if (result.isConfirmed) {
         try {
           await deactivateUserRequest(id);
@@ -140,21 +79,9 @@ const UsersTable = ({ users, setUsers }) => {
             u._id === id ? { ...u, isActive: false } : u,
           );
           setUsers(updatedUsers);
-          Swal.fire({
-            title: "Dado de baja",
-            text: "El usuario ha sido dado de baja.",
-            icon: "success",
-            background: "#1a1a1a",
-            color: "#fff",
-          });
+          showSuccess("El usuario ha sido dado de baja.", "Dado de baja");
         } catch (error) {
-          Swal.fire({
-            title: "Error",
-            text: "No se pudo dar de baja al usuario",
-            icon: "error",
-            background: "#1a1a1a",
-            color: "#fff",
-          });
+          showError("No se pudo dar de baja al usuario");
         }
       }
     });

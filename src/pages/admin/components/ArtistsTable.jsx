@@ -1,45 +1,23 @@
 import React, { useState } from "react";
 import { Table, Image, Button } from "react-bootstrap";
 import { deleteAlbumRequest } from "../../../api/songs";
-import Swal from "sweetalert2";
+import { PAGINATION, DEFAULT_AVATAR } from "../../../config/constants";
+import { showConfirm, showSuccess, showError } from "../../../helpers/alerts";
 
 const ArtistsTable = ({ artists, setArtists }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = PAGINATION.ADMIN_TABLE_ITEMS;
 
   const deleteArtist = async (id) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Se eliminará el artista de la lista",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-      background: "#1a1a1a",
-      color: "#fff",
-    }).then(async (result) => {
+    showConfirm("Se eliminará el artista de la lista").then(async (result) => {
       if (result.isConfirmed) {
         try {
           await deleteAlbumRequest(id);
           const filteredArtists = artists.filter((a) => a._id !== id);
           setArtists(filteredArtists);
-          Swal.fire({
-            title: "Eliminado",
-            text: "El artista ha sido eliminado.",
-            icon: "success",
-            background: "#1a1a1a",
-            color: "#fff",
-          });
+          showSuccess("El artista ha sido eliminado.", "Eliminado");
         } catch (error) {
-          Swal.fire({
-            title: "Error",
-            text: "No se pudo eliminar el artista",
-            icon: "error",
-            background: "#1a1a1a",
-            color: "#fff",
-          });
+          showError("No se pudo eliminar el artista");
         }
       }
     });
@@ -55,8 +33,13 @@ const ArtistsTable = ({ artists, setArtists }) => {
       <div className="table-responsive">
         <Table hover variant="dark" className="align-middle mb-0">
           <thead className="bg-black">
-            <tr className="text-secondary text-uppercase small" style={{ letterSpacing: "1px" }}>
-              <th className="py-3 ps-4" style={{ width: "80px" }}>Foto</th>
+            <tr
+              className="text-secondary text-uppercase small"
+              style={{ letterSpacing: "1px" }}
+            >
+              <th className="py-3 ps-4" style={{ width: "80px" }}>
+                Foto
+              </th>
               <th className="py-3">Nombre</th>
               <th className="py-3">Álbum</th>
               <th className="py-3 pe-4 text-end">Acciones</th>
@@ -67,7 +50,7 @@ const ArtistsTable = ({ artists, setArtists }) => {
               <tr key={artist.id} style={{ borderBottom: "1px solid #2d2d2d" }}>
                 <td className="ps-4 py-3">
                   <Image
-                    src={artist.image || "https://via.placeholder.com/40"}
+                    src={artist.image || DEFAULT_AVATAR}
                     roundedCircle
                     width={48}
                     height={48}
@@ -75,8 +58,12 @@ const ArtistsTable = ({ artists, setArtists }) => {
                     style={{ objectFit: "cover" }}
                   />
                 </td>
-                <td className="fw-bold text-white">{artist.name || artist.artistName}</td>
-                <td className="text-white-50">{artist.album?.name || artist.name || "-"}</td>
+                <td className="fw-bold text-white">
+                  {artist.name || artist.artistName}
+                </td>
+                <td className="text-white-50">
+                  {artist.album?.name || artist.name || "-"}
+                </td>
                 <td className="text-end pe-4">
                   <Button
                     variant="outline-danger"
@@ -85,7 +72,10 @@ const ArtistsTable = ({ artists, setArtists }) => {
                     style={{ width: "32px", height: "32px" }}
                     onClick={() => deleteArtist(artist._id || artist.id)}
                   >
-                    <i className="bi bi-trash-fill" style={{ fontSize: "0.8rem" }}></i>
+                    <i
+                      className="bi bi-trash-fill"
+                      style={{ fontSize: "0.8rem" }}
+                    ></i>
                   </Button>
                 </td>
               </tr>
@@ -101,16 +91,26 @@ const ArtistsTable = ({ artists, setArtists }) => {
             disabled={currentPage === 1}
             type="button"
           >
-            <i className="bi bi-chevron-left" style={{ pointerEvents: "none" }}></i>
+            <i
+              className="bi bi-chevron-left"
+              style={{ pointerEvents: "none" }}
+            ></i>
           </button>
-          <span className="text-white mx-2 small">{currentPage} de {totalPages}</span>
+          <span className="text-white mx-2 small">
+            {currentPage} de {totalPages}
+          </span>
           <button
             className="btn btn-dark btn-sm border-secondary text-white"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
             type="button"
           >
-            <i className="bi bi-chevron-right" style={{ pointerEvents: "none" }}></i>
+            <i
+              className="bi bi-chevron-right"
+              style={{ pointerEvents: "none" }}
+            ></i>
           </button>
         </div>
       )}

@@ -1,45 +1,23 @@
 import React, { useState } from "react";
 import { Table, Image, Button } from "react-bootstrap";
 import { deleteSongRequest } from "../../../api/songs";
-import Swal from "sweetalert2";
+import { PAGINATION, DEFAULT_AVATAR } from "../../../config/constants";
+import { showConfirm, showSuccess, showError } from "../../../helpers/alerts";
 
 const SongsTable = ({ songs, setSongs }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = PAGINATION.ADMIN_TABLE_ITEMS;
 
   const deleteSong = async (id) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Se eliminará de la base de datos",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-      background: "#1a1a1a",
-      color: "#fff",
-    }).then(async (result) => {
+    showConfirm("Se eliminará de la base de datos").then(async (result) => {
       if (result.isConfirmed) {
         try {
           await deleteSongRequest(id);
           const filteredSongs = songs.filter((s) => s._id !== id);
           setSongs(filteredSongs);
-          Swal.fire({
-            title: "Eliminado",
-            text: "La canción ha sido eliminada.",
-            icon: "success",
-            background: "#1a1a1a",
-            color: "#fff",
-          });
+          showSuccess("La canción ha sido eliminada.", "Eliminado");
         } catch (error) {
-          Swal.fire({
-            title: "Error",
-            text: "No se pudo eliminar la canción",
-            icon: "error",
-            background: "#1a1a1a",
-            color: "#fff",
-          });
+          showError("No se pudo eliminar la canción");
         }
       }
     });
@@ -55,8 +33,13 @@ const SongsTable = ({ songs, setSongs }) => {
       <div className="table-responsive">
         <Table hover variant="dark" className="align-middle mb-0">
           <thead className="bg-black">
-            <tr className="text-secondary text-uppercase small" style={{ letterSpacing: "1px" }}>
-              <th className="py-3 ps-4" style={{ width: "80px" }}>Portada</th>
+            <tr
+              className="text-secondary text-uppercase small"
+              style={{ letterSpacing: "1px" }}
+            >
+              <th className="py-3 ps-4" style={{ width: "80px" }}>
+                Portada
+              </th>
               <th className="py-3">Título</th>
               <th className="py-3">Artista</th>
               <th className="py-3">Duración</th>
@@ -68,7 +51,7 @@ const SongsTable = ({ songs, setSongs }) => {
               <tr key={song._id} style={{ borderBottom: "1px solid #2d2d2d" }}>
                 <td className="ps-4 py-3">
                   <Image
-                    src={song.image || "https://via.placeholder.com/40"}
+                    src={song.image || DEFAULT_AVATAR}
                     rounded
                     width={48}
                     height={48}
@@ -88,7 +71,10 @@ const SongsTable = ({ songs, setSongs }) => {
                       style={{ width: "32px", height: "32px" }}
                       onClick={() => deleteSong(song._id)}
                     >
-                      <i className="bi bi-trash-fill" style={{ fontSize: "0.8rem" }}></i>
+                      <i
+                        className="bi bi-trash-fill"
+                        style={{ fontSize: "0.8rem" }}
+                      ></i>
                     </Button>
                   </div>
                 </td>
@@ -105,16 +91,26 @@ const SongsTable = ({ songs, setSongs }) => {
             disabled={currentPage === 1}
             type="button"
           >
-            <i className="bi bi-chevron-left" style={{ pointerEvents: "none" }}></i>
+            <i
+              className="bi bi-chevron-left"
+              style={{ pointerEvents: "none" }}
+            ></i>
           </button>
-          <span className="text-white mx-2 small">{currentPage} de {totalPages}</span>
+          <span className="text-white mx-2 small">
+            {currentPage} de {totalPages}
+          </span>
           <button
             className="btn btn-dark btn-sm border-secondary text-white"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
             type="button"
           >
-            <i className="bi bi-chevron-right" style={{ pointerEvents: "none" }}></i>
+            <i
+              className="bi bi-chevron-right"
+              style={{ pointerEvents: "none" }}
+            ></i>
           </button>
         </div>
       )}

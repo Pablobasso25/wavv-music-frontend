@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, InputGroup, Button, Image } from "react-bootstrap";
 import { createSongRequest, createAlbumRequest } from "../../../api/songs";
-import Swal from "sweetalert2";
+import { showSuccess, showError, showWarning } from "../../../helpers/alerts";
 
 const SearchModal = ({
   show,
@@ -31,7 +31,7 @@ const SearchModal = ({
       setSearchResults(data.results);
     } catch (error) {
       console.error("Error searching iTunes:", error);
-      Swal.fire("Error", "No se pudo conectar con iTunes", "error");
+      showError("No se pudo conectar con iTunes");
     } finally {
       setIsSearching(false);
     }
@@ -41,13 +41,7 @@ const SearchModal = ({
       (s) => s.title === track.trackName && s.artist === track.artistName,
     );
     if (exists) {
-      Swal.fire({
-        title: "Ya existe",
-        text: "Esta canción ya está en tu lista",
-        icon: "info",
-        background: "#1a1a1a",
-        color: "#fff",
-      });
+      showWarning("Esta canción ya está en tu lista", "Ya existe");
       return;
     }
     try {
@@ -66,23 +60,9 @@ const SearchModal = ({
 
       setSongs([...songs, res.data]);
       if (reloadData) reloadData();
-      Swal.fire({
-        title: "¡Agregada!",
-        text: `${track.trackName} se agregó correctamente.`,
-        icon: "success",
-        background: "#1a1a1a",
-        color: "#fff",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      showSuccess(`${track.trackName} se agregó correctamente.`, "¡Agregada!");
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo procesar el audio en el servidor",
-        icon: "error",
-        background: "#1a1a1a",
-        color: "#fff",
-      });
+      showError("No se pudo procesar el audio en el servidor");
     }
   };
   const addArtistFromSearch = async (album) => {
@@ -90,13 +70,7 @@ const SearchModal = ({
       (a) => a.album?.collectionId === album.collectionId,
     );
     if (exists) {
-      Swal.fire({
-        title: "Ya existe",
-        text: "Este álbum ya está en tu lista",
-        icon: "info",
-        background: "#1a1a1a",
-        color: "#fff",
-      });
+      showWarning("Este álbum ya está en tu lista", "Ya existe");
       return;
     }
     try {
@@ -121,23 +95,12 @@ const SearchModal = ({
       const res = await createAlbumRequest(newAlbum);
       setArtists([...artists, res.data]);
       if (reloadData) reloadData();
-      Swal.fire({
-        title: "¡Agregado!",
-        text: `${album.collectionName} se agregó correctamente.`,
-        icon: "success",
-        background: "#1a1a1a",
-        color: "#fff",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      showSuccess(
+        `${album.collectionName} se agregó correctamente.`,
+        "¡Agregado!",
+      );
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo agregar el álbum",
-        icon: "error",
-        background: "#1a1a1a",
-        color: "#fff",
-      });
+      showError("No se pudo agregar el álbum");
     }
   };
   return (
