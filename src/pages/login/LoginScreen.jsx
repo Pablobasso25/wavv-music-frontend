@@ -119,7 +119,7 @@ const LoginScreen = ({ show, handleClose, onSwitchToRegister }) => {
             className="login-register-link"
             onClick={handleClose}
           >
-            ¿Olvidaste tu contraseña?
+            ¿Olvidaste la contraseña?
           </Link>
         </p>
       </Modal.Body>
