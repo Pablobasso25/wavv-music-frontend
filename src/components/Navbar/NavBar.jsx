@@ -77,8 +77,11 @@ const NavBar = () => {
     }
   };
   const isAdminPage = location.pathname === "/admin";
-  const isPremiumUser = user?.role?.toLowerCase() === "premium" || user?.role?.toLowerCase() === "familiar";
-  const showPremiumButton = !isAdminPage && user?.role !== "admin" && !isPremiumUser;
+  const isPremiumUser =
+    user?.role?.toLowerCase() === "premium" ||
+    user?.role?.toLowerCase() === "familiar";
+  const showPremiumButton =
+    !isAdminPage && user?.role !== "admin" && !isPremiumUser;
   useEffect(() => {
     if (searchQuery.length === 0) {
       setSearchResults([]);
@@ -125,15 +128,15 @@ const NavBar = () => {
   }, []);
   const handlePlaySong = (track) => {
     const songData = {
-      _id: track.trackId,
-      id: track.trackId,
-      title: track.trackName,
-      artist: track.artistName,
-      album: track.collectionName,
-      cover: track.artworkUrl100?.replace("100x100", "600x600"),
-      image: track.artworkUrl100?.replace("100x100", "600x600"),
-      audio: track.previewUrl,
-      name: track.trackName,
+      _id: track.trackId || track.id,
+      id: track.trackId || track.id,
+      title: track.trackName || track.title,
+      artist: track.artistName || track.artist,
+      album: track.collectionName || track.album,
+      cover: track.artworkUrl100?.replace("100x100", "600x600") || track.image,
+      image: track.artworkUrl100?.replace("100x100", "600x600") || track.image,
+      audioUrl: track.previewUrl || track.audio || track.audioUrl,
+      name: track.trackName || track.title,
     };
     playSong(songData);
     setShowDropdown(false);
@@ -142,19 +145,20 @@ const NavBar = () => {
   const handleAddSong = async (track) => {
     const songData = {
       externalSong: {
-        title: track.trackName,
-        artist: track.artistName,
-        image: track.artworkUrl100?.replace("100x100", "600x600"),
-        youtubeUrl: track.previewUrl,
+        title: track.trackName || track.title,
+        artist: track.artistName || track.artist,
+        image:
+          track.artworkUrl100?.replace("100x100", "600x600") || track.image,
+        audioUrl: track.previewUrl || track.audio || track.preview_url,
         duration: track.trackTimeMillis
           ? `${Math.floor(track.trackTimeMillis / 60000)}:${String(
-              Math.floor((track.trackTimeMillis % 60000) / 1000)
+              Math.floor((track.trackTimeMillis % 60000) / 1000),
             ).padStart(2, "0")}`
-          : "--:--",
+          : track.duration || "--:--",
       },
     };
-
     const res = await addSongToPlaylist(songData);
+
     if (res.success) {
       toast.success("Canción agregada a tu playlist");
       getUserPlaylist();
@@ -165,179 +169,204 @@ const NavBar = () => {
     }
   };
   return (
-    <nav className="spotify-navbar fixed-top">
-      <div className="spotify-navbar-left">
-        <img
-          src={Logo}
-          alt="Logo"
-          className="spotify-logo text-white fw-bold m-0"
-          style={{ cursor: "pointer", width: "120px" }}
-          onClick={() => navigate("/")}
-        />
-      </div>
-      <div className="spotify-navbar-center" ref={searchRef}>
-        <div className="spotify-search">
-          <i className="bi bi-search spotify-search-icon"></i>
-          <input
-            type="text"
-            className="spotify-search-input"
-            placeholder={placeholder}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+    <>
+      <style>
+        {`
+          @media (max-width: 768px) {
+            .spotify-search-dropdown {
+              position: fixed !important;
+              top: 65px !important;
+              left: 10px !important;
+              right: 10px !important;
+              width: calc(100vw - 20px) !important;
+              max-height: 60vh !important;
+              overflow-y: auto !important;
+              z-index: 1050 !important;
+              box-shadow: 0 8px 24px rgba(0,0,0,0.8) !important;
+            }
+          }
+        `}
+      </style>
+      <nav className="spotify-navbar fixed-top">
+        <div className="spotify-navbar-left">
+          <img
+            src={Logo}
+            alt="Logo"
+            className="spotify-logo text-white fw-bold m-0"
+            style={{ cursor: "pointer", width: "120px" }}
+            onClick={() => navigate("/")}
           />
-          {isSearching && (
-            <div
-              className="spinner-border spinner-border-sm text-light"
-              role="status"
-              style={{ width: "1rem", height: "1rem" }}
-            >
-              <span className="visually-hidden">Buscando...</span>
-            </div>
-          )}
         </div>
-        <button
-          className="spotify-nav-icon d-none d-lg-flex"
-          onClick={() => navigate("/playlist")}
-        >
-          <i className="bi-music-note-list"></i>
-        </button>
-        {showDropdown && searchResults.length > 0 && (
-          <div className="spotify-search-dropdown">
-            {searchResults.length > 0 ? (
-              <>
-                {searchResults.map((track) => (
-                    <div
-                      key={track.trackId}
-                      className="spotify-track-item"
-                      onClick={() => handlePlaySong(track)}
-                    >
-                      <img
-                        src={track.artworkUrl100}
-                        alt={track.trackName}
-                        width="50"
-                        height="50"
-                        className="rounded"
-                      />
-                      <div className="flex-grow-1 ms-2">
-                        <div className="text-white fw-semibold">
-                          {track.trackName}
-                        </div>
-                        <div className="text-secondary small">
-                          {track.artistName}
-                        </div>
-                      </div>
-                      <button
-                        className="btn btn-link text-primary p-0 ms-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddSong(track);
-                        }}
-                        title="Agregar a playlist"
+        {user?.role !== "admin" && (
+          <div className="spotify-navbar-center" ref={searchRef}>
+            <div className="spotify-search">
+              <i className="bi bi-search spotify-search-icon"></i>
+              <input
+                type="text"
+                className="spotify-search-input"
+                placeholder={placeholder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {isSearching && (
+                <div
+                  className="spinner-border spinner-border-sm text-light"
+                  role="status"
+                  style={{ width: "1rem", height: "1rem" }}
+                >
+                  <span className="visually-hidden">Buscando...</span>
+                </div>
+              )}
+            </div>
+            <button
+              className="spotify-nav-icon d-none d-lg-flex"
+              onClick={() => navigate("/playlist")}
+            >
+              <i className="bi-music-note-list"></i>
+            </button>
+            {showDropdown && searchResults.length > 0 && (
+              <div className="spotify-search-dropdown">
+                {searchResults.length > 0 ? (
+                  <>
+                    {searchResults.map((track) => (
+                      <div
+                        key={track.trackId}
+                        className="spotify-track-item"
+                        onClick={() => handlePlaySong(track)}
                       >
-                        <i className="bi bi-plus-circle fs-5"></i>
-                      </button>
-                    </div>
-                ))}
-              </>
-            ) : (
-              <div className="p-3 text-center text-secondary">
-                No se encontraron resultados
+                        <img
+                          src={track.artworkUrl100}
+                          alt={track.trackName}
+                          width="50"
+                          height="50"
+                          className="rounded"
+                        />
+                        <div className="flex-grow-1 ms-2">
+                          <div className="text-white fw-semibold">
+                            {track.trackName}
+                          </div>
+                          <div className="text-secondary small">
+                            {track.artistName}
+                          </div>
+                        </div>
+                        <button
+                          className="btn btn-link text-primary p-0 ms-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddSong(track);
+                          }}
+                          title="Agregar a playlist"
+                        >
+                          <i className="bi bi-plus-circle fs-5"></i>
+                        </button>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="p-3 text-center text-secondary">
+                    No se encontraron resultados
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
-      </div>
-      <div className="spotify-navbar-right">
-        <Dropdown
-          align="end"
-          show={showUserDropdown}
-          onToggle={(isOpen) => setShowUserDropdown(isOpen)}
-        >
-          <Dropdown.Toggle as={CustomToggle}>
-            <div
-              className="spotify-profile-circle"
-              style={{
-                overflow: "hidden",
-              }}
-            >
-              <img
-                src={
-                  user?.avatar ||
-                  "https://previews.123rf.com/images/jemastock/jemastock2001/jemastock200126608/137694549-user-avatar-with-earphones-audio-device-vector-illustration-design.jpg"
-                }
-                alt="Avatar"
+        <div className="spotify-navbar-right">
+          <Dropdown
+            align="end"
+            show={showUserDropdown}
+            onToggle={(isOpen) => setShowUserDropdown(isOpen)}
+          >
+            <Dropdown.Toggle as={CustomToggle}>
+              <div
+                className="spotify-profile-circle"
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "50%",
+                  overflow: "hidden",
                 }}
-              />
-            </div>
-            <span className="spotify-username">
-              {user?.username || "Usuario"}
-            </span>
-            <i className="bi bi-caret-down-fill spotify-caret"></i>
-          </Dropdown.Toggle>
-          <Dropdown.Menu className="dropdown-menu">
-            <Dropdown.Item
-              onClick={() => {
-                navigate("/playlist");
-                setShowUserDropdown(false);
-              }}
-              className="d-lg-none text-white d-flex align-items-center"
-            >
-              <i className="bi bi-music-note-list me-2"></i>
-              Mi Playlist
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => {
-                navigate("/subscription");
-                setShowUserDropdown(false);
-              }}
-              className="text-white d-flex align-items-center"
-            >
-              <i className="bi bi-gem me-2"></i>
-              Explorar Premium
-            </Dropdown.Item>
-            {!isAdminPage && user?.role !== "admin" && (
+              >
+                <img
+                  src={
+                    user?.avatar ||
+                    "https://previews.123rf.com/images/jemastock/jemastock2001/jemastock200126608/137694549-user-avatar-with-earphones-audio-device-vector-illustration-design.jpg"
+                  }
+                  alt="Avatar"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
+                />
+              </div>
+              <span className="spotify-username">
+                {user?.username || "Usuario"}
+              </span>
+              <i className="bi bi-caret-down-fill spotify-caret"></i>
+            </Dropdown.Toggle>
+            <Dropdown.Menu className="dropdown-menu">
+              {user?.role !== "admin" && (
+                <Dropdown.Item
+                  onClick={() => {
+                    navigate("/playlist");
+                    setShowUserDropdown(false);
+                  }}
+                  className="d-lg-none text-white d-flex align-items-center"
+                >
+                  <i className="bi bi-music-note-list me-2"></i>
+                  Mi Playlist
+                </Dropdown.Item>
+              )}
+              {user?.role !== "admin" && (
+                <Dropdown.Item
+                  onClick={() => {
+                    navigate("/subscription");
+                    setShowUserDropdown(false);
+                  }}
+                  className="text-white d-flex align-items-center"
+                >
+                  <i className="bi bi-gem me-2"></i>
+                  Explorar Premium
+                </Dropdown.Item>
+              )}
+              {!isAdminPage && user?.role !== "admin" && (
+                <Dropdown.Item
+                  onClick={() => {
+                    navigate("/profile");
+                    setShowUserDropdown(false);
+                  }}
+                  className="text-white d-flex align-items-center"
+                >
+                  <i className="bi bi-crown me-2"></i>
+                  Perfil
+                </Dropdown.Item>
+              )}
+              {!isAdminPage && user?.role === "admin" && (
+                <Dropdown.Item
+                  onClick={() => {
+                    navigate("/admin");
+                    setShowUserDropdown(false);
+                  }}
+                  className="text-warning d-flex align-items-center"
+                >
+                  Panel Admin
+                </Dropdown.Item>
+              )}
+              <Dropdown.Divider />
               <Dropdown.Item
                 onClick={() => {
-                  navigate("/profile");
+                  handleLogout();
                   setShowUserDropdown(false);
                 }}
                 className="text-white d-flex align-items-center"
               >
-                <i className="bi bi-crown me-2"></i>
-                Perfil
+                <i className="bx bx-log-out me-2"></i>
+                Cerrar Sesión
               </Dropdown.Item>
-            )}
-            {!isAdminPage && user?.role === "admin" && (
-              <Dropdown.Item
-                onClick={() => {
-                  navigate("/admin");
-                  setShowUserDropdown(false);
-                }}
-                className="text-warning d-flex align-items-center"
-              >
-                Panel Admin
-              </Dropdown.Item>
-            )}
-            <Dropdown.Divider />
-            <Dropdown.Item
-              onClick={() => {
-                handleLogout();
-                setShowUserDropdown(false);
-              }}
-              className="text-white d-flex align-items-center"
-            >
-              <i className="bx bx-log-out me-2"></i>
-              Cerrar Sesión
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-    </nav>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      </nav>
+    </>
   );
 };
 

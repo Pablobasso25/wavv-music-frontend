@@ -6,4 +6,7 @@ export default defineConfig({
   server: {
     historyApiFallback: true,
   },
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
 });

@@ -5,6 +5,7 @@ import MusicPlayer from "../../components/musicPlayer/MusicPlayer";
 import TopSongs from "../../components/topSongs/TopSongs";
 import { useSongs } from "../../context/SongContext";
 import { getAlbumsRequest, getAlbumByIdRequest } from "../../api/songs";
+import { PAGINATION, DEFAULT_PLAYLIST_COVER } from "../../config/constants";
 
 const PlaylistScreen = () => {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
@@ -21,7 +22,7 @@ const PlaylistScreen = () => {
       await Promise.all([
         loadPlaylist(),
         loadArtists(),
-        getUserPlaylist(1, 1000)
+        getUserPlaylist(1, PAGINATION.MAX_FETCH_LIMIT),
       ]);
       setIsLoading(false);
     };
@@ -29,13 +30,13 @@ const PlaylistScreen = () => {
   }, []);
 
   const loadPlaylist = async (page = 1) => {
-    const data = await getUserPlaylist(page, 5);
+    const data = await getUserPlaylist(page, PAGINATION.PLAYLIST_PAGE_TRACKS);
     setPlaylistData(data);
   };
 
   const loadArtists = async () => {
     try {
-      const res = await getAlbumsRequest(1, 100);
+      const res = await getAlbumsRequest(1, PAGINATION.ARTISTS_SIDEBAR_LIMIT);
       const albums = res.data.albums || res.data || [];
       const formattedArtists = albums.map((album) => ({
         id: album._id,
@@ -50,9 +51,16 @@ const PlaylistScreen = () => {
   };
 
   const handleAlbumSelect = async (artist) => {
+    const albumId = artist.albumId || artist._id || artist.id;
+
+    if (!albumId) return;
     try {
       if (artist.albumId) {
-        const res = await getAlbumByIdRequest(artist.albumId, 1, 5);
+        const res = await getAlbumByIdRequest(
+          albumId,
+          1,
+          PAGINATION.ALBUM_VIEW_TRACKS,
+        );
         const albumData = res.data.album;
 
         const formattedAlbum = {
@@ -69,7 +77,7 @@ const PlaylistScreen = () => {
             duration_ms: track.duration_ms,
             preview_url: track.preview_url || track.audio,
             audio: track.preview_url || track.audio,
-            youtubeUrl: track.preview_url || track.audio,
+            audioUrl: track.audioUrl || track.preview_url || track.audio,
             cover: track.cover || albumData.image,
           })),
           totalPages: res.data.totalPages,
@@ -89,7 +97,11 @@ const PlaylistScreen = () => {
 
   const handleAlbumPageChange = async (page) => {
     if (selectedAlbum) {
-      const res = await getAlbumByIdRequest(selectedAlbum.albumId, page, 5);
+      const res = await getAlbumByIdRequest(
+        selectedAlbum.albumId,
+        page,
+        PAGINATION.ALBUM_VIEW_TRACKS,
+      );
       const albumData = res.data.album;
 
       const formattedAlbum = {
@@ -106,7 +118,7 @@ const PlaylistScreen = () => {
           duration_ms: track.duration_ms,
           preview_url: track.preview_url || track.audio,
           audio: track.preview_url || track.audio,
-          youtubeUrl: track.preview_url || track.audio,
+          audioUrl: track.audioUrl || track.preview_url || track.audio,
           cover: track.cover || albumData.image,
         })),
         totalPages: res.data.totalPages,
@@ -120,7 +132,7 @@ const PlaylistScreen = () => {
   const playlistAlbum = {
     id: "user-playlist",
     name: "Mi Playlist",
-    image: "https://via.placeholder.com/300/8b5cf6/ffffff?text=My+Playlist",
+    image: DEFAULT_PLAYLIST_COVER,
     tracks: (userPlaylist || []).map((song) => {
       let durationMs = song.duration_ms || song.duration;
       if (typeof durationMs === "string" && durationMs.includes(":")) {
@@ -131,8 +143,7 @@ const PlaylistScreen = () => {
         _id: song._id,
         id: song._id,
         name: song.title,
-        preview_url: song.youtubeUrl,
-        audio: song.youtubeUrl,
+        audioUrl: song.audioUrl,
         cover: song.image,
         artist: song.artist,
         duration_ms: durationMs,
@@ -186,7 +197,7 @@ const PlaylistScreen = () => {
                       setSelectedAlbumData(null);
                     }}
                     style={{
-                      backgroundColor: "#8b5cf6",
+                      backgroundColor: "var(--accent-blue, #5773ff)",
                       border: "none",
                       color: "white",
                       padding: "10px 20px",

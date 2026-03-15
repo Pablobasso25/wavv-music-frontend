@@ -6,7 +6,6 @@ import errorSound from "../assets/sounds/error.mp3";
 import warningSound from "../assets/sounds/warning.mp3";
 import publicidad from "../assets/images/publicidad.png";
 import { showPremiumAlert2 } from "../helpers/alerts";
-import { isPremiumUser } from "../helpers/userPermissions";
 
 const MusicPlayerContext = createContext();
 
@@ -50,12 +49,14 @@ export const MusicPlayerProvider = ({ children }) => {
   };
 
   const executeActionWithAd = (callback) => {
-    if (isPremiumUser(user)) {
+    const adInterval = user?.subscription?.adInterval ?? 3;
+
+    if (adInterval === 0) {
       callback();
       return;
     }
 
-    if (adsCounter >= 3) {
+    if (adsCounter >= adInterval) {
       if (audioRef.current) audioRef.current.pause();
       setIsPlaying(false);
       setIsAdPlaying(true);
@@ -76,10 +77,20 @@ export const MusicPlayerProvider = ({ children }) => {
   };
 
   const playSong = (song, songList = []) => {
+    if (!song) return;
+    const audioSrc =
+      song.audioUrl || song.audio || song.previewUrl || song.preview_url;
+
+    if (!audioSrc) {
+      console.error("No se encontró link de audio válido:", song);
+      return;
+    }
+
     if (songList.length > 0) {
       setQueue(songList);
       const index = songList.findIndex(
-        (s) => s._id === song._id || s.title === song.title,
+        (s) =>
+          (s._id || s.id) === (song._id || song.id) || s.title === song.title,
       );
       setCurrentIndex(index !== -1 ? index : 0);
     } else {
@@ -88,9 +99,12 @@ export const MusicPlayerProvider = ({ children }) => {
         setCurrentIndex(0);
       }
     }
+
     setCurrentSong(song);
-    audioRef.current.src = song.audio || song.youtubeUrl || song.preview_url;
-    audioRef.current.play().catch((e) => console.log("Error play:", e));
+    audioRef.current.src = audioSrc;
+    audioRef.current
+      .play()
+      .catch((e) => console.log("Error al reproducir:", e));
     setIsPlaying(true);
   };
 
@@ -114,8 +128,11 @@ export const MusicPlayerProvider = ({ children }) => {
       if (nextSong) {
         setCurrentSong(nextSong);
         audioRef.current.src =
-          nextSong.audio || nextSong.youtubeUrl || nextSong.preview_url;
-        audioRef.current.play();
+          nextSong.audioUrl ||
+          nextSong.audio ||
+          nextSong.previewUrl ||
+          nextSong.preview_url;
+        audioRef.current.play().catch((e) => console.log(e));
         setIsPlaying(true);
       }
     }
@@ -130,8 +147,11 @@ export const MusicPlayerProvider = ({ children }) => {
       if (prevSong) {
         setCurrentSong(prevSong);
         audioRef.current.src =
-          prevSong.audio || prevSong.youtubeUrl || prevSong.preview_url;
-        audioRef.current.play();
+          prevSong.audioUrl ||
+          prevSong.audio ||
+          prevSong.previewUrl ||
+          prevSong.preview_url;
+        audioRef.current.play().catch((e) => console.log(e));
         setIsPlaying(true);
       }
     }

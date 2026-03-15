@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React from "react";
 import NavBar from "../../components/Navbar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import ArtistasSidebar from "../../components/artistsSidebar/ArtistasSidebar";
@@ -8,74 +7,22 @@ import TrendingSong from "../../components/trendingSong/TrendingSong";
 import TopSongs from "../../components/topSongs/TopSongs";
 import LoginScreen from "../login/LoginScreen";
 import RegisterScreen from "../register/RegisterScreen";
-import { useSongs } from "../../context/SongContext";
-import { useAuth } from "../../context/AuthContext";
-import { getAlbumsRequest, getAlbumByIdRequest } from "../../api/songs";
+import { useHomeData } from "./useHomeData";
 
 const HomeScreen = () => {
-  const location = useLocation();
-  const [selectedAlbumData, setSelectedAlbumData] = useState(null);
-  const [artists, setArtists] = useState([]);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const { songs, getSongs } = useSongs();
-  const { isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      if (!isAuthenticated) {
-        setShowLoginModal(true);
-        setShowRegisterModal(false);
-      }
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      getSongs();
-      loadArtists();
-      setShowLoginModal(false);
-      setShowRegisterModal(false);
-    }
-  }, [isAuthenticated, location.pathname]);
-
-  const loadArtists = async () => {
-    try {
-      const res = await getAlbumsRequest(1, 100);
-      const albums = res.data.albums || res.data || [];
-      const formattedArtists = albums.map((album) => ({
-        id: album._id,
-        name: album.artistName,
-        image: album.image,
-        albumId: album._id,
-      }));
-      setArtists(formattedArtists);
-      if (formattedArtists.length > 0) handleAlbumSelect(formattedArtists[0]);
-    } catch (error) {
-      setArtists([]);
-    }
-  };
-
-  const handleAlbumSelect = async (artist) => {
-    try {
-      const res = await getAlbumByIdRequest(artist.albumId, 1, 4);
-      const albumData = res.data.album;
-      setSelectedAlbumData({
-        ...albumData,
-        tracks: (albumData.tracks || []).map((t) => ({
-          ...t,
-          cover: albumData.image,
-        })),
-        totalPages: res.data.totalPages,
-        currentPage: res.data.currentPage,
-      });
-    } catch (error) {
-      setSelectedAlbumData(null);
-    }
-  };
+  const {
+    selectedAlbumData,
+    artists,
+    showLoginModal,
+    setShowLoginModal,
+    showRegisterModal,
+    setShowRegisterModal,
+    isLoading,
+    songs,
+    isAuthenticated,
+    handleAlbumSelect,
+    handlePageChange,
+  } = useHomeData();
 
   return (
     <>
@@ -132,7 +79,7 @@ const HomeScreen = () => {
             <TopSongs
               album={selectedAlbumData}
               fromHome={true}
-              onPageChange={handleAlbumSelect}
+              onPageChange={handlePageChange}
             />
           </div>
           <div className="home-player">
@@ -146,4 +93,3 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
-

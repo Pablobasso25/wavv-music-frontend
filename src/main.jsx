@@ -16,8 +16,8 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
     <AuthProvider>
-      <SongProvider>
         <MusicPlayerProvider>
+      <SongProvider>
           <App />
           <ToastContainer
             position="top-right"
@@ -31,8 +31,8 @@ createRoot(document.getElementById("root")).render(
             pauseOnHover
             theme="dark"
           />
-        </MusicPlayerProvider>
       </SongProvider>
+        </MusicPlayerProvider>
     </AuthProvider>
     </Router>
   </StrictMode>,
