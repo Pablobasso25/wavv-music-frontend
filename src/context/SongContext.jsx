@@ -8,6 +8,7 @@ import {
   getUserPlaylistRequest,
   removeSongFromPlaylistRequest,
 } from "../api/songs";
+import { PAGINATION } from "../config/constants";
 
 const SongContext = createContext();
 export const useSongs = () => {
@@ -25,7 +26,7 @@ export function SongProvider({ children }) {
       setUserPlaylist([]);
     }
   }, [user]);
-  const getUserPlaylist = async (page = 1, limit = 5) => {
+  const getUserPlaylist = async (page = 1, limit = PAGINATION.PLAYLIST_PAGE_TRACKS) => {
     try {
       const res = await getUserPlaylistRequest(page, limit);
       setUserPlaylist(res.data.songs || []);
@@ -35,7 +36,7 @@ export function SongProvider({ children }) {
       return { songs: [], totalPages: 0, currentPage: 1, totalSongs: 0 };
     }
   };
-  const getSongs = async (page = 1, limit = 5, includeUser = false) => {
+  const getSongs = async (page = 1, limit = PAGINATION.PLAYLIST_PAGE_TRACKS, includeUser = false) => {
     try {
       const res = await getSongsRequest(page, limit, includeUser);
       const songsData = res.data.songs || res.data || [];

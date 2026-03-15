@@ -6,7 +6,6 @@ import errorSound from "../assets/sounds/error.mp3";
 import warningSound from "../assets/sounds/warning.mp3";
 import publicidad from "../assets/images/publicidad.png";
 import { showPremiumAlert2 } from "../helpers/alerts";
-import { isPremiumUser } from "../helpers/userPermissions";
 
 const MusicPlayerContext = createContext();
 
@@ -50,12 +49,14 @@ export const MusicPlayerProvider = ({ children }) => {
   };
 
   const executeActionWithAd = (callback) => {
-    if (isPremiumUser(user)) {
+    const adInterval = user?.subscription?.adInterval ?? 3;
+
+    if (adInterval === 0) {
       callback();
       return;
     }
 
-    if (adsCounter >= 3) {
+    if (adsCounter >= adInterval) {
       if (audioRef.current) audioRef.current.pause();
       setIsPlaying(false);
       setIsAdPlaying(true);
@@ -92,7 +93,7 @@ export const MusicPlayerProvider = ({ children }) => {
           (s._id || s.id) === (song._id || song.id) || s.title === song.title,
       );
       setCurrentIndex(index !== -1 ? index : 0);
-    }else {
+    } else {
       if (queue.length === 0) {
         setQueue([song]);
         setCurrentIndex(0);
@@ -137,7 +138,7 @@ export const MusicPlayerProvider = ({ children }) => {
     }
   };
 
-const prevTrack = () => {
+  const prevTrack = () => {
     if (queue.length > 0) {
       let prevIdx = currentIndex - 1;
       if (prevIdx < 0) prevIdx = queue.length - 1;
@@ -145,8 +146,12 @@ const prevTrack = () => {
       const prevSong = queue[prevIdx];
       if (prevSong) {
         setCurrentSong(prevSong);
-        audioRef.current.src = prevSong.audioUrl || prevSong.audio || prevSong.previewUrl || prevSong.preview_url;
-        audioRef.current.play().catch(e => console.log(e));
+        audioRef.current.src =
+          prevSong.audioUrl ||
+          prevSong.audio ||
+          prevSong.previewUrl ||
+          prevSong.preview_url;
+        audioRef.current.play().catch((e) => console.log(e));
         setIsPlaying(true);
       }
     }
