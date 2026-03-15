@@ -4,9 +4,9 @@ import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { useSongs } from "../../context/SongContext";
 import { useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
-import Swal from "sweetalert2";
-import { showPremiumAlert } from "../../helpers/alerts";
+import { showPremiumAlert, showConfirm } from "../../helpers/alerts";
 import publicidad2 from "../../assets/images/publicidad2.png";
+import { PAGINATION } from "../../config/constants";
 
 const TopSongs = ({
   album,
@@ -35,7 +35,7 @@ const TopSongs = ({
 
   useEffect(() => {
     if (!fromHome) {
-      getUserPlaylist(1, 1000);
+      getUserPlaylist(1, PAGINATION.MAX_FETCH_LIMIT);
     }
   }, [fromHome]);
 
@@ -87,18 +87,10 @@ const TopSongs = ({
   const handleRemoveFromPlaylist = async (e, track) => {
     e.stopPropagation();
     const trackId = track._id || track.id;
-    const confirm = await Swal.fire({
-      title: "¿Borrar canción?",
-      text: "Se eliminará de tu playlist.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, borrar",
-      cancelButtonText: "Cancelar",
-      background: "#191B1B",
-      color: "#fff",
-    });
+    const confirm = await showConfirm(
+      "Se eliminará de tu playlist.",
+      "¿Borrar canción?",
+    );
 
     if (confirm.isConfirmed) {
       const result = await deleteSongFromPlaylist(trackId);
@@ -149,7 +141,7 @@ const TopSongs = ({
       <div
         className="music-list p-3 rounded-4 d-flex flex-column"
         style={{
-          backgroundColor: "#111111",
+          backgroundColor: "var(--bg-card, #111111)",
           margin: "0 auto",
           width: "100%",
           overflow: "hidden",
@@ -178,10 +170,10 @@ const TopSongs = ({
                 key={index}
                 className="item d-flex align-items-center justify-content-between p-2 p-md-3 rounded-3 mb-2 cursor-pointer w-100"
                 style={{
-                  backgroundColor: "#191B1B",
+                  backgroundColor: "var(--bg-secondary, #191B1B)",
                   transition: "0.2s",
                   border: isCurrentTrack
-                    ? "1px solid #5773ff"
+                    ? "1px solid var(--accent-blue, #5773ff)"
                     : "1px solid transparent",
                 }}
                 onClick={() => {
@@ -226,7 +218,9 @@ const TopSongs = ({
                       style={{
                         fontSize: "0.9rem",
                         maxWidth: "150px",
-                        color: isCurrentTrack ? "#5773ff" : "white",
+                        color: isCurrentTrack
+                          ? "var(--accent-blue, #5773ff)"
+                          : "white",
                       }}
                     >
                       {track.name}
@@ -239,7 +233,9 @@ const TopSongs = ({
                       isCurrentTrack && isPlaying ? "bx-pause" : "bx-play"
                     } fs-3`}
                     style={{
-                      color: isCurrentTrack ? "#5773ff" : "white",
+                      color: isCurrentTrack
+                        ? "var(--accent-blue, #5773ff)"
+                        : "white",
                       cursor: "pointer",
                     }}
                   ></i>

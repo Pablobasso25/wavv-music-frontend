@@ -1,22 +1,49 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import "../aboutUs/AboutUs.css"
+import "../aboutUs/AboutUs.css";
 import TeamMember from "./TeamMember";
 
 import logo from "../../assets/images/logo2.svg";
-import TomiImg from "../../assets/images/tomi.png"
-import LuhanaImg from "../../assets/images/luhana.png"
+import TomiImg from "../../assets/images/tomi.png";
+import LuhanaImg from "../../assets/images/luhana.png";
 import JuanImg from "../../assets/images/juan.jpg";
 import PabloImg from "../../assets/images/pablo.jpeg";
 
 const colors = {
-  bgPrimary: "#111111",
-  bgSecondary: "#191B1B",
-  bgSoft: "#35393B",
-  bgHover: "#494D4E",
-  textMain: "#F5F5F5",
-  accent: "#FF2E2E",
+  bgPrimary: "var(--bg-primary, #000000)",
+  bgSecondary: "var(--bg-secondary, #1a1a1a)",
+  bgSoft: "var(--bg-card, #202026)",
+  bgHover: "rgba(255,255,255,0.1)",
+  textMain: "var(--text-main, #f5f5f5)",
+  accent: "var(--accent-red, #ff2e2e)",
 };
+
+const TEAM_MEMBERS = [
+  {
+    name: "Pablo",
+    img: PabloImg,
+    text: "Organizado, responsable y siempre dispuesto a dar una mano al equipo.",
+    github: "https://github.com/Pablobasso25",
+  },
+  {
+    name: "Tomas",
+    img: TomiImg,
+    text: "Proactivo, resolutivo y con una visión clara para mejorar cada proyecto.",
+    github: "https://github.com/tomasgomez18",
+  },
+  {
+    name: "Luhana",
+    img: LuhanaImg,
+    text: "Enfocada, detallista, atenta y con una energía que contagia al equipo.",
+    github: "https://github.com/JLuhanaJakubowicz",
+  },
+  {
+    name: "Juan",
+    img: JuanImg,
+    text: "Creativo, curioso, persistente y con una energía que impulsa al grupo.",
+    github: "https://github.com/JuanFerreyra18",
+  },
+];
 
 const AboutUs = () => {
   return (
@@ -48,38 +75,16 @@ const AboutUs = () => {
             paddingLeft: "1rem",
           }}
         >
-          <TeamMember
-            name="Pablo"
-            img={PabloImg}
-            text="Organizado, responsable y siempre dispuesto a dar una mano al equipo."
-            github="https://github.com/Pablobasso25"
-            colors={colors}
-          />
-
-          <TeamMember
-            name="Tomas"
-            img={TomiImg}
-            text="Proactivo, resolutivo y con una visión clara para mejorar cada proyecto."
-            github="https://github.com/tomasgomez18"
-            colors={colors}
-          />
-
-          <TeamMember
-            name="Luhana"
-            img={LuhanaImg}
-            text="Enfocada, detallista, atenta y con una energía que contagia al equipo."
-            github="https://github.com/JLuhanaJakubowicz"
-            colors={colors}
-          />
-
-          <TeamMember
-            name="Juan"
-            img={JuanImg}
-            text="Creativo, curioso, persistente y con una energía que impulsa al grupo."
-            github="https://github.com/JuanFerreyra18"
-            colors={colors}
-          />
-
+          {TEAM_MEMBERS.map((member, index) => (
+            <TeamMember
+              key={index}
+              name={member.name}
+              img={member.img}
+              text={member.text}
+              github={member.github}
+              colors={colors}
+            />
+          ))}
         </Row>
       </Container>
     </div>

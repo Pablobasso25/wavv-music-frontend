@@ -93,20 +93,22 @@ const ArtistasSidebar = ({ onAlbumSelect, artistas = [] }) => {
                   cursor: "pointer",
                   transition: "all 0.3s ease",
                   borderRadius: "12px",
-                  backgroundColor: "#1a1a1a",
-                  border: "1px solid #333",
+                  backgroundColor: "var(--bg-secondary, #1a1a1a)",
+                  border: "1px solid var(--bg-card, #333)",
                 }}
                 onClick={() => onAlbumSelect(artista)}
                 onMouseEnter={(event) => {
                   event.currentTarget.style.transform = "translateY(-2px)";
                   event.currentTarget.style.boxShadow =
                     "0 4px 15px rgba(255,255,255,0.1)";
-                  event.currentTarget.style.backgroundColor = "#2a2a2a";
+                  event.currentTarget.style.backgroundColor =
+                    "var(--bg-card, #2a2a2a)";
                 }}
                 onMouseLeave={(event) => {
                   event.currentTarget.style.transform = "translateY(0)";
                   event.currentTarget.style.boxShadow = "none";
-                  event.currentTarget.style.backgroundColor = "#1a1a1a";
+                  event.currentTarget.style.backgroundColor =
+                    "var(--bg-secondary, #1a1a1a)";
                 }}
               >
                 <div

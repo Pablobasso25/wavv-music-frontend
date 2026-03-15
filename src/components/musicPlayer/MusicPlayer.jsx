@@ -14,6 +14,7 @@ import {
 import { useLocation } from "react-router-dom";
 import { useMusicPlayer } from "../../context/MusicPlayerContext";
 import { useSongs } from "../../context/SongContext";
+import { DEFAULT_COVER } from "../../config/constants";
 import "./MusicPlayer.css";
 
 const PLAYER_WIDTH = 300;
@@ -31,10 +32,7 @@ const MusicPlayer = ({ isStatic = false }) => {
     setIsPlaying,
     playUISound,
   } = useMusicPlayer();
-  const {
-    userPlaylist,
-    getUserPlaylist,
-  } = useSongs();
+  const { userPlaylist, getUserPlaylist } = useSongs();
   const [visible, setVisible] = useState(true);
   const [minimized, setMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 20, y: 80 });
@@ -48,18 +46,19 @@ const MusicPlayer = ({ isStatic = false }) => {
   const dragRef = useRef(null);
   const offsetRef = useRef({ x: 0, y: 0 });
   const location = useLocation();
-  
+
   useEffect(() => {
     getUserPlaylist(1, 1000);
   }, []);
-  
+
   useEffect(() => {
     if (currentSong && userPlaylist && Array.isArray(userPlaylist)) {
       const isSaved = userPlaylist.some(
-        (s) => 
-          s._id === currentSong._id || 
+        (s) =>
+          s._id === currentSong._id ||
           s.id === currentSong._id ||
-          (s.title === (currentSong.title || currentSong.name) && s.artist === currentSong.artist)
+          (s.title === (currentSong.title || currentSong.name) &&
+            s.artist === currentSong.artist),
       );
       setIsLiked(isSaved);
     } else {
@@ -70,7 +69,7 @@ const MusicPlayer = ({ isStatic = false }) => {
   const handleLike = () => {
     return;
   };
-  
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -158,7 +157,7 @@ const MusicPlayer = ({ isStatic = false }) => {
     currentSong?.image ||
     currentSong?.cover ||
     currentSong?.album?.image ||
-    "https://via.placeholder.com/150";
+    DEFAULT_COVER;
   if (isMobile) {
     if (!currentSong) return null;
     return (
@@ -573,9 +572,7 @@ const MusicPlayer = ({ isStatic = false }) => {
                 </button>
               </div>
               <div className="lyrics-body">
-                <p>
-                  Letra no disponible
-                </p>
+                <p>Letra no disponible</p>
               </div>
             </div>
           )}
