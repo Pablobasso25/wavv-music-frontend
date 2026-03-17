@@ -29,7 +29,7 @@ export const useAdminData = () => {
         const res = await getSongsRequest(1, 1000, true);
         setSongs(res.data.songs || res.data || []);
       } else if (currentTab === "artists") {
-        const res = await getAlbumsRequest();
+        const res = await getAlbumsRequest(1, 1000);
         setArtists(res.data.albums || res.data || []);
       } else if (currentTab === "plans") {
         const res = await getPlansRequest();

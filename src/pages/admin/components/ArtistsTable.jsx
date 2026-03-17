@@ -47,7 +47,10 @@ const ArtistsTable = ({ artists, setArtists }) => {
           </thead>
           <tbody>
             {currentArtists.map((artist) => (
-              <tr key={artist.id} style={{ borderBottom: "1px solid #2d2d2d" }}>
+              <tr
+                key={artist._id || artist.id}
+                style={{ borderBottom: "1px solid #2d2d2d" }}
+              >
                 <td className="ps-4 py-3">
                   <Image
                     src={artist.image || DEFAULT_AVATAR}
