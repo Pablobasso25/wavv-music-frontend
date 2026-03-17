@@ -58,7 +58,7 @@ const AdminScreen = () => {
           >
             {renderNavLink("users", "bi-people-fill", "Usuarios")}
             {renderNavLink("songs", "bi-music-note-beamed", "Canciones")}
-            {renderNavLink("artists", "bi-mic-fill", "Artistas")}
+            {renderNavLink("artists", "bi-journal-album", "Álbumes")}
             {renderNavLink("plans", "bi-credit-card-fill", "Planes")}
           </Nav>
 
@@ -70,7 +70,7 @@ const AdminScreen = () => {
             >
               <i className="bi bi-plus-lg me-2"></i>
               <span>
-                {currentTab === "songs" ? "Nueva Canción" : "Nuevo Artista"}
+                {currentTab === "songs" ? "Nueva Canción" : "Nuevo Álbum"}
               </span>
             </Button>
           )}
