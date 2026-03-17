@@ -9,15 +9,15 @@ const ArtistsTable = ({ artists, setArtists }) => {
   const itemsPerPage = PAGINATION.ADMIN_TABLE_ITEMS;
 
   const deleteArtist = async (id) => {
-    showConfirm("Se eliminará el artista de la lista").then(async (result) => {
+    showConfirm("Se eliminará el álbum de la lista").then(async (result) => {
       if (result.isConfirmed) {
         try {
           await deleteAlbumRequest(id);
           const filteredArtists = artists.filter((a) => a._id !== id);
           setArtists(filteredArtists);
-          showSuccess("El artista ha sido eliminado.", "Eliminado");
+          showSuccess("El álbum ha sido eliminado.", "Eliminado");
         } catch (error) {
-          showError("No se pudo eliminar el artista");
+          showError("No se pudo eliminar el álbum");
         }
       }
     });
@@ -38,10 +38,10 @@ const ArtistsTable = ({ artists, setArtists }) => {
               style={{ letterSpacing: "1px" }}
             >
               <th className="py-3 ps-4" style={{ width: "80px" }}>
-                Foto
+                Portada
               </th>
-              <th className="py-3">Nombre</th>
               <th className="py-3">Álbum</th>
+              <th className="py-3">Artista</th>
               <th className="py-3 pe-4 text-end">Acciones</th>
             </tr>
           </thead>
@@ -58,12 +58,8 @@ const ArtistsTable = ({ artists, setArtists }) => {
                     style={{ objectFit: "cover" }}
                   />
                 </td>
-                <td className="fw-bold text-white">
-                  {artist.name || artist.artistName}
-                </td>
-                <td className="text-white-50">
-                  {artist.album?.name || artist.name || "-"}
-                </td>
+                <td className="fw-bold text-white">{artist.name || "-"}</td>
+                <td className="text-white-50">{artist.artistName || "-"}</td>
                 <td className="text-end pe-4">
                   <Button
                     variant="outline-danger"
