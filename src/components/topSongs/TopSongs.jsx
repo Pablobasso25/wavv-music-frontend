@@ -161,8 +161,7 @@ const TopSongs = ({
           }}
         >
           {album.tracks.map((track, index) => {
-            const isCurrentTrack =
-              currentSong?.title === (track.name || track.title);
+            const isCurrentTrack = currentSong?.title === (track.name || track.title);
             const added = isInPlaylist(track);
 
             return (
@@ -177,11 +176,22 @@ const TopSongs = ({
                     : "1px solid transparent",
                 }}
                 onClick={() => {
+                  if (isCurrentTrack) {
+                    if (isPlaying) {
+                      audioRef.current?.pause();
+                      setIsPlaying(false);
+                    } else {
+                      audioRef.current?.play();
+                      setIsPlaying(true);
+                    }
+                    return;
+                  }
                   const urlAudio =
                     track.preview_url ||
                     track.previewUrl ||
                     track.audio ||
                     track.audioUrl;
+                  
                   executeActionWithAd(() => {
                     const songToPlay = {
                       title: track.name || track.title,
